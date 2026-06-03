@@ -1,0 +1,418 @@
+{% liquid
+    assign btn_link = section.settings.button_link
+    if btn_link == blank
+      assign btn_link = routes.all_products_collection_url
+    endif
+  %}
+
+  {%- if settings.style_mode == 'flat' -%}
+    {%- assign grad_1    = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_2    = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_3    = section.settings.color_scheme.settings.background -%}
+    {%- assign wave_c    = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_text = section.settings.color_scheme.settings.foreground -%}
+    {%- assign btn_bg    = 'var(--color-primary)' -%}
+    {%- assign btn_text  = 'var(--color-primary-button-text)' -%}
+    {%- assign btn_hover = 'var(--color-primary-hover)' -%}
+  {%- elsif section.settings.use_custom_colors -%}
+    {%- assign grad_1    = section.settings.gradient_color_1 -%}
+    {%- assign grad_2    = section.settings.gradient_color_2 -%}
+    {%- assign grad_3    = section.settings.gradient_color_3 -%}
+    {%- assign wave_c    = section.settings.wave_color -%}
+    {%- assign grad_text = section.settings.text_color -%}
+    {%- assign btn_bg    = section.settings.button_bg -%}
+    {%- assign btn_text  = section.settings.button_text -%}
+    {%- assign btn_hover = section.settings.button_bg_hover -%}
+  {%- else -%}
+    {%- assign grad_1    = section.settings.color_scheme.settings.gradient_1 -%}
+    {%- assign grad_2    = section.settings.color_scheme.settings.gradient_2 -%}
+    {%- assign grad_3    = section.settings.color_scheme.settings.gradient_3 -%}
+    {%- assign wave_c    = section.settings.color_scheme.settings.wave_color -%}
+    {%- assign grad_text = section.settings.color_scheme.settings.gradient_text_color -%}
+    {%- assign btn_bg    = 'var(--color-background)' -%}
+    {%- assign btn_text  = 'var(--color-foreground)' -%}
+    {%- assign btn_hover = 'var(--color-background)' -%}
+  {%- endif -%}
+
+  <section id="shopify-section-{{ section.id }}" class="anchor-hero-wave color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }}{
+        --ahw-wave-height: {{ section.settings.wave_height }}px;
+
+        --ahw-grad-1: {{ grad_1 }};
+        --ahw-grad-2: {{ grad_2 }};
+        --ahw-grad-3: {{ grad_3 }};
+
+        --ahw-text: {{ grad_text }};
+        {%- if section.settings.use_custom_colors -%}
+        --ahw-muted: {{ section.settings.muted_text_color }};
+        {%- else -%}
+        --ahw-muted: {{ grad_text | color_modify: 'alpha', 0.65 }};
+        {%- endif -%}
+  
+        --ahw-button-bg: {{ btn_bg }};
+        --ahw-button-text: {{ btn_text }};
+        --ahw-button-bg-hover: {{ btn_hover }};
+  
+        --ahw-shadow: 0 20px 60px rgba(0,0,0,.18);
+      }
+  
+      /* No outer padding. Full bleed. */
+      #shopify-section-{{ section.id }} .ahw-wrap{
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+  
+      /* No rounded edges. No outlines. */
+      #shopify-section-{{ section.id }} .ahw-card{
+        border-radius: 0;
+        overflow: hidden;
+        position: relative;
+        background: #000;
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none; /* remove “outline-ish” shadow look */
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-grid{
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        min-height: {{ section.settings.min_height_desktop }}px;
+        position: relative;
+        z-index: 1; /* keep content above background waves */
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-media{
+        position: relative;
+        overflow: hidden;
+        background: #0b1220;
+        min-height: {{ section.settings.min_height_desktop }}px;
+      }
+  
+      /* Force picture/img to fill the column height (fixes black gap). */
+      #shopify-section-{{ section.id }} .ahw-media picture{
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #shopify-section-{{ section.id }} .ahw-media img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.01);
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-media::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        background: {{ section.settings.media_overlay }};
+        pointer-events:none;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-content{
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 56px 56px;
+        color: var(--ahw-text);
+        background: linear-gradient(135deg, var(--ahw-grad-1), var(--ahw-grad-2) 55%, var(--ahw-grad-3));
+      }
+  
+      /* subtle texture */
+      #shopify-section-{{ section.id }} .ahw-content::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:
+          radial-gradient(1200px 600px at 10% 15%, rgba(255,255,255,.14), transparent 55%),
+          radial-gradient(900px 500px at 90% 80%, rgba(255,255,255,.10), transparent 60%);
+        opacity: .9;
+        pointer-events:none;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-content-inner{
+        position: relative;
+        width: 100%;
+        max-width: 560px;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-rating{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        letter-spacing: .2px;
+        color: var(--ahw-muted);
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-stars{
+        display:flex;
+        gap: 2px;
+        line-height: 1;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-stars svg{
+        width: 14px;
+        height: 14px;
+        fill: {%- if section.settings.use_custom_colors -%}{{ section.settings.star_color }}{%- else -%}{{ grad_text }}{%- endif -%};
+        opacity: .95;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-eyebrow{
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        color: var(--ahw-muted);
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-title{
+        margin: 0 0 14px 0;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.06;
+        font-size: clamp(32px, 3.2vw, 56px);
+        color: var(--ahw-text);
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-sub{
+        margin: 0 0 22px 0;
+        font-size: 16px;
+        line-height: 1.55;
+        color: var(--ahw-text);
+        opacity: .95;
+        max-width: 52ch;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-actions{
+        display:flex;
+        align-items:center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: calc(var(--ahw-wave-height) * 0.35); /* keep text above waves */
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding: 14px 22px;
+        border-radius: var(--style-border-radius-buttons-primary);
+        text-decoration:none;
+        font-weight: 800;
+        font-size: 15px;
+        background: var(--ahw-button-bg);
+        color: var(--ahw-button-text);
+        border: 0;
+        transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+        box-shadow: 0 12px 30px rgba(0,0,0,.16);
+        cursor: pointer;
+      }
+      #shopify-section-{{ section.id }} .ahw-btn:hover{
+        background: var(--ahw-button-bg-hover);
+        transform: translateY(-1px);
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-secondary{
+        font-size: 13px;
+        color: var(--ahw-muted);
+        opacity: .95;
+      }
+  
+      /* FULL-WIDTH realistic multi-layer waves across entire hero */
+      #shopify-section-{{ section.id }} .ahw-waves{
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: var(--ahw-wave-height);
+        pointer-events: none;
+        z-index: 2; /* over both columns */
+        overflow: hidden;
+      }
+  
+      #shopify-section-{{ section.id }} .ahw-waves svg{
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+  }
+  
+      #shopify-section-{{ section.id }} .ahw-wave-1 path{ fill: rgba(255,255,255,.20); }
+      #shopify-section-{{ section.id }} .ahw-wave-2 path{ fill: rgba(255,255,255,.45); }
+      #shopify-section-{{ section.id }} .ahw-wave-3 path{ fill: {{ wave_c }}; }
+  
+      /* Mobile */
+      @media (max-width: 989px){
+        #shopify-section-{{ section.id }} .ahw-grid{
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+  
+        #shopify-section-{{ section.id }} .ahw-media{
+          min-height: auto;
+          height: {{ section.settings.media_height_mobile }}px;
+        }
+  
+        #shopify-section-{{ section.id }} .ahw-content{
+          padding: 30px 20px 34px 20px;
+        }
+  
+        /* Slightly taller waves on mobile to feel more “real” */
+        #shopify-section-{{ section.id }}{
+          --ahw-wave-height: {{ section.settings.wave_height_mobile }}px;
+        }
+  
+        #shopify-section-{{ section.id }} .ahw-actions{
+          margin-bottom: calc(var(--ahw-wave-height) * 0.40);
+        }
+      }
+    {% endstyle %}
+  
+    <div class="ahw-wrap">
+      <div class="ahw-card">
+        <div class="ahw-grid">
+          <div class="ahw-media" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+            {% if section.settings.image != blank %}
+              {% assign desktop_img = section.settings.image %}
+              {% assign mobile_img = section.settings.image_mobile | default: section.settings.image %}
+  
+              <picture>
+                <source media="(max-width: 989px)" srcset="{{ mobile_img | image_url: width: 1400 }}">
+                <img
+                  src="{{ desktop_img | image_url: width: 2200 }}"
+                  alt="{{ section.settings.image_alt | escape }}"
+                  loading="lazy"
+                  width="{{ desktop_img.width }}"
+                  height="{{ desktop_img.height }}"
+                >
+              </picture>
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </div>
+  
+          <div class="ahw-content">
+            <div class="ahw-content-inner">
+              {% if section.settings.show_rating %}
+                <div class="ahw-rating">
+                  <span class="ahw-stars" aria-hidden="true">
+                    {% for i in (1..5) %}
+                      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                      </svg>
+                    {% endfor %}
+                  </span>
+                  <span>{{ section.settings.rating_text }}</span>
+                </div>
+              {% endif %}
+  
+              {% if section.settings.eyebrow != blank %}
+                <div class="ahw-eyebrow">{{ section.settings.eyebrow }}</div>
+              {% endif %}
+  
+              {% if section.settings.heading != blank %}
+                <h1 class="ahw-title">{{ section.settings.heading }}</h1>
+              {% endif %}
+  
+              {% if section.settings.subheading != blank %}
+                <div class="ahw-sub">{{ section.settings.subheading }}</div>
+              {% endif %}
+  
+              <div class="ahw-actions">
+                {% if section.settings.button_label != blank %}
+                  <a class="ahw-btn" href="{{ btn_link }}">
+                    {{ section.settings.button_label }}
+                  </a>
+                {% endif %}
+  
+                {% if section.settings.secondary_line != blank %}
+                  <div class="ahw-secondary">{{ section.settings.secondary_line }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        {% if section.settings.show_wave %}
+          <div class="ahw-waves" aria-hidden="true">
+            <!-- back wave -->
+            <svg class="ahw-wave-1" viewBox="0 0 1440 120" preserveAspectRatio="none">
+              <path d="M0,80 C180,110 360,50 540,78 C720,106 900,66 1080,88 C1260,110 1350,98 1440,90 L1440,120 L0,120 Z"></path>
+            </svg>
+            <!-- mid wave -->
+            <svg class="ahw-wave-2" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+              <path d="M0,92 C200,70 380,110 560,92 C740,74 920,114 1100,90 C1280,66 1360,74 1440,86 L1440,120 L0,120 Z"></path>
+            </svg>
+            <!-- front wave -->
+            <svg class="ahw-wave-3" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+              <path d="M0,102 C240,122 420,82 600,102 C780,122 960,88 1140,104 C1320,120 1380,112 1440,106 L1440,120 L0,120 Z"></path>
+            </svg>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Hero Wave",
+    "settings": [
+      { "type": "image_picker", "id": "image", "label": "Desktop image" },
+      { "type": "image_picker", "id": "image_mobile", "label": "Mobile image (optional)" },
+      { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "Facecube Face Massager" },
+  
+      { "type": "checkbox", "id": "show_rating", "label": "Show rating row", "default": true },
+      { "type": "text", "id": "rating_text", "label": "Rating text", "default": "Excellent 4.8 | 12,319 Customers" },
+      { "type": "color", "id": "star_color", "label": "Star color", "default": "#ffffff" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+  
+      { "type": "text", "id": "eyebrow", "label": "Eyebrow (small line)", "default": "Skincare" },
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Transform Your Skincare Routine" },
+      { "type": "richtext", "id": "subheading", "label": "Subheading", "default": "<p>Experience the power of facial massage with the Facecube Face Massager - your path to glowing, relaxed skin!</p>" },
+  
+      { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
+      { "type": "url", "id": "button_link", "label": "Button link (optional)" },
+      { "type": "text", "id": "secondary_line", "label": "Secondary line (optional)", "default": "Free shipping over $14" },
+  
+      { "type": "header", "content": "Style" },
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+      { "type": "header", "content": "Colors" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Override theme gradient colors", "info": "When off, uses the theme's global gradient colors", "default": false },
+
+      { "type": "color", "id": "gradient_color_1", "label": "Gradient color 1", "default": "#0EA5E9", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "gradient_color_2", "label": "Gradient color 2", "default": "#06B6D4", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "gradient_color_3", "label": "Gradient color 3", "default": "#1D4ED8", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "text_color", "label": "Text color", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "muted_text_color", "label": "Muted text color", "default": "#E6F7FF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "text", "id": "media_overlay", "label": "Media overlay (CSS color/gradient)", "default": "linear-gradient(90deg, rgba(0,0,0,.08), rgba(0,0,0,.18))" },
+
+      { "type": "color", "id": "button_bg", "label": "Button background", "default": "#0B1020", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_bg_hover", "label": "Button hover background", "default": "#101a33", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_text", "label": "Button text", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "checkbox", "id": "show_wave", "label": "Show wave", "default": true },
+      { "type": "color", "id": "wave_color", "label": "Front wave color", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+  
+      { "type": "range", "id": "wave_height", "label": "Wave height (desktop)", "min": 60, "max": 180, "step": 6, "default": 120 },
+      { "type": "range", "id": "wave_height_mobile", "label": "Wave height (mobile)", "min": 70, "max": 220, "step": 5, "default": 140 },
+  
+      { "type": "range", "id": "min_height_desktop", "label": "Desktop min height (px)", "min": 360, "max": 760, "step": 10, "default": 520 },
+      { "type": "range", "id": "media_height_mobile", "label": "Mobile image height (px)", "min": 220, "max": 560, "step": 10, "default": 320 }
+    ],
+    "presets": [
+      { "name": "Hero Wave", "category": "Banner" }
+    ]
+  }
+  {% endschema %}
+  

@@ -1,0 +1,9 @@
+{%- comment -%}
+  Local dev: tunnel URL from shop.metafields.shopify-forge.api_base_dev (synced when
+  you open the dev app admin during `pnpm dev`). Prod: hardcoded via `pnpm deploy:prod`.
+{%- endcomment -%}
+{%- assign forge_reviews_api_base = shop.metafields.shopify-forge.api_base_dev.value -%}
+{%- if forge_reviews_api_base == blank -%}
+  {%- assign forge_reviews_api_base = 'https://forge-prod-11402474925.us-central1.run.app' -%}
+{%- endif -%}
+{{- forge_reviews_api_base -}}

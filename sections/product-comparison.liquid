@@ -1,0 +1,353 @@
+{%- liquid
+  assign title = section.settings.title
+  assign description = section.settings.description
+  assign brand_name = section.settings.brand_name
+  assign competitor_name = section.settings.competitor_name
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .product-comparison {
+    --comparison-table-bg: var(--color-background);
+    --comparison-header-bg: rgb(var(--color-foreground-rgb) / 0.07);
+    --comparison-border: var(--color-border);
+    --comparison-text: var(--color-foreground);
+    --comparison-primary: var(--color-primary);
+    --comparison-x-color: {{ section.settings.x_color }};
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="product-comparison section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="product-comparison__container container">
+
+    <div class="product-comparison__layout">
+      <!-- Left Content -->
+      <div class="product-comparison__content">
+        {%- if title != blank -%}
+          <div class="product-comparison__title rte">{{ title }}</div>
+        {%- endif -%}
+        {%- if description != blank -%}
+          <div class="product-comparison__description rte">{{ description }}</div>
+        {%- endif -%}
+      </div>
+
+      <!-- Right Table -->
+      <div class="product-comparison__table-wrapper">
+        <table class="product-comparison__table">
+          <thead>
+            <tr>
+              <th class="product-comparison__header-empty"></th>
+              <th class="product-comparison__header-brand">{{ brand_name }}</th>
+              <th class="product-comparison__header-competitor">{{ competitor_name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'feature' -%}
+                <tr {{ block.shopify_attributes }}>
+                  <td class="product-comparison__feature-name">{{ block.settings.feature_name }}</td>
+                  <td class="product-comparison__cell product-comparison__cell--brand">
+                    {%- if block.settings.brand_has == true -%}
+                      <span class="product-comparison__check-wrapper">
+                        <svg class="product-comparison__check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                    {%- else -%}
+                      <svg class="product-comparison__x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    {%- endif -%}
+                  </td>
+                  <td class="product-comparison__cell product-comparison__cell--competitor">
+                    {%- if block.settings.competitor_has == true -%}
+                      <span class="product-comparison__check-wrapper">
+                        <svg class="product-comparison__check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                    {%- else -%}
+                      <svg class="product-comparison__x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    {%- endif -%}
+                  </td>
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-comparison {
+    position: relative;
+    color: var(--comparison-text);
+  }
+
+  .product-comparison__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .product-comparison__layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .product-comparison__content {
+    max-width: 560px;
+  }
+
+  .product-comparison__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 1.5rem;
+    color: var(--comparison-text);
+  }
+
+  .product-comparison__title.rte p { margin: 0; }
+  .product-comparison__title.rte h1,
+  .product-comparison__title.rte h2,
+  .product-comparison__title.rte h3 {
+    margin: 0 0 0.5em 0;
+    font-weight: 700;
+    line-height: inherit;
+    color: var(--comparison-text);
+  }
+
+  .product-comparison__description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    opacity: 0.85;
+    color: var(--comparison-text);
+  }
+  .product-comparison__description p { margin: 0; }
+
+  .product-comparison__table-wrapper {
+    background-color: var(--comparison-table-bg);
+    border-radius: var(--style-border-radius-cards);
+    border: 1px solid var(--comparison-border);
+    overflow: hidden;
+  }
+
+  .product-comparison__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .product-comparison__table thead th {
+    background-color: var(--comparison-header-bg);
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--comparison-text);
+    border-bottom: 1px solid var(--comparison-border);
+  }
+
+  .product-comparison__header-empty {
+    background-color: var(--comparison-table-bg) !important;
+    border-bottom: 1px solid var(--comparison-border);
+  }
+
+  .product-comparison__header-brand {
+    color: var(--comparison-primary);
+  }
+
+  .product-comparison__header-competitor {
+    opacity: 0.7;
+  }
+
+  .product-comparison__table tbody tr {
+    border-bottom: 1px solid var(--comparison-border);
+    background-color: var(--comparison-table-bg);
+  }
+
+  .product-comparison__table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .product-comparison__table td {
+    padding: 1.25rem 1rem;
+    color: var(--comparison-text);
+  }
+
+  .product-comparison__feature-name {
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .product-comparison__cell {
+    text-align: center;
+    width: 25%;
+  }
+
+  .product-comparison__check-wrapper {
+    display: inline-block;
+  }
+
+  .product-comparison__check,
+  .product-comparison__x {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+  }
+
+  .product-comparison__check {
+    color: var(--comparison-primary);
+  }
+
+  .product-comparison__x {
+    color: var(--comparison-x-color);
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 989px) {
+    .product-comparison__layout {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .product-comparison__content {
+      max-width: 100%;
+      text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-comparison__layout { gap: 2rem; }
+    .product-comparison__table thead th { padding: 0.75rem 0.5rem; font-size: 0.75rem; }
+    .product-comparison__table td { padding: 1rem 0.5rem; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Comparison",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<p>What Makes Us Different</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Elevate your dog's safety with our LED collar...</p>"
+    },
+    {
+      "type": "header",
+      "content": "Table Headers"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Your brand name",
+      "default": "Our LED Collar"
+    },
+    {
+      "type": "text",
+      "id": "competitor_name",
+      "label": "Competitor name",
+      "default": "Others"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1",
+      "info": "Table background will blend with this section background."
+    },
+    {
+      "type": "color",
+      "id": "x_color",
+      "label": "X mark color",
+      "default": "#F44336"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_name",
+          "label": "Feature name",
+          "default": "Feature Name"
+        },
+        {
+          "type": "checkbox",
+          "id": "brand_has",
+          "label": "Your product has this",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "competitor_has",
+          "label": "Competitor has this",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Comparison",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}

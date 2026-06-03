@@ -1,0 +1,204 @@
+{% liquid
+  assign block_settings = block.settings
+%}
+
+{% style %}
+  .product-block-{{ block.id }} {
+    padding-top: {{ block_settings.padding_top }}px;
+    padding-bottom: {{ block_settings.padding_bottom }}px;
+  }
+
+
+  .product-block-{{ block.id }} .stars-outer {
+    position: relative;
+    display: inline-block;
+  }
+
+  .product-block-{{ block.id }} .stars-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .product-block-{{ block.id }} .stars-outer::before,
+  .product-block-{{ block.id }} .stars-inner::before {
+    content: "★★★★★";
+    font-family: "Arial", sans-serif;
+    font-size: {{ block_settings.rating_starts_size }}px;
+    line-height: 1;
+    letter-spacing: 0;
+    font-weight: normal;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .product-block-{{ block.id }} .stars-outer::before {
+    color: var(--color-border, #d3d3d3);
+  }
+
+  .product-block-{{ block.id }} .stars-inner::before {
+    color: var(--color-primary, #F2D952);
+    {% if block_settings.stars_color != blank %}
+      color: {{ block_settings.stars_color }};
+    {% endif %}
+  }
+
+  .product-block-{{ block.id }} .rating p strong {
+    color: var(--color-foreground-heading, #000000);
+    {% if block_settings.rating_text_highlighted_color != blank %}
+      color: {{ block_settings.rating_text_highlighted_color }};
+    {% endif %}
+  }
+{% endstyle %}
+
+<div
+  class="star-rating product-block-{{ block.id }}"
+  style="display:flex; align-items: center; justify-content: {{ block_settings.rating_alignment }};"
+  {{ block.shopify_attributes }}
+>
+  <div class="stars-outer">
+    {% assign rating_float = block_settings.product_rating | plus: 0.0 %}
+    {% assign rating_float = rating_float | divided_by: 1.0 %}
+    {% capture rating_float_rounded %}{{ rating_float | round: 2 }}{% endcapture %}
+    {% assign rating_float_final = rating_float_rounded | replace: ',', '.' %}
+    
+    {% assign rating_percentage = rating_float_final | divided_by: 5 | times: 100 %}
+    <div class="stars-inner" style="width: {{ rating_percentage }}%"></div>
+  </div>
+  {% if block_settings.rating_text != blank %}
+    <span
+      class="rating"
+      style="
+        margin-left: 8px;
+        word-wrap: break-word;
+        font-size: {{ block_settings.rating_text_font_size }}px;
+        color: {% if block_settings.rating_text_color != blank %}{{ block_settings.rating_text_color }}{% else %}var(--color-foreground, #000000){% endif %};
+      "
+    >
+      {{ block_settings.rating_text }}
+    </span>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "t:names.product_review_stars",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "rating_text",
+      "label": "Rating text",
+      "default": "<p><strong>4.9 / 5</strong></p>"
+    },
+    {
+      "type": "range",
+      "id": "product_rating",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "label": "Rating",
+      "default": 4.9
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "rating_alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start",
+      "label": "Alignment"
+    },
+    {
+      "type": "range",
+      "id": "rating_starts_size",
+      "label": "Stars size",
+      "min": 15,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "rating_text_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Rating text size",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "rating_text_color",
+      "label": "Rating text color",
+      "info": "Leave empty to use the color scheme."
+    },
+    {
+      "type": "color",
+      "id": "rating_text_highlighted_color",
+      "label": "Bolded rating text color",
+      "info": "Leave empty to use the color scheme."
+    },
+    {
+      "type": "color",
+      "id": "stars_color",
+      "label": "Star color",
+      "info": "Leave empty to use the color scheme."
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_review_stars",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

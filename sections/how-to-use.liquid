@@ -1,0 +1,663 @@
+{%- liquid
+    assign title = section.settings.title
+    assign subtitle = section.settings.subtitle
+    assign hero_image = section.settings.hero_image
+    if section.settings.use_custom_colors
+      assign htu_accent = section.settings.accent_color
+      assign htu_text   = section.settings.text_color
+      assign htu_card   = section.settings.card_bg_color
+    elsif settings.style_mode == 'gradient'
+      assign htu_card   = 'var(--color-card-gradient)'
+      assign htu_accent = 'var(--color-gradient-1)'
+      assign htu_text   = 'var(--color-gradient-text)'
+    else
+      assign htu_accent = section.settings.color_scheme.settings.primary
+      assign htu_text   = section.settings.color_scheme.settings.foreground
+      assign htu_card   = section.settings.color_scheme.settings.background_secondary
+    endif
+  -%}
+
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      --how-to-use-accent-color: {{ htu_accent }};
+      --how-to-use-text-color: {{ htu_text }};
+      --how-to-use-card-bg: {{ htu_card }};
+      --how-to-use-border-radius: var(--style-border-radius-cards);
+      --how-to-use-spacing: {{ section.settings.content_spacing }}px;
+      --how-to-use-image-size-value: {{ section.settings.image_size | default: 100 }};
+      --how-to-use-image-size: {{ section.settings.image_size | default: 100 }}%;
+      --how-to-use-card-width: {{ section.settings.card_width | default: 100 }}%;
+    }
+  {% endstyle %}
+  
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+  <div class="how-to-use section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+    <div class="how-to-use__container container">
+      
+      {%- if title != blank -%}
+        <div class="how-to-use__header">
+          <h2 class="how-to-use__title rte">{{ title }}</h2>
+          {%- if subtitle != blank -%}
+            <p class="how-to-use__subtitle">{{ subtitle }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+  
+      <div class="how-to-use__main-grid">
+        
+        <!-- Image Side -->
+        <div class="how-to-use__image-wrapper">
+          {%- if hero_image != blank -%}
+            {%- render 'image', 
+              image: hero_image,
+              class: 'how-to-use__image'
+            -%}
+          {%- else -%}
+            <div class="how-to-use__placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'how-to-use__placeholder-svg' }}
+            </div>
+          {%- endif -%}
+        </div>
+  
+        <!-- Content Side -->
+        <div class="how-to-use__content-wrapper">
+          
+          <!-- How to Use Section -->
+          <div class="how-to-use__section how-to-use__section--positive">
+          <div class="how-to-use__section-header">
+            {%- if section.settings.show_icon -%}
+              <div class="how-to-use__section-icon how-to-use__section-icon--positive">
+                {%- if section.settings.custom_icon != blank -%}
+                  {{ section.settings.custom_icon }}
+                {%- else -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            <h3 class="how-to-use__section-title rte">{{ section.settings.how_to_title | default: "<p>How to Use</p>" }}</h3>
+          </div>
+          
+          {%- if section.settings.how_to_description != blank -%}
+            <div class="how-to-use__section-description rte">{{ section.settings.how_to_description }}</div>
+          {%- endif -%}
+  
+          {%- if section.blocks.size > 0 -%}
+            <div class="how-to-use__steps">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'how_to_step' -%}
+                  <div class="how-to-use__step{% unless section.settings.show_step_numbers %} how-to-use__step--no-number{% endunless %}" {{ block.shopify_attributes }}>
+                    {%- if section.settings.show_step_numbers -%}
+                      <div class="how-to-use__step-number">{{ forloop.index }}</div>
+                    {%- endif -%}
+                    <div class="how-to-use__step-content">
+                      {%- if block.settings.title != blank -%}
+                        <h4 class="how-to-use__step-title">{{ block.settings.title }}</h4>
+                      {%- endif -%}
+                      {%- if block.settings.description != blank -%}
+                        <div class="how-to-use__step-description rte">{{ block.settings.description }}</div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          </div>
+  
+        </div>
+  
+      </div>
+  
+    </div>
+  </div>
+  
+  {% stylesheet %}
+    .how-to-use {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+  
+    .how-to-use__container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+  
+    .how-to-use__header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+  
+    .how-to-use__title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px 0;
+      line-height: 1.2;
+      color: var(--how-to-use-text-color, inherit);
+    }
+  
+    .how-to-use__subtitle {
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-weight: 400;
+      opacity: 0.7;
+      margin: 0;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .how-to-use__main-grid {
+      display: grid;
+      grid-template-columns: calc((100% - 80px) * var(--how-to-use-image-size-value) / 200) 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+  
+    .how-to-use__image-wrapper {
+      position: sticky;
+      top: 100px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+      height: fit-content;
+      width: 100%;
+      border-radius: var(--how-to-use-border-radius);
+    }
+  
+    .how-to-use__image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  
+    .how-to-use__placeholder {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.03);
+    }
+  
+    .how-to-use__placeholder-svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.3;
+    }
+  
+    .how-to-use__content-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: var(--how-to-use-card-width);
+    }
+  
+    .how-to-use__section {
+      padding: 48px;
+      background: var(--how-to-use-card-bg, rgba(255, 255, 255, 0.5));
+      border-radius: var(--how-to-use-border-radius, 16px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+  
+    .how-to-use__section::-webkit-scrollbar {
+      width: 6px;
+    }
+  
+    .how-to-use__section::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+    }
+  
+    .how-to-use__section::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+  
+    .how-to-use__section::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  
+    .how-to-use__section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+  
+    .how-to-use__section-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+  
+    .how-to-use__section-icon {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--style-border-radius-cards);
+      background: rgba(0, 0, 0, 0.03);
+    }
+  
+    .how-to-use__section-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--how-to-use-accent-color, #000);
+    }
+  
+    .how-to-use__section-icon--positive {
+      background: color-mix(in srgb, var(--how-to-use-accent-color) 12%, transparent);
+    }
+
+    .how-to-use__section-icon--positive svg {
+      stroke: var(--how-to-use-accent-color, #4CAF50);
+    }
+  
+    .how-to-use__section-title {
+      font-size: clamp(1.5rem, 2vw, 2rem);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin: 0;
+      line-height: 1.3;
+      color: var(--how-to-use-text-color, inherit);
+    }
+  
+    .how-to-use__section-description {
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      opacity: 0.8;
+      margin-bottom: 40px;
+      color: var(--how-to-use-text-color, inherit);
+    }
+  
+    .how-to-use__section-description p {
+      margin: 0 0 16px 0;
+    }
+  
+    .how-to-use__section-description p:last-child {
+      margin-bottom: 0;
+    }
+  
+    .how-to-use__steps {
+      display: flex;
+      flex-direction: column;
+      gap: var(--how-to-use-spacing, 32px);
+    }
+  
+    .how-to-use__step {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+  
+    .how-to-use__step-number {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--how-to-use-accent-color, #000);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+  
+    .how-to-use__step--no-number {
+      gap: 0;
+    }
+  
+    .how-to-use__step-content {
+      flex: 1;
+      padding-top: 4px;
+    }
+  
+    .how-to-use__step--no-number .how-to-use__step-content {
+      padding-top: 0;
+    }
+  
+    .how-to-use__step-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      color: var(--how-to-use-text-color, inherit);
+    }
+  
+    .how-to-use__step-description {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      opacity: 0.75;
+      color: var(--how-to-use-text-color, inherit);
+    }
+  
+    .how-to-use__step-description p {
+      margin: 0;
+    }
+  
+    @media (max-width: 989px) {
+      .how-to-use__main-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+  
+      .how-to-use__header {
+        margin-bottom: 48px;
+      }
+  
+      .how-to-use__image-wrapper {
+        position: relative;
+        top: 0;
+      }
+  
+      .how-to-use__section {
+        padding: 36px;
+        max-height: none;
+        overflow-y: visible;
+      }
+  
+      .how-to-use__section-header {
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+      }
+  
+      .how-to-use__section-icon {
+        width: 48px;
+        height: 48px;
+      }
+  
+      .how-to-use__section-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  
+    @media (max-width: 749px) {
+      .how-to-use__header {
+        margin-bottom: 40px;
+      }
+  
+      .how-to-use__main-grid {
+        gap: 36px;
+      }
+  
+      .how-to-use__section {
+        padding: 28px 24px;
+      }
+  
+      .how-to-use__section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+      }
+  
+      .how-to-use__section-icon {
+        width: 44px;
+        height: 44px;
+      }
+  
+      .how-to-use__section-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+  
+      .how-to-use__section-title {
+        font-size: 1.5rem;
+      }
+  
+      .how-to-use__section-description {
+        font-size: 1rem;
+        margin-bottom: 32px;
+      }
+  
+      .how-to-use__steps {
+        gap: 24px;
+      }
+  
+      .how-to-use__step {
+        gap: 20px;
+      }
+  
+      .how-to-use__step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.125rem;
+      }
+  
+      .how-to-use__step-title {
+        font-size: 1.0625rem;
+      }
+  
+      .how-to-use__step-description {
+        font-size: 0.875rem;
+      }
+    }
+  {% endstylesheet %}
+  
+  {% schema %}
+  {
+    "name": "How to Use",
+    "tag": "section",
+    "class": "section-wrapper",
+    "disabled_on": {
+      "groups": ["header", "footer"]
+    },
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "title",
+        "label": "t:settings.title",
+        "default": "<h2>How to Use</h2>"
+      },
+      {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Subtitle",
+        "default": "Follow these simple steps for optimal results"
+      },
+      {
+        "type": "image_picker",
+        "id": "hero_image",
+        "label": "Product Image",
+        "info": "Main product image displayed on the left side"
+      },
+      {
+        "type": "header",
+        "content": "Image Settings"
+      },
+      {
+        "type": "range",
+        "id": "image_size",
+        "label": "Image Size",
+        "min": 50,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "default": 100,
+        "info": "Control the maximum width of the product image (percentage of column width)"
+      },
+      {
+        "type": "range",
+        "id": "card_width",
+        "label": "Content Card Width",
+        "min": 50,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "default": 100,
+        "info": "Control the maximum width of the content card (percentage of column width)"
+      },
+      {
+        "type": "header",
+        "content": "How to Use Section"
+      },
+      {
+        "type": "richtext",
+        "id": "how_to_title",
+        "label": "Section Title",
+        "default": "<p>How to Use</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "how_to_description",
+        "label": "Description",
+        "default": "<p>For best results, follow these recommended steps.</p>"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_icon",
+        "label": "Show icon",
+        "default": true,
+        "info": "Display icon next to section title"
+      },
+      {
+        "type": "html",
+        "id": "custom_icon",
+        "label": "Custom Icon SVG",
+        "info": "Optional: Paste custom SVG icon code. Leave empty to use default checkmark icon."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_step_numbers",
+        "label": "Show step numbers",
+        "default": true,
+        "info": "Display numbered circles for each step"
+      },
+      {
+        "type": "header",
+        "content": "Design"
+      },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+      {
+        "type": "color",
+        "id": "accent_color",
+        "label": "Accent Color",
+        "default": "#000000",
+        "info": "Used for step numbers and icons",
+        "visible_if": "{{ section.settings.use_custom_colors }}"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#000000",
+        "visible_if": "{{ section.settings.use_custom_colors }}"
+      },
+      {
+        "type": "color",
+        "id": "card_bg_color",
+        "label": "Card Background",
+        "default": "rgba(255, 255, 255, 0.8)",
+        "info": "Use rgba for transparency",
+        "visible_if": "{{ section.settings.use_custom_colors }}"
+      },
+      {
+        "type": "range",
+        "id": "content_spacing",
+        "label": "Content Spacing",
+        "min": 16,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "default": 32,
+        "info": "Spacing between steps"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "t:settings.color_scheme",
+        "default": "scheme-1"
+      },
+      {
+        "type": "header",
+        "content": "t:content.padding"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "label": "t:settings.top",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "t:settings.bottom",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "default": 80
+      }
+    ],
+    "blocks": [
+      {
+        "type": "how_to_step",
+        "name": "How to Use Step",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Step Title",
+            "default": "Step Title"
+          },
+          {
+            "type": "richtext",
+            "id": "description",
+            "label": "Description",
+            "default": "<p>Detailed instructions for this step.</p>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "How to Use",
+        "category": "t:categories.product",
+        "blocks": [
+          {
+            "type": "how_to_step",
+            "settings": {
+              "title": "Cleanse Your Skin",
+              "description": "<p>Start with a clean, dry face. Remove any makeup and gently cleanse your skin with a mild cleanser.</p>"
+            }
+          },
+          {
+            "type": "how_to_step",
+            "settings": {
+              "title": "Apply Product",
+              "description": "<p>Take a small amount of product and gently massage it into your skin using upward circular motions.</p>"
+            }
+          },
+          {
+            "type": "how_to_step",
+            "settings": {
+              "title": "Let It Absorb",
+              "description": "<p>Allow the product to fully absorb into your skin before applying any additional products or makeup.</p>"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
+  

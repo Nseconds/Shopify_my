@@ -1,0 +1,446 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-medicube-split-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: var(--color-background, {{ section.settings.background_color }});
+    padding: {{ section.settings.section_padding }}px 0;
+  }
+
+  .ai-medicube-split-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-medicube-split-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--style-gap-cards);
+    align-items: center;
+  }
+
+  .ai-medicube-split-content-{{ ai_gen_id }} {
+    padding-right: 40px;
+  }
+
+  .ai-medicube-split-headline-{{ ai_gen_id }} {
+    font-size: {{ section.settings.headline_size }}px;
+    line-height: 1.2;
+    color: var(--color-foreground, {{ section.settings.headline_color }});
+    margin: 0 0 {{ section.settings.headline_spacing }}px 0;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+
+  .ai-medicube-split-description-{{ ai_gen_id }} {
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.6;
+    color: var(--color-foreground, {{ section.settings.text_color }});
+    margin: 0 0 {{ section.settings.text_spacing }}px 0;
+  }
+
+  .ai-medicube-split-description-{{ ai_gen_id }} p {
+    margin: 0 0 16px 0;
+  }
+
+  .ai-medicube-split-description-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-medicube-split-bullets-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-medicube-split-bullets-{{ ai_gen_id }} li {
+    font-size: {{ section.settings.bullet_size }}px;
+    line-height: 1.6;
+    color: var(--color-foreground, {{ section.settings.text_color }});
+    padding-left: 24px;
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .ai-medicube-split-bullets-{{ ai_gen_id }} li:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-medicube-split-bullets-{{ ai_gen_id }} li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-primary, {{ section.settings.bullet_color }});
+    border-radius: 50%;
+  }
+
+  .ai-medicube-split-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-medicube-split-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-medicube-split-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-medicube-split-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-medicube-split-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-medicube-split-accent-line-{{ ai_gen_id }} {
+    width: {{ section.settings.accent_line_width }}%;
+    height: {{ section.settings.accent_line_thickness }}px;
+    background-color: var(--color-primary, {{ section.settings.accent_line_color }});
+    margin-bottom: {{ section.settings.headline_spacing }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-medicube-split-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .ai-medicube-split-content-{{ ai_gen_id }} {
+      padding-right: 0;
+      order: 2;
+    }
+
+    .ai-medicube-split-image-wrapper-{{ ai_gen_id }} {
+      order: 1;
+    }
+
+    .ai-medicube-split-headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-medicube-split-description-{{ ai_gen_id }} {
+      font-size: {{ section.settings.text_size | times: 0.9 }}px;
+    }
+
+    .ai-medicube-split-bullets-{{ ai_gen_id }} li {
+      font-size: {{ section.settings.bullet_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-medicube-split-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-medicube-split-container-{{ ai_gen_id }}">
+    <div class="ai-medicube-split-grid-{{ ai_gen_id }}">
+      <div class="ai-medicube-split-content-{{ ai_gen_id }}">
+        {% if section.settings.show_accent_line %}
+          <div class="ai-medicube-split-accent-line-{{ ai_gen_id }}"></div>
+        {% endif %}
+
+        {% if section.settings.headline != blank %}
+          <h2 class="ai-medicube-split-headline-{{ ai_gen_id }}">
+            {{ section.settings.headline }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.description != blank %}
+          <div class="ai-medicube-split-description-{{ ai_gen_id }}">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_bullets %}
+          <ul class="ai-medicube-split-bullets-{{ ai_gen_id }}">
+            {% if section.settings.bullet_1 != blank %}
+              <li>{{ section.settings.bullet_1 }}</li>
+            {% endif %}
+            {% if section.settings.bullet_2 != blank %}
+              <li>{{ section.settings.bullet_2 }}</li>
+            {% endif %}
+            {% if section.settings.bullet_3 != blank %}
+              <li>{{ section.settings.bullet_3 }}</li>
+            {% endif %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="ai-medicube-split-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="product_image"{% if section.settings.product_image == blank %} data-forge-slot-blank="true"{% endif %}>
+        {% if section.settings.product_image %}
+          <img
+            src="{{ section.settings.product_image | image_url: width: 1200 }}"
+            alt="{{ section.settings.product_image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.product_image.width }}"
+            height="{{ section.settings.product_image.height }}"
+            class="ai-medicube-split-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-medicube-split-image-placeholder-{{ ai_gen_id }}">
+            {{ 'product-1' | placeholder_svg_tag }}
+            <div class="ai-medicube-split-empty-state-{{ ai_gen_id }}">
+              Next, add a product image
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Premium split layout",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f8f5f1"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "<p>Advanced skincare technology</p>"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "label": "Bottom spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Text",
+      "default": "<p>Precision-engineered for daily use. Combines clinical-grade technology with intuitive design for professional results at home.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color",
+      "default": "#4a4a4a"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Bottom spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Bullet points"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bullets",
+      "label": "Show bullet points",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "bullet_1",
+      "label": "Bullet 1",
+      "default": "Medical-grade precision technology"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "bullet_2",
+      "label": "Bullet 2",
+      "default": "Ergonomic design for daily comfort"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "bullet_3",
+      "label": "Bullet 3",
+      "default": "Clinically tested for safety"
+    },
+    {
+      "type": "range",
+      "id": "bullet_size",
+      "label": "Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet color",
+      "default": "#ca90de"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Accent line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accent_line",
+      "label": "Show accent line",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "accent_line_width",
+      "label": "Width",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "accent_line_thickness",
+      "label": "Thickness",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "color",
+      "id": "accent_line_color",
+      "label": "Color",
+      "default": "#ca90de"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium split layout"
+    }
+  ]
+}
+{% endschema %}

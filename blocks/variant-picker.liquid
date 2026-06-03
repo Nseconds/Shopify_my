@@ -1,0 +1,222 @@
+{% liquid
+  assign product_resource = closest.product
+  if request.visual_preview_mode and product_resource == blank
+    assign product_resource = collections.all.products.first
+  endif
+-%}
+
+{% render 'variant-main-picker', product_resource: product_resource, block: block %}
+
+{% schema %}
+{
+  "name": "t:names.product_variant_picker",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_product_variant_picker"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.edit_variants_in_theme_settings"
+    },
+    {
+      "type": "select",
+      "id": "variant_style",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "dropdowns",
+          "label": "t:options.dropdowns"
+        },
+        {
+          "value": "buttons",
+          "label": "t:options.buttons"
+        }
+      ],
+      "default": "buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "t:settings.swatches",
+      "default": true
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_title",
+      "label": "Show variant title",
+      "default": true,
+      "info": "Show or hide the variant option name (e.g., 'Size', 'Color')"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_background",
+      "label": "Selected option background color",
+      "info": "Background color for selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_text",
+      "label": "Selected option text color",
+      "info": "Text color for selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_border",
+      "label": "Selected option border color",
+      "info": "Border color for selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_background",
+      "label": "Unselected option background color",
+      "info": "Background color for unselected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_text",
+      "label": "Unselected option text color",
+      "info": "Text color for unselected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_border",
+      "label": "Unselected option border color",
+      "info": "Border color for unselected variant options"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_hover_background",
+      "label": "Selected option hover background color",
+      "info": "Background color when hovering over selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_hover_text",
+      "label": "Selected option hover text color",
+      "info": "Text color when hovering over selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "selected_option_hover_border",
+      "label": "Selected option hover border color",
+      "info": "Border color when hovering over selected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_hover_background",
+      "label": "Unselected option hover background color",
+      "info": "Background color when hovering over unselected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_hover_text",
+      "label": "Unselected option hover text color",
+      "info": "Text color when hovering over unselected variant options"
+    },
+    {
+      "type": "color",
+      "id": "unselected_option_hover_border",
+      "label": "Unselected option hover border color",
+      "info": "Border color when hovering over unselected variant options"
+    },
+    {
+      "type": "header",
+      "content": "Border Radius"
+    },
+    {
+      "type": "range",
+      "id": "option_border_radius",
+      "label": "Option border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Border radius for variant option buttons"
+    },
+    {
+      "type": "range",
+      "id": "swatch_border_radius",
+      "label": "Swatch border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Border radius for color swatches"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_variant_picker",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

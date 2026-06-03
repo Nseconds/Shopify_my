@@ -1,0 +1,479 @@
+{% liquid
+  assign block_settings = block.settings
+%}
+
+{% style %}
+  .product-block-{{ block.id }} {
+    padding-top: {{ block_settings.padding_top }}px;
+    padding-bottom: {{ block_settings.padding_bottom }}px;
+  }
+  .product-block-{{ block.id }} .bullet-point-text {
+    font-size: {{ block_settings.body_font_size }}px;
+    color: var(--color-foreground, {{ block_settings.text_color }});
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .product-block-{{ block.id }} .bullet-point-text strong {
+    color: var(--color-primary, {{ block_settings.text_highlighted_color }});
+  }
+  .product-block-{{ block.id }} .material-icon svg {
+    width: {{ block_settings.emoji_size }}px !important;
+    height: {{ block_settings.emoji_size }}px !important;
+    fill: var(--color-primary, {{ block_settings.emoji_color }}) !important;
+  }
+  .product-block-{{ block.id }} ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: {{ block_settings.column_gap }}px;
+  }
+  {% if block_settings.display_layout == 'row' %}
+    .product-block-{{ block.id }} ul {
+      display: flex;
+      flex-direction: column;
+    }
+  {% elsif block_settings.display_layout == 'column' %}
+    .product-block-{{ block.id }} ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: {{ block_settings.column_gap | times: 2 }}px;
+    }
+    @media (max-width: 768px) {
+      .product-block-{{ block.id }} ul {
+        grid-template-columns: 1fr;
+      }
+    }
+  {% endif %}
+  .product-block-{{ block.id }} li {
+    display: flex;
+    align-items: flex-start;
+    {% if block_settings.text_alignment == 'center' %}
+      justify-content: center;
+    {% elsif block_settings.text_alignment == 'right' %}
+      justify-content: flex-end;
+    {% else %}
+      justify-content: flex-start;
+    {% endif %}
+  }
+  .product-block-{{ block.id }} .bullet-point-text .material-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: {{ block_settings.emoji_size }}px;
+    width: {{ block_settings.emoji_size }}px;
+    color: {{ block_settings.emoji_color }};
+  }
+  .product-block-{{ block.id }} .bullet-point-text img {
+    flex-shrink: 0;
+    margin-right: 0;
+  }
+{% endstyle %}
+
+<div class="emoji-benefits-container product-block-{{ block.id }}" {{ block.shopify_attributes }}>
+  <ul>
+    {% if block_settings.point1 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_1 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_1 | image_url }}"
+              {% if block_settings.bullet_image_1.alt != blank %}
+                alt="{{ block_settings.bullet_image_1.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_1 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_1 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point1 }}
+        </div>
+      </li>
+    {% endif %}
+
+    {% if block_settings.point2 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_2 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_2 | image_url }}"
+              {% if block_settings.bullet_image_2.alt != blank %}
+                alt="{{ block_settings.bullet_image_2.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_2 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_2 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point2 }}
+        </div>
+      </li>
+    {% endif %}
+
+    {% if block_settings.point3 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_3 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_3 | image_url }}"
+              {% if block_settings.bullet_image_3.alt != blank %}
+                alt="{{ block_settings.bullet_image_3.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_3 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_3 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point3 }}
+        </div>
+      </li>
+    {% endif %}
+
+    {% if block_settings.point4 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_4 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_4 | image_url }}"
+              {% if block_settings.bullet_image_4.alt != blank %}
+                alt="{{ block_settings.bullet_image_4.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_4 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_4 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point4 }}
+        </div>
+      </li>
+    {% endif %}
+
+    {% if block_settings.point5 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_5 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_5 | image_url }}"
+              {% if block_settings.bullet_image_5.alt != blank %}
+                alt="{{ block_settings.bullet_image_5.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_5 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_5 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point5 }}
+        </div>
+      </li>
+    {% endif %}
+
+    {% if block_settings.point6 != blank %}
+      <li>
+        <div class="bullet-point-text">
+          {%- if block_settings.bullet_image_6 %}
+            <img
+              style="width: {{ block_settings.emoji_size }}px; height: {{ block_settings.emoji_size }}px; min-width: {{ block_settings.emoji_size }}px;"
+              width="{{ block_settings.emoji_size }}"
+              height="{{ block_settings.emoji_size }}"
+              src="{{ block_settings.bullet_image_6 | image_url }}"
+              {% if block_settings.bullet_image_6.alt != blank %}
+                alt="{{ block_settings.bullet_image_6.alt | escape }}"
+              {% else %}
+                alt=""
+              {% endif %}
+              loading="lazy"
+            >
+          {% elsif block_settings.icon_6 != blank %}
+            <span class="material-icon">
+              {{ block_settings.icon_6 }}
+            </span>
+          {% endif %}
+          {{ block_settings.point6 }}
+        </div>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "Product features",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Feature 1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point1",
+      "label": "Text",
+      "default": "Fast breakout reduction & pore unclog"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_1",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_1",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 2"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point2",
+      "label": "Text",
+      "default": "Scientifically proven ingredients"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_2",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_2",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 3"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point3",
+      "label": "Text",
+      "default": "Redness relief - calms inflamed look"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_3",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_3",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 4"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point4",
+      "label": "Text",
+      "default": "Non-drying - hydrates while it treats"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_4",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_4",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 5"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point5",
+      "label": "Text"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_5",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_5",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 6"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "point6",
+      "label": "Text"
+    },
+    {
+      "type": "textarea",
+      "id": "icon_6",
+      "label": "Icon SVG",
+      "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\" viewBox=\"0 -960 960 960\" width=\"24px\" fill=\"#1f1f1f\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "bullet_image_6",
+      "label": "Custom icon image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "emoji_size",
+      "label": "Icon size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "body_font_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "display_layout",
+      "label": "Display layout",
+      "options": [
+        {
+          "value": "row",
+          "label": "1 column"
+        },
+        {
+          "value": "column",
+          "label": "2 columns"
+        }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Gap between items",
+      "unit": "px",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "emoji_color",
+      "label": "Icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_highlighted_color",
+      "label": "Bolded text color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product features",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+

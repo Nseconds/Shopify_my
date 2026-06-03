@@ -1,0 +1,358 @@
+{% doc %}
+  Urgency Timer Block
+  
+  Creates urgency with countdown timer and promotional message.
+  Perfect for limited-time offers and flash sales.
+{% enddoc %}
+
+{%- liquid
+  assign timer_text = block.settings.timer_text
+  assign urgent_message = block.settings.urgent_message
+  assign hours = block.settings.countdown_hours
+assign show_icon = block.settings.show_icon
+-%}
+
+<div class="urgency-timer">
+  {%- if show_icon -%}
+    <div class="urgency-timer__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </div>
+  {%- endif -%}
+  
+  <div class="urgency-timer__content">
+    {%- if urgent_message != blank -%}
+      <div class="urgency-timer__message">{{ urgent_message }}</div>
+    {%- endif -%}
+    
+    {%- if timer_text != blank -%}
+      <div class="urgency-timer__text">{{ timer_text }}</div>
+    {%- endif -%}
+    
+    <div class="urgency-timer__countdown" data-hours="{{ hours }}">
+      {%- if block.settings.show_days -%}
+      <div class="urgency-timer__time">
+        <span class="urgency-timer__number" data-days>00</span>
+        <span class="urgency-timer__label">Days</span>
+      </div>
+      <span class="urgency-timer__separator">:</span>
+      {%- endif -%}
+      <div class="urgency-timer__time">
+        <span class="urgency-timer__number" data-hours>00</span>
+        <span class="urgency-timer__label">Hours</span>
+      </div>
+      <span class="urgency-timer__separator">:</span>
+      <div class="urgency-timer__time">
+        <span class="urgency-timer__number" data-minutes>00</span>
+        <span class="urgency-timer__label">Minutes</span>
+      </div>
+      <span class="urgency-timer__separator">:</span>
+      <div class="urgency-timer__time">
+        <span class="urgency-timer__number" data-seconds>00</span>
+        <span class="urgency-timer__label">Seconds</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% style %}
+  #shopify-block-{{ block.id }} {
+    {% if block.settings.use_scheme_colors == false %}
+      --urgency-bg-1: {{ block.settings.bg_color_1 }};
+      --urgency-bg-2: {{ block.settings.bg_color_2 }};
+      --urgency-text: {{ block.settings.text_color }};
+      --urgency-icon: {{ block.settings.icon_color }};
+    {% else %}
+      --urgency-bg-1: var(--color-primary);
+      --urgency-bg-2: var(--color-primary);
+      --urgency-text: var(--color-primary-button-text);
+      --urgency-icon: var(--color-primary-button-text);
+    {% endif %}
+  }
+{% endstyle %}
+
+{% stylesheet %}
+  .urgency-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--urgency-bg-1) 0%, var(--urgency-bg-2) 100%);
+    border-radius: 8px;
+    color: var(--urgency-text);
+  }
+
+  .urgency-timer__icon {
+    flex-shrink: 0;
+  }
+
+  .urgency-timer__icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: var(--urgency-icon);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  .urgency-timer__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .urgency-timer__message {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .urgency-timer__text {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .urgency-timer__countdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .urgency-timer__time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .urgency-timer__number {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 48px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+  }
+
+  .urgency-timer__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+  }
+
+  .urgency-timer__separator {
+    font-size: 24px;
+    font-weight: 700;
+    opacity: 0.6;
+    margin: 0 4px;
+    animation: blink 1s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.2; }
+  }
+
+  @media (max-width: 749px) {
+    .urgency-timer {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .urgency-timer__number {
+      font-size: 24px;
+      min-width: 40px;
+      padding: 6px 10px;
+    }
+
+    .urgency-timer__message {
+      font-size: 14px;
+    }
+
+    .urgency-timer__countdown {
+      gap: 4px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class UrgencyTimer extends HTMLElement {
+    constructor() {
+      super();
+      this.countdown = this.querySelector('.urgency-timer__countdown');
+      this.daysElement = this.countdown.querySelector('[data-days]');
+      this.hoursElement = this.countdown.querySelector('[data-hours]');
+      this.minutesElement = this.countdown.querySelector('[data-minutes]');
+      this.secondsElement = this.countdown.querySelector('[data-seconds]');
+      this.totalHours = parseInt(this.countdown.dataset.hours) || 24;
+
+      this.initTimer();
+    }
+
+    initTimer() {
+      // Check if timer exists in localStorage
+      let endTime = localStorage.getItem('urgency_timer_end');
+      
+      if (!endTime || new Date(parseInt(endTime)) < new Date()) {
+        // Create new timer
+        endTime = new Date().getTime() + (this.totalHours * 60 * 60 * 1000);
+        localStorage.setItem('urgency_timer_end', endTime);
+      }
+      
+      this.endTime = parseInt(endTime);
+      this.updateTimer();
+      this.interval = setInterval(() => this.updateTimer(), 1000);
+    }
+
+    updateTimer() {
+      const now = new Date().getTime();
+      const distance = this.endTime - now;
+
+      if (distance < 0) {
+        // Reset timer
+        this.endTime = new Date().getTime() + (this.totalHours * 60 * 60 * 1000);
+        localStorage.setItem('urgency_timer_end', this.endTime);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (this.daysElement) this.daysElement.textContent = this.pad(days);
+      this.hoursElement.textContent = this.pad(hours);
+      this.minutesElement.textContent = this.pad(minutes);
+      this.secondsElement.textContent = this.pad(seconds);
+    }
+
+    pad(num) {
+      return num.toString().padStart(2, '0');
+    }
+
+    disconnectedCallback() {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+    }
+  }
+
+  customElements.define('urgency-timer', UrgencyTimer);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Urgency Timer",
+  "tag": "urgency-timer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "urgent_message",
+      "label": "Urgent message",
+      "default": "🔥 SALE ENDS SOON"
+    },
+    {
+      "type": "text",
+      "id": "timer_text",
+      "label": "Timer text",
+      "default": "Hurry! Offer expires in:"
+    },
+    {
+      "type": "range",
+      "id": "countdown_hours",
+      "label": "Countdown duration (hours)",
+      "min": 1,
+      "max": 72,
+      "step": 1,
+      "unit": "h",
+      "default": 24,
+      "info": "Timer persists in browser and resets when expired"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_days",
+      "label": "Show days",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show clock icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_scheme_colors",
+      "label": "Use theme color scheme",
+      "default": true,
+      "info": "When enabled, uses the primary brand color. Disable to set custom colors."
+    },
+    {
+      "type": "color",
+      "id": "bg_color_1",
+      "label": "Background gradient start",
+      "default": "#FF6B6B"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_2",
+      "label": "Background gradient end",
+      "default": "#FF8E53"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}
+

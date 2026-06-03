@@ -1,0 +1,370 @@
+{
+  "sections": {
+    "editorial-hero_ukaep9": {
+      "type": "editorial-hero",
+      "settings": {
+        "image": "shopify://shop_images/forge-deploy-1-1780429477722.png",
+        "heading": "PET SAFETY THAT ACTUALLY WORKS",
+        "subheading": "Military-grade restraints crash-tested to protect your pet like family in every vehicle.",
+        "button_label": "Shop Safety Harnesses",
+        "button_link": "shopify://collections/all",
+        "use_custom_colors": true,
+        "text_color": "#ffffff",
+        "overlay_opacity": 100,
+        "min_height": 560,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "editorial-marquee_ymzal8": {
+      "type": "editorial-marquee",
+      "settings": {
+        "text": "<p>CRASH-TESTED TO 200+ LBS IMPACT FORCE - MILITARY GRADE PROTECTION</p>",
+        "show_separator": true,
+        "speed": 30,
+        "direction": "left",
+        "font_size": 1.2,
+        "padding_vertical": 12,
+        "color_scheme": "scheme-1",
+        "use_custom_colors": false,
+        "bg_color": "#000000",
+        "text_color": "#ffffff",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "editorial-trust-bar_ebpueh": {
+      "type": "editorial-trust-bar",
+      "blocks": {
+        "item_1": {
+          "type": "trust_item",
+          "settings": {
+            "heading": "Crash tested",
+            "description": ""
+          }
+        },
+        "item_2": {
+          "type": "trust_item",
+          "settings": {
+            "heading": "Free shipping",
+            "description": ""
+          }
+        },
+        "item_3": {
+          "type": "trust_item",
+          "settings": {
+            "heading": "30-day returns",
+            "description": ""
+          }
+        },
+        "item_4": {
+          "type": "trust_item",
+          "settings": {
+            "heading": "4.92 rating",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "border_color": "#333333",
+        "divider_vertical_inset": 14,
+        "padding-block-start": 32,
+        "padding-block-end": 32
+      }
+    },
+    "editorial-accordion_olxrsq": {
+      "type": "editorial-accordion",
+      "blocks": {
+        "item_0": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "<p>Why is a vehicle restraint necessary?</p>",
+            "content": "<p>Unrestrained pets can become projectiles in a collision. Our harnesses keep them secure in their seat, reducing injury risk to both pet and passengers during sudden stops.</p>"
+          }
+        },
+        "item_1": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "<p>How does it fit my car?</p>",
+            "content": "<p>The universal clip design fits standard seatbelt receptacles in 99% of vehicles with zero modifications required for installation.</p>"
+          }
+        },
+        "item_2": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "<p>Is it weight-rated?</p>",
+            "content": "<p>Yes. Our systems are load-tested to withstand over 200 lbs of impact force, suitable for pets ranging from 5 to 85 lbs.</p>"
+          }
+        },
+        "item_3": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "<p>Zinc Alloy vs. Plastic components?</p>",
+            "content": "<p>We use heavy-duty zinc alloy and reinforced nylon because plastic buckles often shatter under the high-G forces of a sudden stop or impact.</p>"
+          }
+        },
+        "item_4": {
+          "type": "accordion_item",
+          "settings": {
+            "heading": "<p>Fit &amp; Sizing Guide</p>",
+            "content": "<p>Adjustable straps ensure a snug fit for any breed. Simply adjust the lead length to give your pet comfortable movement without excessive slack.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "item_0",
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4"
+      ],
+      "settings": {
+        "heading": "<p>TRAVEL SAFETY FAQ</p>",
+        "color_scheme": "scheme-1",
+        "use_custom_colors": true,
+        "bg_color": "#222222",
+        "text_color": "#ffffff",
+        "border_color": "#333333",
+        "padding-block-start": 16,
+        "padding-block-end": 48
+      }
+    },
+    "editorial-testimonials_oiqgfb": {
+      "type": "editorial-testimonials",
+      "blocks": {
+        "item_0": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Perfect Fit</p>",
+            "quote": "<p>Finally, a seatbelt that feels solid. My lab doesn't shift during turns anymore and I can drive with complete peace of mind.</p>",
+            "author": "Michael D.",
+            "product_info": ""
+          }
+        },
+        "item_1": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Peace of Mind</p>",
+            "quote": "<p>The quality of the zinc hardware is obvious. This is a must-have for long road trips. It is noticeably better than cheap store brands.</p>",
+            "author": "Sarah L.",
+            "product_info": ""
+          }
+        },
+        "item_2": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Vet Approved</p>",
+            "quote": "<p>As a veterinarian, I only trust load-tested restraints. This is the gold standard for my dogs and I recommend it to all my clients.</p>",
+            "author": "Dr. James K.",
+            "product_info": ""
+          }
+        },
+        "item_3": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Easy Install</p>",
+            "quote": "<p>Took less than a minute to set up. Now I don't worry about my cat jumping in my lap while I am driving on the highway.</p>",
+            "author": "Elena R.",
+            "product_info": ""
+          }
+        },
+        "item_4": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Heavy Duty</p>",
+            "quote": "<p>Stronger than anything I found at the pet store. The nylon webbing is incredibly thick and the metal clip is very secure.</p>",
+            "author": "Tom W.",
+            "product_info": ""
+          }
+        },
+        "item_5": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "title": "<p>Safety First</p>",
+            "quote": "<p>I feel so much better knowing my golden retriever is secure. It is an investment in her life and safety every time we get in the car.</p>",
+            "author": "Chloe M.",
+            "product_info": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_0",
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4",
+        "item_5"
+      ],
+      "settings": {
+        "heading": "<p>TRUSTED BY PET PARENTS</p>",
+        "color_scheme": "scheme-1",
+        "use_custom_colors": false,
+        "card_bg": "#f5f5f5",
+        "text_color": "#000000",
+        "star_color": "#000000",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "editorial-ugc-strip_bkyhy0": {
+      "type": "editorial-ugc-strip",
+      "blocks": {
+        "photo_1": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/forge-deploy-0-1780429476901.png"
+          }
+        },
+        "photo_2": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/1618642315250.jpg"
+          }
+        },
+        "photo_3": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/1618642315249_b3556deb-a958-4351-a65f-4100ca68000c.jpg"
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/1618642315543.jpg"
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/1618642315542.jpg"
+          }
+        },
+        "photo_6": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/1618642315251.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5",
+        "photo_6"
+      ],
+      "settings": {
+        "heading": "<p>FOLLOW US @COLLECTHIVE</p>",
+        "heading_alignment": "center",
+        "heading_margin_bottom": 24,
+        "slide_width_desktop": 360,
+        "slide_width_mobile": 280,
+        "aspect_ratio": "1 / 1",
+        "gap": 6,
+        "full_width_strip": true,
+        "scroll_snap": true,
+        "enable_hover_zoom": true,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "service-promo-banner_9jbil9": {
+      "type": "service-promo-banner",
+      "settings": {
+        "left_icon": "shopify://shop_images/forge-deploy-2-1780429478417.png",
+        "icon_size": 80,
+        "headline_highlight": "FREE PRIORITY SHIPPING",
+        "headline_normal": "On Orders Over $75",
+        "supporting_text": "<p>Ensure your next road trip is safe with our military-grade hardware and veterinarian-approved designs.</p>",
+        "headline_size": 28,
+        "subtext_size": 14,
+        "badge_link": "#",
+        "badge_max_width": 150,
+        "highlight_color": "#ff9a0e",
+        "background_color": "#ffffff",
+        "container_max_width": 1400,
+        "padding_vertical": 50,
+        "mobile_alignment": "center"
+      }
+    },
+    "editorial-product-row_0ork7t": {
+      "type": "editorial-product-row",
+      "settings": {
+        "heading": "<p>BATTLE-TESTED RESTRAINTS</p>",
+        "show_view_all": true,
+        "view_all_text": "Shop The Collection",
+        "max_products": 4,
+        "desktop_layout": "carousel",
+        "desktop_visible_count": 4,
+        "mobile_layout": "carousel",
+        "mobile_slide_max_width": 320,
+        "gap": 2,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "editorial-newsletter_mg6xbr": {
+      "type": "editorial-newsletter",
+      "settings": {
+        "heading": "<p>JOIN THE HIVESAFE CLUB</p>",
+        "subheading": "<p>Get travel safety tips and early access to new military-grade product drops.</p>",
+        "placeholder": "Enter your email",
+        "button_label": "SUBSCRIBE",
+        "color_scheme": "scheme-1",
+        "use_custom_colors": false,
+        "bg_color": "#f5f5f5",
+        "text_color": "#000000",
+        "button_bg": "#000000",
+        "button_text_color": "#ffffff",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "editorial-promo-banner_a5oswi": {
+      "type": "editorial-promo-banner",
+      "settings": {
+        "image": "shopify://shop_images/1618642315248.jpg",
+        "eyebrow": "BUILT FOR IMPACT",
+        "heading": "<p>THE MILITARY-GRADE DIFFERENCE</p>",
+        "button_label": "EXPLORE THE SPECS",
+        "button_link": "shopify://collections/all",
+        "use_custom_colors": true,
+        "text_color": "#ffffff",
+        "button_bg": "#ffffff",
+        "button_text_color": "#000000",
+        "overlay_opacity": 35,
+        "min_height": 400,
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "editorial-hero_ukaep9",
+    "editorial-marquee_ymzal8",
+    "editorial-trust-bar_ebpueh",
+    "editorial-accordion_olxrsq",
+    "editorial-testimonials_oiqgfb",
+    "editorial-ugc-strip_bkyhy0",
+    "service-promo-banner_9jbil9",
+    "editorial-product-row_0ork7t",
+    "editorial-newsletter_mg6xbr",
+    "editorial-promo-banner_a5oswi"
+  ]
+}

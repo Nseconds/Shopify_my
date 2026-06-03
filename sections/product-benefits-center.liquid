@@ -1,0 +1,740 @@
+{% liquid
+  assign blocks = section.blocks
+%}
+
+{% if settings.style_mode == 'gradient' %}
+  {% style %}
+    .product-benefits-center-{{ section.id }} {
+      --feature-accent: var(--color-gradient-1);
+    }
+  {% endstyle %}
+{% endif %}
+
+{% style %}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .product-benefits-center-{{ section.id }} {
+    --feature-background: var(--color-background-secondary);
+    --feature-text: var(--color-foreground);
+    --feature-heading: var(--color-foreground);
+    --feature-icon: var(--color-primary);
+    --feature-border: var(--color-border);
+    --feature-border-radius: var(--style-border-radius-cards);
+    --feature-max-width: {% if section.settings.feature_larger_width %}400px{% else %}280px{% endif %};
+  }
+
+  {% if section.settings.feature_larger_width %}
+    .product-benefits-center-{{ section.id }} .product-benefits-center__features {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-rows: 1fr;
+    }
+
+    .product-benefits-center-{{ section.id }} .product-benefits-center__feature {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-benefits-center-{{ section.id }} .product-benefits-center__content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  {% endif %}
+
+  .product-benefits-center-{{ section.id }} .product-benefits-center__image-wrapper {
+    max-width: {{ section.settings.image_max_width }}px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .product-benefits-center-{{ section.id }} .product-benefits-center__image-wrapper {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-benefits-center-{{ section.id }} .product-benefits-center__image-wrapper {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="product-benefits-center product-benefits-center-{{ section.id }} section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}">
+  <div class="product-benefits-center__container page-width">
+    {% if section.settings.heading != blank %}
+      <div class="product-benefits-center__heading rte {{ section.settings.heading_alignment }}">
+        {{ section.settings.heading }}
+      </div>
+    {% endif %}
+
+    <div class="product-benefits-center__grid" style="--overlap-amount: {{ section.settings.overlap_amount }}px;">
+      <!-- Left Features -->
+      <div class="product-benefits-center__features product-benefits-center__features--left">
+        {% for block in blocks %}
+          {% if block.settings.position == 'left' %}
+            <div class="product-benefits-center__feature text-{{ block.settings.text_alignment }}" {{ block.shopify_attributes }}>
+              {% if block.settings.svg_icon != blank or block.settings.icon != 'none' or block.settings.image_upload != blank %}
+                <div class="product-benefits-center__icon">
+                  {% render 'icon-or-image',
+                    icon: block.settings.icon,
+                    svg_icon: block.settings.svg_icon,
+                    image_upload: block.settings.image_upload,
+                    width: block.settings.icon_size,
+                    class_name: 'product-benefits-center__icon-media'
+                  %}
+                </div>
+              {% endif %}
+              <div class="product-benefits-center__content">
+                {% if block.settings.heading != blank %}
+                  <h3 class="product-benefits-center__feature-heading" style="font-size: {{ block.settings.heading_font_size }}px;">{{ block.settings.heading }}</h3>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <div class="product-benefits-center__text" style="font-size: {{ block.settings.text_font_size }}px;">{{ block.settings.text }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Center Image -->
+      <div class="product-benefits-center__image-wrapper">
+        {% if section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            class="product-benefits-center__image"
+            loading="lazy"
+            style="border-radius: var(--style-border-radius-images);"
+            alt="{{ section.settings.image.alt | escape }}"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {% else %}
+          <div class="product-benefits-center__placeholder" style="border-radius: var(--style-border-radius-images);">
+            {{ 'product-1' | placeholder_svg_tag: 'product-benefits-center__placeholder-svg' }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Right Features -->
+      <div class="product-benefits-center__features product-benefits-center__features--right">
+        {% for block in blocks %}
+          {% if block.settings.position == 'right' %}
+            <div class="product-benefits-center__feature text-{{ block.settings.text_alignment }}" {{ block.shopify_attributes }}>
+              {% if block.settings.svg_icon != blank or block.settings.icon != 'none' or block.settings.image_upload != blank %}
+                <div class="product-benefits-center__icon">
+                  {% render 'icon-or-image',
+                    icon: block.settings.icon,
+                    svg_icon: block.settings.svg_icon,
+                    image_upload: block.settings.image_upload,
+                    width: block.settings.icon_size,
+                    class_name: 'product-benefits-center__icon-media'
+                  %}
+                </div>
+              {% endif %}
+              <div class="product-benefits-center__content">
+                {% if block.settings.heading != blank %}
+                  <h3 class="product-benefits-center__feature-heading" style="font-size: {{ block.settings.heading_font_size }}px;">{{ block.settings.heading }}</h3>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <div class="product-benefits-center__text" style="font-size: {{ block.settings.text_font_size }}px;">{{ block.settings.text }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-benefits-center__container {
+    width: 100%;
+    color: var(--feature-text);
+  }
+
+  .product-benefits-center__heading {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-weight: 400;
+    color: var(--feature-heading);
+  }
+
+  .product-benefits-center__heading.rte p {
+    margin: 0;
+  }
+
+  .product-benefits-center__heading.rte h1,
+  .product-benefits-center__heading.rte h2,
+  .product-benefits-center__heading.rte h3,
+  .product-benefits-center__heading.rte h4,
+  .product-benefits-center__heading.rte h5,
+  .product-benefits-center__heading.rte h6 {
+    margin: 0 0 0.5em 0;
+    font-weight: inherit;
+    line-height: inherit;
+    color: var(--feature-heading);
+  }
+
+  .product-benefits-center__heading.rte h1:last-child,
+  .product-benefits-center__heading.rte h2:last-child,
+  .product-benefits-center__heading.rte h3:last-child,
+  .product-benefits-center__heading.rte h4:last-child,
+  .product-benefits-center__heading.rte h5:last-child,
+  .product-benefits-center__heading.rte h6:last-child {
+    margin-bottom: 0;
+  }
+
+  .product-benefits-center__heading.left {
+    text-align: left;
+  }
+
+  .product-benefits-center__heading.right {
+    text-align: right;
+  }
+
+  .product-benefits-center__grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 3rem;
+    align-items: center;
+    --overlap-amount: 0px;
+  }
+
+  .product-benefits-center__features {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-auto-rows: 1fr;
+    gap: 2.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .product-benefits-center__features--left {
+    align-items: flex-end;
+    margin-right: calc(var(--overlap-amount) * -1);
+  }
+
+  .product-benefits-center__features--left .product-benefits-center__feature {
+    margin-left: auto;
+  }
+
+  .product-benefits-center__features--right {
+    align-items: flex-start;
+    margin-left: calc(var(--overlap-amount) * -1);
+  }
+
+  .product-benefits-center__features--right .product-benefits-center__feature {
+    margin-right: auto;
+  }
+
+  .product-benefits-center__image-wrapper {
+    position: relative;
+    z-index: 1;
+  }
+
+  .product-benefits-center__feature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: var(--feature-max-width, 280px);
+    background-color: var(--feature-background);
+    border-radius: var(--feature-border-radius, 0);
+    border: 1px solid var(--feature-border);
+    transition: background-color 0.3s ease;
+    padding: 1.5rem !important;
+  }
+
+  .product-benefits-center__content {
+    flex: 1;
+  }
+
+  .product-benefits-center__feature.text-left {
+    text-align: left;
+  }
+
+  .product-benefits-center__feature.text-center {
+    text-align: center;
+  }
+
+  .product-benefits-center__feature.text-right {
+    text-align: right;
+  }
+
+  .product-benefits-center__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    fill: currentColor;
+    color: var(--feature-icon);
+  }
+
+  .product-benefits-center__icon-media {
+    width: auto;
+    height: auto;
+  }
+
+  .product-benefits-center__feature-heading {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--feature-heading);
+  }
+
+  .product-benefits-center__text {
+    line-height: 1.6;
+    margin: 0;
+    color: var(--feature-text);
+  }
+
+  .product-benefits-center__text p {
+    margin: 0;
+  }
+
+  .product-benefits-center__text > :first-child {
+    margin-top: 0;
+  }
+
+  .product-benefits-center__text > :last-child {
+    margin-bottom: 0;
+  }
+
+  .product-benefits-center__image-wrapper {
+    margin: 0 auto;
+  }
+
+  .product-benefits-center__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: hidden;
+  }
+
+  .product-benefits-center__placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+    overflow: hidden;
+  }
+
+  .product-benefits-center__placeholder-svg {
+    width: 50%;
+    height: auto;
+    opacity: 0.5;
+  }
+
+  @media screen and (max-width: 989px) {
+    .product-benefits-center__grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .product-benefits-center__features--left,
+    .product-benefits-center__features--right {
+      align-items: stretch;
+      margin-left: 0;
+      margin-right: 0;
+      width: 100%;
+    }
+
+    .product-benefits-center__features--left .product-benefits-center__feature,
+    .product-benefits-center__features--right .product-benefits-center__feature {
+      align-self: stretch;
+    }
+
+    .product-benefits-center__feature {
+      width: 100%;
+      max-width: 100%;
+      align-items: center;
+    }
+
+    .product-benefits-center__image-wrapper {
+      order: -1;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-benefits-center__container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .product-benefits-center__heading {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .product-benefits-center__grid {
+      gap: 2rem;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .product-benefits-center__features {
+      gap: 2rem;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .product-benefits-center__image-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .product-benefits-center__image {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Benefits Center",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Why Our Product is Better</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Center image"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "label": "Image max width",
+      "min": 200,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "overlap_amount",
+      "label": "Text overlap amount",
+      "info": "Pull text blocks to overlap the center image",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "paragraph",
+      "content": "Colors are automatically mapped to theme settings. Features use Background Secondary."
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_larger_width",
+      "label": "Use larger feature width on desktop",
+      "info": "When enabled, features use 400px max-width. When disabled, features use 280px max-width.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:settings.top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:settings.bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Preset Icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "apple",
+              "label": "Apple"
+            },
+            {
+              "value": "box",
+              "label": "Box"
+            },
+            {
+              "value": "check_box",
+              "label": "Check box"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "lightning_bolt",
+              "label": "Lightning bolt"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "recycle",
+              "label": "Recycle"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            }
+          ],
+          "default": "check_box"
+        },
+        {
+          "type": "textarea",
+          "id": "svg_icon",
+          "label": "Custom SVG Icon",
+          "info": "You can get SVG codes from [Google Material Icons](https://fonts.google.com/icons)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_upload",
+          "label": "Custom icon image"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Icon size",
+          "min": 24,
+          "max": 80,
+          "step": 4,
+          "unit": "px",
+          "default": 48
+        },
+        {
+          "type": "richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "<p>Feature Heading</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Describe your product benefit here.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Typography"
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size",
+          "label": "Heading font size",
+          "min": 10,
+          "max": 32,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "label": "Text font size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Benefits Center",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "position": "left",
+            "heading": "<p>PERFECTLY PORTIONED</p>",
+            "text": "<p>Stop wasting money by using more toothpaste than you need.</p>",
+            "icon": "check_box",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "position": "left",
+            "heading": "<p>BETTER-FOR-YOU FORMULATIONS</p>",
+            "text": "<p>A dry tablet means we can use less-harmful ingredients and still protect your teeth.</p>",
+            "icon": "star",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "position": "left",
+            "heading": "<p>SINK-FRIENDLY</p>",
+            "text": "<p>Our tablets leave less mess in your sink because no glycerine – what makes most toothpaste, paste – means no sticky goop.</p>",
+            "icon": "heart",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "position": "right",
+            "heading": "<p>SUITCASE-SAFE</p>",
+            "text": "<p>No more toothpaste explosions in your bag. Just throw a few Bits in your pack and you're good to go</p>",
+            "icon": "box",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "position": "right",
+            "heading": "<p>EARTH-FRIENDLY</p>",
+            "text": "<p>Infinitely refillable with no plastic toothpaste tubes, our Bits are better for our earth and oceans.</p>",
+            "icon": "recycle",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "position": "right",
+            "heading": "<p>STOPS THE SPREAD OF BACTERIA</p>",
+            "text": "<p>The top of a toothpaste tube can transfer bacteria from your partners brush to your mouth. Our Bits can stop the spread.</p>",
+            "icon": "lock",
+            "text_alignment": "center"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

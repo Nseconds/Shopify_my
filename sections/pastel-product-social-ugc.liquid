@@ -1,0 +1,311 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign lifestyle_image = section.settings.lifestyle_image
+  assign lifestyle_image_url = section.settings.lifestyle_image_url
+  assign heading = section.settings.heading
+  assign body_text = section.settings.body_text
+  assign ugc_blocks = section.blocks | where: 'type', 'ugc_item'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-product-social-ugc section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-product-social-ugc__inner">
+    <div class="pastel-product-social-ugc__story">
+      <div class="pastel-product-social-ugc__media">
+        <div class="pastel-product-social-ugc__image-wrap pastel-scalloped-frame" data-forge-slot-id="lifestyle_image"{% if lifestyle_image == blank and lifestyle_image_url == blank %} data-forge-slot-blank{% endif %}>
+          {% if lifestyle_image != blank %}
+            <img
+              src="{{ lifestyle_image | image_url: width: 900 }}"
+              alt="{{ lifestyle_image.alt | default: heading | default: 'Lifestyle' }}"
+              width="520"
+              height="520"
+              loading="lazy"
+              class="pastel-product-social-ugc__image"
+            >
+          {% elsif lifestyle_image_url != blank %}
+            {% # theme-check-disable RemoteAsset %}
+            <img
+              src="{{ lifestyle_image_url }}"
+              alt="{{ heading | default: 'Lifestyle' }}"
+              width="520"
+              height="520"
+              loading="lazy"
+              class="pastel-product-social-ugc__image"
+            >
+            {% # theme-check-enable RemoteAsset %}
+          {% else %}
+            <div class="pastel-product-social-ugc__placeholder">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="pastel-product-social-ugc__copy">
+        {% if heading != blank %}
+          <h2 class="pastel-product-social-ugc__heading">{{ heading }}</h2>
+        {% endif %}
+        {% if body_text != blank %}
+          <div class="pastel-product-social-ugc__body rte">
+            <p>{{ body_text | newline_to_br }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if ugc_blocks.size > 0 %}
+      <div class="pastel-product-social-ugc__gallery" role="region" aria-label="Customer photos">
+        {% for block in ugc_blocks %}
+          <div class="pastel-product-social-ugc__ugc-item" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              <img
+                src="{{ block.settings.image | image_url: width: 420 }}"
+                alt="{{ block.settings.caption | default: 'Customer photo' }}"
+                width="210"
+                height="210"
+                loading="lazy"
+                class="pastel-product-social-ugc__ugc-image"
+              >
+            {% elsif block.settings.image_url != blank %}
+              {% # theme-check-disable RemoteAsset %}
+              <img
+                src="{{ block.settings.image_url }}"
+                alt="{{ block.settings.caption | default: 'Customer photo' }}"
+                width="210"
+                height="210"
+                loading="lazy"
+                class="pastel-product-social-ugc__ugc-image"
+              >
+              {% # theme-check-enable RemoteAsset %}
+            {% else %}
+              <div class="pastel-product-social-ugc__ugc-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-product-social-ugc {
+    padding: 56px 24px 72px;
+    background: var(--color-background);
+  }
+
+  .pastel-product-social-ugc__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .pastel-product-social-ugc__story {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 36px;
+    align-items: center;
+  }
+
+  .pastel-product-social-ugc__image-wrap {
+    position: relative;
+    min-height: 420px;
+    overflow: hidden;
+    background: var(--color-background-secondary);
+  }
+
+  .pastel-product-social-ugc__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pastel-product-social-ugc__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pastel-product-social-ugc__placeholder svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .pastel-product-social-ugc__copy {
+    max-width: 420px;
+  }
+
+  .pastel-product-social-ugc__heading {
+    margin: 0 0 16px;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.8rem, 4vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--color-foreground-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .pastel-product-social-ugc__body {
+    font-family: var(--font-body--family);
+    font-size: 16px;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--color-foreground) 88%, var(--color-background));
+  }
+
+  .pastel-product-social-ugc__body p {
+    margin: 0;
+  }
+
+  .pastel-product-social-ugc__gallery {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--style-gap-cards, 12px);
+  }
+
+  .pastel-product-social-ugc__ugc-item {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--style-border-radius-images, 16px);
+    overflow: hidden;
+    background: var(--color-background-secondary);
+  }
+
+  .pastel-product-social-ugc__ugc-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pastel-product-social-ugc__ugc-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pastel-product-social-ugc__ugc-placeholder svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pastel-product-social-ugc__story {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .pastel-product-social-ugc__copy {
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .pastel-product-social-ugc__gallery {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-product-social-ugc {
+      padding: 48px 16px 56px;
+    }
+
+    .pastel-product-social-ugc__image-wrap {
+      min-height: 320px;
+    }
+
+    .pastel-product-social-ugc__gallery {
+      display: flex;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -16px;
+      padding: 0 16px 8px;
+    }
+
+    .pastel-product-social-ugc__ugc-item {
+      flex: 0 0 140px;
+      scroll-snap-align: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Social Story + UGC",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "lifestyle_image",
+      "label": "Lifestyle image"
+    },
+    {
+      "type": "text",
+      "id": "lifestyle_image_url",
+      "label": "Lifestyle image URL (fallback)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "OVER 40,000 HAPPY SLEEPY CUSTOMERS"
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "See how these gummies fit into real nightly routines, from wind-down moments to wake-up-ready mornings."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ugc_item",
+      "name": "UGC photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Story + UGC",
+      "blocks": [
+        { "type": "ugc_item" },
+        { "type": "ugc_item" },
+        { "type": "ugc_item" },
+        { "type": "ugc_item" },
+        { "type": "ugc_item" },
+        { "type": "ugc_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

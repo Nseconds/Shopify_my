@@ -1,0 +1,834 @@
+{% assign section_id = section.id | replace: '_', '' | downcase %}
+
+{%- liquid
+  if settings.style_mode == 'gradient'
+    assign uc_bg         = 'var(--color-card-gradient)'
+    assign uc_text       = 'var(--color-gradient-text)'
+    assign uc_number_bg  = 'rgba(255,255,255,0.15)'
+    assign uc_number_c   = 'var(--color-gradient-text)'
+    assign uc_label_c    = 'var(--color-gradient-text)'
+  else
+    assign uc_bg         = 'var(--color-primary)'
+    assign uc_text       = 'var(--color-primary-button-text)'
+    assign uc_number_bg  = 'var(--color-background)'
+    assign uc_number_c   = 'var(--color-primary)'
+    assign uc_label_c    = 'var(--color-primary-button-text)'
+  endif
+-%}
+
+{% style %}
+  .urgency-countdown-{{ section_id }} {
+    background: {{ uc_bg }};
+    padding: {{ section.settings.padding }}px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    {% if section.settings.sticky %}
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    {% endif %}
+  }
+
+  .urgency-countdown-container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: {{ section.settings.gap }}px;
+  }
+
+  .urgency-countdown-text-{{ section_id }} {
+    font-size: {{ section.settings.text_size }}px;
+    color: {{ uc_text }};
+    font-weight: {{ section.settings.text_weight }};
+    margin: 0;
+  }
+
+  .urgency-countdown-subheading-{{ section_id }} {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ uc_text }};
+    font-weight: {{ section.settings.subheading_weight }};
+    margin: {{ section.settings.subheading_margin }}px 0 0 0;
+  }
+
+  .urgency-countdown-timer-{{ section_id }} {
+    display: flex;
+    gap: {{ section.settings.timer_gap }}px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .urgency-countdown-unit-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-width: {{ section.settings.unit_size }}px;
+  }
+
+  .urgency-countdown-number-{{ section_id }} {
+    font-size: {{ section.settings.number_size }}px;
+    font-weight: {{ section.settings.number_weight }};
+    color: {{ uc_number_c }};
+    background: {{ uc_number_bg }};
+    padding: {{ section.settings.number_padding }}px;
+    border-radius: var(--style-border-radius-cards);
+    min-width: {{ section.settings.number_min_width }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    {% if section.settings.number_shadow %}
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    {% endif %}
+  }
+
+  .urgency-countdown-label-{{ section_id }} {
+    font-size: {{ section.settings.label_size }}px;
+    color: {{ uc_label_c }};
+    text-transform: {{ section.settings.label_transform }};
+    font-weight: {{ section.settings.label_weight }};
+  }
+
+  .urgency-countdown-separator-{{ section_id }} {
+    font-size: {{ section.settings.number_size }}px;
+    font-weight: {{ section.settings.number_weight }};
+    color: {{ uc_text }};
+    padding: 0 5px;
+    align-self: flex-start;
+    padding-top: 5px;
+  }
+
+  .urgency-countdown-cta-{{ section_id }} {
+    margin-top: 10px;
+  }
+
+  .urgency-countdown-button-{{ section_id }} {
+    display: inline-block;
+    padding: {{ section.settings.button_padding_y }}px {{ section.settings.button_padding_x }}px;
+    background: var(--color-primary-button-background, {{ section.settings.button_bg_color }});
+    color: var(--color-primary-button-text, {{ section.settings.button_text_color }});
+    text-decoration: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ section.settings.button_size }}px;
+    font-weight: {{ section.settings.button_weight }};
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    {% if section.settings.button_shadow %}
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    {% endif %}
+  }
+
+  .urgency-countdown-button-{{ section_id }}:hover {
+    background: {{ section.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+    {% if section.settings.button_shadow %}
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    {% endif %}
+  }
+
+  .urgency-countdown-subtext-{{ section_id }} {
+    font-size: {{ section.settings.subtext_size }}px;
+    color: {{ uc_text }};
+    opacity: 0.85;
+    margin-top: 8px;
+  }
+
+  /* Pulse animation for urgency */
+  {% if section.settings.pulse_animation %}
+    @keyframes pulse-{{ section_id }} {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .urgency-countdown-number-{{ section_id }} {
+      animation: pulse-{{ section_id }} 2s infinite;
+    }
+  {% endif %}
+
+  /* Responsive */
+  @media screen and (max-width: 749px) {
+    .urgency-countdown-{{ section_id }} {
+      padding: {{ section.settings.padding | times: 0.7 }}px 15px;
+    }
+
+    .urgency-countdown-text-{{ section_id }} {
+      font-size: {{ section.settings.text_size | times: 0.85 }}px;
+    }
+
+    .urgency-countdown-subheading-{{ section_id }} {
+      font-size: {{ section.settings.subheading_size | times: 0.85 }}px;
+      margin: {{ section.settings.subheading_margin | times: 0.8 }}px 0 0 0;
+    }
+
+    .urgency-countdown-number-{{ section_id }} {
+      font-size: {{ section.settings.number_size | times: 0.8 }}px;
+      padding: {{ section.settings.number_padding | times: 0.7 }}px;
+      min-width: {{ section.settings.number_min_width | times: 0.8 }}px;
+    }
+
+    .urgency-countdown-label-{{ section_id }} {
+      font-size: {{ section.settings.label_size | times: 0.85 }}px;
+    }
+
+    .urgency-countdown-button-{{ section_id }} {
+      font-size: {{ section.settings.button_size | times: 0.9 }}px;
+      padding: {{ section.settings.button_padding_y | times: 0.85 }}px {{ section.settings.button_padding_x | times: 0.85 }}px;
+    }
+
+    .urgency-countdown-unit-{{ section_id }} {
+      min-width: {{ section.settings.unit_size | times: 0.8 }}px;
+    }
+
+    .urgency-countdown-timer-{{ section_id }} {
+      gap: {{ section.settings.timer_gap | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="urgency-countdown-{{ section_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="urgency-countdown-container-{{ section_id }}">
+    {% if section.settings.heading != blank %}
+      <div class="urgency-countdown-text-{{ section_id }}">
+        {{ section.settings.heading }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <div class="urgency-countdown-subheading-{{ section_id }}">
+        {{ section.settings.subheading }}
+      </div>
+    {% endif %}
+
+    <div class="urgency-countdown-timer-{{ section_id }}" data-countdown="{{ section_id }}">
+      {% if section.settings.show_days %}
+        <div class="urgency-countdown-unit-{{ section_id }}">
+          <div class="urgency-countdown-number-{{ section_id }}" data-days>00</div>
+          <div class="urgency-countdown-label-{{ section_id }}">{{ section.settings.days_label }}</div>
+        </div>
+        {% if section.settings.show_separator %}<span class="urgency-countdown-separator-{{ section_id }}">:</span>{% endif %}
+      {% endif %}
+
+      <div class="urgency-countdown-unit-{{ section_id }}">
+        <div class="urgency-countdown-number-{{ section_id }}" data-hours>00</div>
+        <div class="urgency-countdown-label-{{ section_id }}">{{ section.settings.hours_label }}</div>
+      </div>
+      {% if section.settings.show_separator %}<span class="urgency-countdown-separator-{{ section_id }}">:</span>{% endif %}
+
+      <div class="urgency-countdown-unit-{{ section_id }}">
+        <div class="urgency-countdown-number-{{ section_id }}" data-minutes>00</div>
+        <div class="urgency-countdown-label-{{ section_id }}">{{ section.settings.minutes_label }}</div>
+      </div>
+      {% if section.settings.show_separator %}<span class="urgency-countdown-separator-{{ section_id }}">:</span>{% endif %}
+
+      <div class="urgency-countdown-unit-{{ section_id }}">
+        <div class="urgency-countdown-number-{{ section_id }}" data-seconds>00</div>
+        <div class="urgency-countdown-label-{{ section_id }}">{{ section.settings.seconds_label }}</div>
+      </div>
+    </div>
+
+    {% if section.settings.subtext != blank %}
+      <div class="urgency-countdown-subtext-{{ section_id }}">
+        {{ section.settings.subtext }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_button and section.settings.button_text != blank %}
+      <div class="urgency-countdown-cta-{{ section_id }}">
+        <a href="{{ section.settings.button_link }}" class="urgency-countdown-button-{{ section_id }}">
+          {{ section.settings.button_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    const countdown = document.querySelector('[data-countdown="{{ section_id }}"]');
+    if (!countdown) return;
+
+    const daysEl = countdown.querySelector('[data-days]');
+    const hoursEl = countdown.querySelector('[data-hours]');
+    const minutesEl = countdown.querySelector('[data-minutes]');
+    const secondsEl = countdown.querySelector('[data-seconds]');
+
+    {% if section.settings.countdown_type == 'fixed' %}
+      // Fixed end date/time
+      const endDate = new Date('{{ section.settings.end_date }} {{ section.settings.end_time }}').getTime();
+      
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate - now;
+
+        if (distance < 0) {
+          {% if section.settings.hide_when_expired %}
+            document.querySelector('.urgency-countdown-{{ section_id }}').style.display = 'none';
+          {% else %}
+            if (daysEl) daysEl.textContent = '00';
+            hoursEl.textContent = '00';
+            minutesEl.textContent = '00';
+            secondsEl.textContent = '00';
+          {% endif %}
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        hoursEl.textContent = String(hours).padStart(2, '0');
+        minutesEl.textContent = String(minutes).padStart(2, '0');
+        secondsEl.textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+
+    {% else %}
+      // Evergreen countdown - resets daily/hourly
+      const duration = {{ section.settings.evergreen_duration }} * 60 * 60 * 1000; // hours to milliseconds
+      const storageKey = 'countdown_{{ section_id }}_end';
+      
+      let endTime = localStorage.getItem(storageKey);
+      
+      if (!endTime || new Date().getTime() > parseInt(endTime)) {
+        endTime = new Date().getTime() + duration;
+        localStorage.setItem(storageKey, endTime);
+      } else {
+        endTime = parseInt(endTime);
+      }
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        if (distance < 0) {
+          // Reset the timer
+          endTime = new Date().getTime() + duration;
+          localStorage.setItem(storageKey, endTime);
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        hoursEl.textContent = String(hours).padStart(2, '0');
+        minutesEl.textContent = String(minutes).padStart(2, '0');
+        secondsEl.textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    {% endif %}
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Urgency Countdown",
+  "tag": "section",
+  "class": "section-urgency-countdown",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Countdown Type"
+    },
+    {
+      "type": "select",
+      "id": "countdown_type",
+      "label": "Countdown type",
+      "options": [
+        {
+          "value": "fixed",
+          "label": "Fixed date & time"
+        },
+        {
+          "value": "evergreen",
+          "label": "Evergreen (resets per visitor)"
+        }
+      ],
+      "default": "evergreen",
+      "info": "Fixed counts to a specific date. Evergreen creates urgency for each visitor."
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date (for fixed)",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)",
+      "default": "2025-12-31"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time (for fixed)",
+      "info": "Format: HH:MM (24-hour, e.g., 23:59)",
+      "default": "23:59"
+    },
+    {
+      "type": "range",
+      "id": "evergreen_duration",
+      "label": "Duration in hours (for evergreen)",
+      "min": 1,
+      "max": 72,
+      "step": 1,
+      "default": 24,
+      "info": "Timer resets after this many hours"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "Hide when timer expires",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Make sticky (follows on scroll)",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between elements",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FF6B6B"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading text",
+      "default": "<p>⚡ FLASH SALE ENDS IN:</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Heading size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "text_weight",
+      "label": "Heading weight",
+      "min": 400,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading text (under heading)",
+      "default": "<p>Limited time offer - act fast!</p>"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "subheading_weight",
+      "label": "Subheading weight",
+      "min": 300,
+      "max": 700,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "subheading_margin",
+      "label": "Subheading margin top",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Timer Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_days",
+      "label": "Show days",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_separator",
+      "label": "Show colon separator",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "timer_gap",
+      "label": "Gap between units",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "unit_size",
+      "label": "Minimum unit width",
+      "min": 50,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Timer Numbers"
+    },
+    {
+      "type": "range",
+      "id": "number_size",
+      "label": "Number size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Number color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "number_bg_color",
+      "label": "Number background",
+      "default": "rgba(0, 0, 0, 0.2)"
+    },
+    {
+      "type": "range",
+      "id": "number_padding",
+      "label": "Number padding",
+      "min": 5,
+      "max": 25,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "number_border_radius",
+      "label": "Number border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "number_min_width",
+      "label": "Number minimum width",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "number_weight",
+      "label": "Number weight",
+      "min": 400,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "checkbox",
+      "id": "number_shadow",
+      "label": "Add shadow to numbers",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "pulse_animation",
+      "label": "Pulse animation",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Timer Labels"
+    },
+    {
+      "type": "text",
+      "id": "days_label",
+      "label": "Days label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minutes label",
+      "default": "Mins"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Seconds label",
+      "default": "Secs"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "label_transform",
+      "label": "Label text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "label_weight",
+      "label": "Label weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Don't miss out on this limited-time offer!",
+      "info": "Optional additional text below timer"
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "label": "Subtext size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show CTA button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "label": "Button text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "label": "Button vertical padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Button horizontal padding",
+      "min": 20,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_weight",
+      "label": "Button font weight",
+      "min": 400,
+      "max": 900,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "button_shadow",
+      "label": "Add shadow to button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Urgency Countdown"
+    }
+  ]
+}
+{% endschema %}
+

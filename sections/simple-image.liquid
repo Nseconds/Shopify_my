@@ -1,0 +1,219 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  #section-{{ section.id }} .simple-image-container {
+    display: flex;
+    justify-content: {{ section.settings.alignment }};
+  }
+
+  #section-{{ section.id }} .simple-image {
+    {% if section.settings.width != blank and section.settings.width > 0 %}
+      width: {{ section.settings.width }}px;
+      max-width: 100%;
+    {% else %}
+      width: auto;
+      max-width: 100%;
+    {% endif %}
+    {% if section.settings.height != blank and section.settings.height > 0 %}
+      height: {{ section.settings.height }}px;
+      object-fit: {{ section.settings.object_fit }};
+    {% else %}
+      height: auto;
+    {% endif %}
+    border-radius: var(--style-border-radius-images);
+    {% if section.settings.shadow %}
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    {% endif %}
+  }
+
+  @media (max-width: 768px) {
+    #section-{{ section.id }} .simple-image {
+      {% if section.settings.mobile_width != blank and section.settings.mobile_width > 0 %}
+        width: {{ section.settings.mobile_width }}px;
+      {% elsif section.settings.mobile_full_width %}
+        width: 100%;
+      {% endif %}
+      {% if section.settings.mobile_height != blank and section.settings.mobile_height > 0 %}
+        height: {{ section.settings.mobile_height }}px;
+      {% endif %}
+    }
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  id="section-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
+>
+  <div class="simple-image-container">
+    {% if section.settings.image != blank %}
+      {{ section.settings.image | image_url: width: 1920 | image_tag: class: 'simple-image', loading: 'lazy' }}
+    {% else %}
+      <div class="simple-image" style="width: {{ section.settings.width | default: 400 }}px; height: {{ section.settings.height | default: 300 }}px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #6b7280;">
+        Select an image
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Simple Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image or GIF"
+    },
+    {
+      "type": "header",
+      "content": "Size"
+    },
+    {
+      "type": "number",
+      "id": "width",
+      "label": "Width (px)",
+      "info": "Leave empty for auto width"
+    },
+    {
+      "type": "number",
+      "id": "height",
+      "label": "Height (px)",
+      "info": "Leave empty for auto height"
+    },
+    {
+      "type": "select",
+      "id": "object_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        },
+        {
+          "value": "fill",
+          "label": "Fill"
+        }
+      ],
+      "default": "cover",
+      "info": "Only applies when height is set"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Size"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_full_width",
+      "label": "Full width on mobile",
+      "default": false
+    },
+    {
+      "type": "number",
+      "id": "mobile_width",
+      "label": "Mobile width (px)",
+      "info": "Leave empty to use desktop width"
+    },
+    {
+      "type": "number",
+      "id": "mobile_height",
+      "label": "Mobile height (px)",
+      "info": "Leave empty to use desktop height"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "shadow",
+      "label": "Add shadow",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple Image",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}
+

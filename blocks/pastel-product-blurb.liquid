@@ -1,0 +1,48 @@
+{% liquid
+  assign text = block.settings.text | strip
+
+  if text == blank
+    assign text = closest.product.description | strip_html | strip | truncatewords: 28
+  endif
+%}
+
+{% if text != blank %}
+  <div class="pastel-product-blurb spacing-style" {{ block.shopify_attributes }}>
+    <p class="pastel-product-blurb__text">{{ text }}</p>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .pastel-product-blurb {
+    max-width: 46ch;
+    padding-block: 4px 8px;
+  }
+
+  .pastel-product-blurb__text {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: 15px;
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--color-foreground) 84%, var(--color-background));
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product blurb",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Override text",
+      "info": "Leave blank to use a short excerpt from the product description."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product blurb"
+    }
+  ]
+}
+{% endschema %}

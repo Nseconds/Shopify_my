@@ -1,0 +1,618 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c         = section.settings.background_color -%}
+  {%- assign icon_circle_c = section.settings.icon_circle_color -%}
+  {%- assign icon_c       = section.settings.icon_color -%}
+  {%- assign dashed_c     = section.settings.dashed_border_color -%}
+  {%- assign title_c      = section.settings.title_color -%}
+  {%- assign text_c       = section.settings.description_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c         = 'var(--color-background)' -%}
+  {%- assign icon_circle_c = 'var(--color-card-background)' -%}
+  {%- assign icon_c       = 'var(--color-gradient-1)' -%}
+  {%- assign dashed_c     = 'var(--color-gradient-1)' -%}
+  {%- assign title_c      = 'var(--color-foreground)' -%}
+  {%- assign text_c       = 'var(--color-foreground)' -%}
+{%- else -%}
+  {%- assign bg_c         = section.settings.color_scheme.settings.background -%}
+  {%- assign icon_circle_c = section.settings.color_scheme.settings.background_secondary -%}
+  {%- assign icon_c       = section.settings.color_scheme.settings.primary -%}
+  {%- assign dashed_c     = section.settings.color_scheme.settings.primary -%}
+  {%- assign title_c      = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c       = section.settings.color_scheme.settings.foreground -%}
+{%- endif -%}
+
+{% style %}
+  .trust-icons-row-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ bg_c }};
+    padding-top: {{ section.settings.spacing_top }}px;
+    padding-bottom: {{ section.settings.spacing_bottom }}px;
+  }
+
+  .trust-icons-row-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .trust-icons-row-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  .trust-icons-row-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .trust-icons-row-item-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+  }
+
+  .trust-icons-row-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .trust-icons-row-circle-{{ ai_gen_id }} {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    border-radius: 50%;
+    background-color: {{ icon_circle_c }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .trust-icons-row-item-{{ ai_gen_id }}:hover .trust-icons-row-circle-{{ ai_gen_id }} svg {
+    transform: scale(1.05);
+  }
+
+  .trust-icons-row-circle-{{ ai_gen_id }} svg {
+    width: calc({{ section.settings.icon_size }}px * 0.5);
+    height: calc({{ section.settings.icon_size }}px * 0.5);
+    color: {{ icon_c }};
+    transition: transform 0.3s ease;
+  }
+
+  {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  .trust-icons-row-circle-{{ ai_gen_id }} svg {
+    stroke: url(#tir-icon-grad-{{ ai_gen_id }});
+  }
+  {% endif %}
+
+  {% if section.settings.show_dashed_border %}
+    .trust-icons-row-border-{{ ai_gen_id }} {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc({{ section.settings.icon_size }}px + 16px);
+      height: calc({{ section.settings.icon_size }}px + 16px);
+      border-radius: 50%;
+      border: 2px dashed {{ dashed_c }};
+      z-index: 0;
+    }
+  {% endif %}
+
+  .trust-icons-row-title-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family), sans-serif;
+    font-size: {{ section.settings.title_font_size }}px;
+    color: {{ title_c }};
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+
+  .trust-icons-row-description-{{ ai_gen_id }} {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: {{ section.settings.description_font_size }}px;
+    color: {{ text_c }};
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .trust-icons-row-link-{{ ai_gen_id }} {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .trust-icons-row-single-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .trust-icons-row-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .trust-icons-row-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .trust-icons-row-{{ ai_gen_id }} {
+      padding-top: {{ section.settings.spacing_top | times: 0.7 }}px;
+      padding-bottom: {{ section.settings.spacing_bottom | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+{% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  {%- assign tir_g1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign tir_g2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign tir_g3 = section.settings.color_scheme.settings.gradient_3 -%}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="tir-icon-grad-{{ ai_gen_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="{{ tir_g1 }}"/>
+        <stop offset="50%" stop-color="{{ tir_g2 }}"/>
+        <stop offset="100%" stop-color="{{ tir_g3 }}"/>
+      </linearGradient>
+    </defs>
+  </svg>
+{% endif %}
+
+<trust-icons-row class="trust-icons-row-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="trust-icons-row-container-{{ ai_gen_id }}">
+    <div class="trust-icons-row-grid-{{ ai_gen_id }}">
+      <div class="trust-icons-row-item-{{ ai_gen_id }} trust-icons-row-single-{{ ai_gen_id }}">
+        {% if section.settings.enable_link_1 and section.settings.link_1 != blank %}
+          <a href="{{ section.settings.link_1 }}" class="trust-icons-row-link-{{ ai_gen_id }}" data-trust-icon-link>
+        {% endif %}
+
+        <div class="trust-icons-row-wrapper-{{ ai_gen_id }}">
+          {% if section.settings.show_dashed_border %}
+            <div class="trust-icons-row-border-{{ ai_gen_id }}"></div>
+          {% endif %}
+          <div class="trust-icons-row-circle-{{ ai_gen_id }}">
+            {% if section.settings.icon_1 != blank %}
+              {{ section.settings.icon_1 }}
+            {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if section.settings.title_1 != blank %}
+          <h3 class="trust-icons-row-title-{{ ai_gen_id }}" data-trust-icon-title>{{ section.settings.title_1 }}</h3>
+        {% endif %}
+
+        {% if section.settings.description_1 != blank %}
+          <p class="trust-icons-row-description-{{ ai_gen_id }}">{{ section.settings.description_1 }}</p>
+        {% endif %}
+
+        {% if section.settings.enable_link_1 and section.settings.link_1 != blank %}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="trust-icons-row-item-{{ ai_gen_id }} trust-icons-row-single-{{ ai_gen_id }}">
+        {% if section.settings.enable_link_2 and section.settings.link_2 != blank %}
+          <a href="{{ section.settings.link_2 }}" class="trust-icons-row-link-{{ ai_gen_id }}" data-trust-icon-link>
+        {% endif %}
+
+        <div class="trust-icons-row-wrapper-{{ ai_gen_id }}">
+          {% if section.settings.show_dashed_border %}
+            <div class="trust-icons-row-border-{{ ai_gen_id }}"></div>
+          {% endif %}
+          <div class="trust-icons-row-circle-{{ ai_gen_id }}">
+            {% if section.settings.icon_2 != blank %}
+              {{ section.settings.icon_2 }}
+            {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if section.settings.title_2 != blank %}
+          <h3 class="trust-icons-row-title-{{ ai_gen_id }}" data-trust-icon-title>{{ section.settings.title_2 }}</h3>
+        {% endif %}
+
+        {% if section.settings.description_2 != blank %}
+          <p class="trust-icons-row-description-{{ ai_gen_id }}">{{ section.settings.description_2 }}</p>
+        {% endif %}
+
+        {% if section.settings.enable_link_2 and section.settings.link_2 != blank %}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="trust-icons-row-item-{{ ai_gen_id }} trust-icons-row-single-{{ ai_gen_id }}">
+        {% if section.settings.enable_link_3 and section.settings.link_3 != blank %}
+          <a href="{{ section.settings.link_3 }}" class="trust-icons-row-link-{{ ai_gen_id }}" data-trust-icon-link>
+        {% endif %}
+
+        <div class="trust-icons-row-wrapper-{{ ai_gen_id }}">
+          {% if section.settings.show_dashed_border %}
+            <div class="trust-icons-row-border-{{ ai_gen_id }}"></div>
+          {% endif %}
+          <div class="trust-icons-row-circle-{{ ai_gen_id }}">
+            {% if section.settings.icon_3 != blank %}
+              {{ section.settings.icon_3 }}
+            {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if section.settings.title_3 != blank %}
+          <h3 class="trust-icons-row-title-{{ ai_gen_id }}" data-trust-icon-title>{{ section.settings.title_3 }}</h3>
+        {% endif %}
+
+        {% if section.settings.description_3 != blank %}
+          <p class="trust-icons-row-description-{{ ai_gen_id }}">{{ section.settings.description_3 }}</p>
+        {% endif %}
+
+        {% if section.settings.enable_link_3 and section.settings.link_3 != blank %}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="trust-icons-row-item-{{ ai_gen_id }} trust-icons-row-single-{{ ai_gen_id }}">
+        {% if section.settings.enable_link_4 and section.settings.link_4 != blank %}
+          <a href="{{ section.settings.link_4 }}" class="trust-icons-row-link-{{ ai_gen_id }}" data-trust-icon-link>
+        {% endif %}
+
+        <div class="trust-icons-row-wrapper-{{ ai_gen_id }}">
+          {% if section.settings.show_dashed_border %}
+            <div class="trust-icons-row-border-{{ ai_gen_id }}"></div>
+          {% endif %}
+          <div class="trust-icons-row-circle-{{ ai_gen_id }}">
+            {% if section.settings.icon_4 != blank %}
+              {{ section.settings.icon_4 }}
+            {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if section.settings.title_4 != blank %}
+          <h3 class="trust-icons-row-title-{{ ai_gen_id }}" data-trust-icon-title>{{ section.settings.title_4 }}</h3>
+        {% endif %}
+
+        {% if section.settings.description_4 != blank %}
+          <p class="trust-icons-row-description-{{ ai_gen_id }}">{{ section.settings.description_4 }}</p>
+        {% endif %}
+
+        {% if section.settings.enable_link_4 and section.settings.link_4 != blank %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</trust-icons-row>
+
+<script>
+  (function() {
+    if (customElements.get('trust-icons-row')) return;
+
+    class TrustIconsRow extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const links = this.querySelectorAll('[data-trust-icon-link]');
+        links.forEach(link => {
+          if (!link.getAttribute('aria-label')) {
+            const title = link.querySelector('[data-trust-icon-title]');
+            if (title) {
+              link.setAttribute('aria-label', title.textContent.trim());
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define('trust-icons-row', TrustIconsRow);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Trust icons row",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top spacing",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom spacing",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "icon_circle_color",
+      "label": "Icon circle",
+      "default": "#F3EDE6"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#F27A00"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 80,
+      "max": 160,
+      "step": 10,
+      "unit": "px",
+      "label": "Icon circle size",
+      "default": 120
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dashed_border",
+      "label": "Show dashed border",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "dashed_border_color",
+      "label": "Dashed border",
+      "default": "#F27A00"
+    },
+    {
+      "type": "header",
+      "content": "Icon 1"
+    },
+    {
+      "type": "html",
+      "id": "icon_1",
+      "label": "Icon SVG"
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Title",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "textarea",
+      "id": "description_1",
+      "label": "Description",
+      "default": "On orders over $50"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_link_1",
+      "label": "Enable link",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Icon 2"
+    },
+    {
+      "type": "html",
+      "id": "icon_2",
+      "label": "Icon SVG"
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Title",
+      "default": "24/7 Support"
+    },
+    {
+      "type": "textarea",
+      "id": "description_2",
+      "label": "Description",
+      "default": "Always here to help"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_link_2",
+      "label": "Enable link",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Icon 3"
+    },
+    {
+      "type": "html",
+      "id": "icon_3",
+      "label": "Icon SVG"
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Title",
+      "default": "Secure Payment"
+    },
+    {
+      "type": "textarea",
+      "id": "description_3",
+      "label": "Description",
+      "default": "100% protected"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_link_3",
+      "label": "Enable link",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Icon 4"
+    },
+    {
+      "type": "html",
+      "id": "icon_4",
+      "label": "Icon SVG"
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Title",
+      "default": "Easy Returns"
+    },
+    {
+      "type": "textarea",
+      "id": "description_4",
+      "label": "Description",
+      "default": "30-day guarantee"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_link_4",
+      "label": "Enable link",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link_4",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust icons row"
+    }
+  ]
+}
+{% endschema %}

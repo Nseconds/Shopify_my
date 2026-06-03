@@ -1,0 +1,120 @@
+
+
+{% render 'quantity-selector', 
+  product: closest.product, 
+  show_label: block.settings.show_label, 
+  label_text: block.settings.label_text, 
+  label_font_size: block.settings.label_font_size,
+  label_text_align: block.settings.label_text_align,
+  full_width: block.settings.full_width,
+  block_id: block.id,
+  border_color: block.settings.border_color,
+  border_thickness: block.settings.border_thickness,
+  border_radius: block.settings.border_radius,
+  block: block
+%}
+
+{% style %}
+  /* Make the quantity picker scheme-aware using the same foreground-rgb/opacity
+     pattern the rest of the theme uses (pills, checkboxes, borders, etc.).
+     This ensures it automatically adapts to dark and light color schemes. */
+  .quantity-selector-wrapper--{{ block.id }} .quantity-selector {
+    --color-input-background: rgb(var(--color-foreground-rgb) / var(--opacity-5-15));
+    --color-input-hover-background: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    --color-input-text: var(--color-foreground);
+    --quantity-border-color: rgb(var(--color-foreground-rgb) / var(--opacity-35-55));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "t:names.quantity",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_label",
+      "label": "Show label",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label text",
+      "default": "Quantity",
+      "info": "Only shown if 'Show label' is enabled"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "info": "Only applies if 'Show label' is enabled"
+    },
+    {
+      "type": "select",
+      "id": "label_text_align",
+      "label": "Label text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "info": "Only applies if 'Show label' is enabled"
+    },
+    {
+      "type": "header",
+      "content": "Quantity Selector Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false,
+      "info": "Make the quantity selector span the full width"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "info": "Custom border color for the quantity selector"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1,
+      "info": "Border thickness in pixels"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8,
+      "info": "Corner radius in pixels"
+    }
+  ]
+}
+{% endschema %}

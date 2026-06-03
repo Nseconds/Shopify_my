@@ -1,0 +1,810 @@
+{% assign ai_gen_id = section.id | replace: '_', '-' | downcase %}
+{% assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+{% assign background_gradient = section.settings.background_gradient %}
+{% assign background_color = section.settings.background_color %}
+{% assign overlay_color = section.settings.overlay_color %}
+{% assign overlay_opacity_raw = section.settings.overlay_opacity %}
+{% assign blur_color_1 = section.settings.blur_color_1 %}
+{% assign blur_color_2 = section.settings.blur_color_2 %}
+{% assign eyebrow_color = section.settings.eyebrow_color %}
+{% assign eyebrow_bg_color = section.settings.eyebrow_bg_color %}
+{% assign heading_color = section.settings.heading_color %}
+{% assign subheading_color = section.settings.subheading_color %}
+{% assign countdown_color = section.settings.countdown_color %}
+{% assign countdown_label_color = section.settings.countdown_label_color %}
+{% assign countdown_bg_color = section.settings.countdown_bg_color %}
+{% assign button_bg_color = section.settings.button_bg_color %}
+{% assign button_text_color = section.settings.button_text_color %}
+{% assign button_hover_bg = section.settings.button_hover_bg %}
+{% assign button_hover_text = section.settings.button_hover_text %}
+
+{% assign overlay_opacity = overlay_opacity_raw | divided_by: 100.0 %}
+
+{% if settings.style_mode == 'gradient' %}
+  {%- liquid
+    assign background_gradient = 'var(--color-card-gradient)'
+    assign background_color = 'var(--color-card-background)'
+    assign heading_color = 'var(--color-gradient-text)'
+    assign subheading_color = 'var(--color-gradient-text)'
+    assign countdown_color = 'var(--color-gradient-text)'
+    assign countdown_label_color = 'var(--color-gradient-text)'
+  -%}
+{% else %}
+  {%- liquid
+    assign background_gradient = 'var(--color-primary)'
+    assign background_color = 'var(--color-primary)'
+    assign heading_color = 'var(--color-primary-button-text)'
+    assign subheading_color = 'var(--color-primary-button-text)'
+    assign countdown_color = 'var(--color-primary)'
+    assign countdown_label_color = 'var(--color-primary)'
+    assign eyebrow_color = 'var(--color-primary)'
+    assign eyebrow_bg_color = 'var(--color-background)'
+    assign countdown_bg_color = 'var(--color-background)'
+    assign button_bg_color = 'var(--color-background)'
+    assign button_text_color = 'var(--color-primary)'
+    assign button_hover_bg = 'var(--color-background)'
+    assign button_hover_text = 'var(--color-primary)'
+    assign blur_color_1 = 'transparent'
+    assign blur_color_2 = 'transparent'
+    assign overlay_color = 'transparent'
+  -%}
+{% endif %}
+
+{% style %}
+  .ai-black-friday-banner-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    background: {{ background_gradient | default: background_color }};
+    background-color: {{ background_color }};
+    padding: {{ section.settings.padding_desktop }}px 40px;
+    text-align: {{ section.settings.text_alignment }};
+    overflow: hidden;
+  }
+
+  .ai-black-friday-banner--full-width-{{ ai_gen_id }} {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner-{{ ai_gen_id }} {
+      padding: {{ section.settings.padding_mobile }}px 20px;
+    }
+  }
+
+  .ai-black-friday-banner__content-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-black-friday-banner__eyebrow-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: {{ section.settings.eyebrow_size }}px;
+    color: {{ eyebrow_color }};
+    background: {{ eyebrow_bg_color }};
+    padding: 6px 14px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid {% if settings.style_mode == 'gradient' %}rgba(255, 255, 255, 0.18){% else %}var(--color-border){% endif %};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__eyebrow-{{ ai_gen_id }} {
+      font-size: {{ section.settings.eyebrow_size | times: 0.9 }}px;
+      padding: 5px 12px;
+    }
+  }
+
+  .ai-black-friday-banner__heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ heading_color }};
+    margin: 0 0 8px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.6 }}px;
+    }
+  }
+
+  .ai-black-friday-banner__subheading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ subheading_color }};
+    margin: 0 0 20px;
+    line-height: 1.4;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__subheading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.subheading_size | times: 0.9 }}px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .ai-black-friday-banner__countdown-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: {{ section.settings.text_alignment }};
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .ai-black-friday-banner__countdown-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    background: {{ countdown_bg_color }};
+    border-radius: var(--style-border-radius-cards);
+    padding: 12px 10px;
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid {% if settings.style_mode == 'gradient' %}rgba(255, 255, 255, 0.18){% else %}var(--color-border){% endif %};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__countdown-item-{{ ai_gen_id }} {
+      min-width: 56px;
+      padding: 10px 8px;
+    }
+  }
+
+  .ai-black-friday-banner__countdown-number-{{ ai_gen_id }} {
+    font-size: {{ section.settings.countdown_size }}px;
+    color: {{ countdown_color }};
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__countdown-number-{{ ai_gen_id }} {
+      font-size: {{ section.settings.countdown_size | times: 0.75 }}px;
+    }
+  }
+
+  .ai-black-friday-banner__countdown-label-{{ ai_gen_id }} {
+    font-size: 10px;
+    color: {{ countdown_label_color }};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  .ai-black-friday-banner__button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: {{ button_bg_color }};
+    color: {{ button_text_color }};
+    text-decoration: none;
+    font-size: {{ section.settings.button_size }}px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    border-radius: 100px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .ai-black-friday-banner__button-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ai-black-friday-banner__button-{{ ai_gen_id }}:hover::before {
+    opacity: 1;
+  }
+
+  .ai-black-friday-banner__button-{{ ai_gen_id }}:hover {
+    background: {{ button_hover_bg }};
+    color: {{ button_hover_text }};
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .ai-black-friday-banner__button-{{ ai_gen_id }}:active {
+    transform: scale(0.98);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__button-{{ ai_gen_id }} {
+      padding: 12px 28px;
+      font-size: {{ section.settings.button_size | times: 0.95 }}px;
+    }
+  }
+
+  .ai-black-friday-banner__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ overlay_color }};
+    opacity: {{ overlay_opacity }};
+    z-index: 1;
+  }
+
+  .ai-black-friday-banner__blur-circle-{{ ai_gen_id }} {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .ai-black-friday-banner__blur-circle-1-{{ ai_gen_id }} {
+    width: 300px;
+    height: 300px;
+    background: {{ blur_color_1 }};
+    top: -100px;
+    right: 10%;
+  }
+
+  .ai-black-friday-banner__blur-circle-2-{{ ai_gen_id }} {
+    width: 250px;
+    height: 250px;
+    background: {{ blur_color_2 }};
+    bottom: -80px;
+    left: 15%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-black-friday-banner__blur-circle-1-{{ ai_gen_id }} {
+      width: 200px;
+      height: 200px;
+      top: -60px;
+    }
+
+    .ai-black-friday-banner__blur-circle-2-{{ ai_gen_id }} {
+      width: 180px;
+      height: 180px;
+      bottom: -50px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-black-friday-banner-{{ ai_gen_id }} ai-black-friday-banner--full-width-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}">
+  {% if section.settings.show_blur_effects %}
+    <div class="ai-black-friday-banner__blur-circle-{{ ai_gen_id }} ai-black-friday-banner__blur-circle-1-{{ ai_gen_id }}"></div>
+    <div class="ai-black-friday-banner__blur-circle-{{ ai_gen_id }} ai-black-friday-banner__blur-circle-2-{{ ai_gen_id }}"></div>
+  {% endif %}
+
+  {% if section.settings.show_overlay %}
+    <div class="ai-black-friday-banner__overlay-{{ ai_gen_id }}"></div>
+  {% endif %}
+
+  <div class="ai-black-friday-banner__content-{{ ai_gen_id }}">
+    {% if section.settings.eyebrow_text != blank %}
+      <div class="ai-black-friday-banner__eyebrow-{{ ai_gen_id }}">
+        <span>{{ section.settings.eyebrow_text }}</span>
+      </div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="ai-black-friday-banner__heading-{{ ai_gen_id }}">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <div class="ai-black-friday-banner__subheading-{{ ai_gen_id }}">
+        {{ section.settings.subheading }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_countdown %}
+      <div class="ai-black-friday-banner__countdown-{{ ai_gen_id }}" id="ai-countdown-{{ ai_gen_id }}">
+        <div class="ai-black-friday-banner__countdown-item-{{ ai_gen_id }}">
+          <div class="ai-black-friday-banner__countdown-number-{{ ai_gen_id }}" data-hours>00</div>
+          <div class="ai-black-friday-banner__countdown-label-{{ ai_gen_id }}">Hours</div>
+        </div>
+        <div class="ai-black-friday-banner__countdown-item-{{ ai_gen_id }}">
+          <div class="ai-black-friday-banner__countdown-number-{{ ai_gen_id }}" data-minutes>00</div>
+          <div class="ai-black-friday-banner__countdown-label-{{ ai_gen_id }}">Mins</div>
+        </div>
+        <div class="ai-black-friday-banner__countdown-item-{{ ai_gen_id }}">
+          <div class="ai-black-friday-banner__countdown-number-{{ ai_gen_id }}" data-seconds>00</div>
+          <div class="ai-black-friday-banner__countdown-label-{{ ai_gen_id }}">Secs</div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.button_text != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="ai-black-friday-banner__button-{{ ai_gen_id }}">
+        <span>{{ section.settings.button_text }}</span>
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% if section.settings.show_countdown %}
+  <script>
+    (function() {
+      var tagName = 'black-friday-countdown-{{ ai_gen_id }}';
+
+      class BlackFridayCountdown{{ ai_gen_id_js }} extends HTMLElement {
+        constructor() {
+          super();
+          this.countdownElement = document.getElementById('ai-countdown-{{ ai_gen_id }}');
+        }
+
+        connectedCallback() {
+          if (this.countdownElement) {
+            this.updateCountdown();
+            this.interval = setInterval(() => this.updateCountdown(), 1000);
+          }
+        }
+
+        disconnectedCallback() {
+          if (this.interval) {
+            clearInterval(this.interval);
+          }
+        }
+
+        getNextTarget() {
+          var now = new Date();
+          var target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 0, 0, 0);
+
+          /* If 6 PM today has already passed, target tomorrow's 6 PM */
+          if (now.getTime() >= target.getTime()) {
+            target.setDate(target.getDate() + 1);
+          }
+
+          return target.getTime();
+        }
+
+        updateCountdown() {
+          var now = new Date().getTime();
+          var distance = this.getNextTarget() - now;
+
+          if (distance < 0) {
+            distance = 0;
+          }
+
+          var hours = Math.floor(distance / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          this.countdownElement.querySelector('[data-hours]').textContent = String(hours).padStart(2, '0');
+          this.countdownElement.querySelector('[data-minutes]').textContent = String(minutes).padStart(2, '0');
+          this.countdownElement.querySelector('[data-seconds]').textContent = String(seconds).padStart(2, '0');
+        }
+      }
+
+      if (!customElements.get(tagName)) {
+        customElements.define(tagName, BlackFridayCountdown{{ ai_gen_id_js }});
+      }
+
+      var banner = document.querySelector('.ai-black-friday-banner-{{ ai_gen_id }}');
+      if (banner) {
+        var wrapper = document.createElement(tagName);
+        banner.parentNode.insertBefore(wrapper, banner);
+        wrapper.appendChild(banner);
+      }
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Discount countdown",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "Limited Time"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Discount countdown"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Up to 70% off all products"
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 500,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "min": 20,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding mobile",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show overlay",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blur_effects",
+      "label": "Show blur effects",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "blur_color_1",
+      "label": "Blur color 1",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "blur_color_2",
+      "label": "Blur color 2",
+      "default": "#FF6B6B"
+    },
+    {
+      "type": "header",
+      "content": "Eyebrow style"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 11
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_bg_color",
+      "label": "Background color",
+      "default": "rgba(255, 215, 0, 0.9)"
+    },
+    {
+      "type": "header",
+      "content": "Heading style"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Subheading style"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "header",
+      "content": "Countdown style"
+    },
+    {
+      "type": "range",
+      "id": "countdown_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Number size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "countdown_color",
+      "label": "Number color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "countdown_label_color",
+      "label": "Label color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "countdown_bg_color",
+      "label": "Background color",
+      "default": "rgba(255, 255, 255, 0.9)"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "rgba(255, 215, 0, 0.95)"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Hover background",
+      "default": "rgba(255, 215, 0, 1)"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Discount countdown (Manual)",
+      "settings": {
+        "heading": "Discount countdown"
+      }
+    },
+    {
+      "name": "Discount countdown (Black Friday)",
+      "settings": {
+        "heading": "Black Friday",
+        "background_gradient": "linear-gradient(135deg, #111111 0%, #000000 50%, #1c1c1c 100%)",
+        "background_color": "#000000",
+        "show_overlay": true,
+        "overlay_color": "#000000",
+        "overlay_opacity": 40,
+        "show_blur_effects": true,
+        "blur_color_1": "#FFD700",
+        "blur_color_2": "#FF6B6B",
+        "eyebrow_color": "#000000",
+        "eyebrow_bg_color": "rgba(255, 215, 0, 0.9)",
+        "heading_color": "#FFFFFF",
+        "subheading_color": "#E0E0E0",
+        "countdown_color": "#000000",
+        "countdown_label_color": "#666666",
+        "countdown_bg_color": "rgba(255, 255, 255, 0.9)",
+        "button_bg_color": "rgba(255, 215, 0, 0.95)",
+        "button_text_color": "#000000",
+        "button_hover_bg": "rgba(255, 215, 0, 1)",
+        "button_hover_text": "#000000"
+      }
+    },
+    {
+      "name": "Discount countdown (Christmas)",
+      "settings": {
+        "heading": "Merry Christmas",
+        "background_gradient": "linear-gradient(135deg, #0b3d2e 0%, #0f5b3a 50%, #0b3d2e 100%)",
+        "background_color": "#0b3d2e",
+        "show_overlay": true,
+        "overlay_color": "#0b3d2e",
+        "overlay_opacity": 25,
+        "show_blur_effects": true,
+        "blur_color_1": "#D9A441",
+        "blur_color_2": "#B3272D",
+        "eyebrow_color": "#0b3d2e",
+        "eyebrow_bg_color": "rgba(217, 164, 65, 0.92)",
+        "heading_color": "#FFFFFF",
+        "subheading_color": "#E6F0EB",
+        "countdown_color": "#0b3d2e",
+        "countdown_label_color": "#2e5b4f",
+        "countdown_bg_color": "rgba(255, 255, 255, 0.9)",
+        "button_bg_color": "#D9A441",
+        "button_text_color": "#0b3d2e",
+        "button_hover_bg": "#F2C55C",
+        "button_hover_text": "#0b3d2e"
+      }
+    },
+    {
+      "name": "Discount countdown (Valentines)",
+      "settings": {
+        "heading": "Happy Valentines!",
+        "background_gradient": "linear-gradient(135deg, #8b1f3f 0%, #c0395e 50%, #ff6f91 100%)",
+        "background_color": "#c0395e",
+        "show_overlay": true,
+        "overlay_color": "#8b1f3f",
+        "overlay_opacity": 20,
+        "show_blur_effects": true,
+        "blur_color_1": "#FF9EB2",
+        "blur_color_2": "#FF6F91",
+        "eyebrow_color": "#8b1f3f",
+        "eyebrow_bg_color": "rgba(255, 158, 178, 0.9)",
+        "heading_color": "#FFFFFF",
+        "subheading_color": "#FFE5EC",
+        "countdown_color": "#8b1f3f",
+        "countdown_label_color": "#b24b67",
+        "countdown_bg_color": "rgba(255, 255, 255, 0.9)",
+        "button_bg_color": "#FFE5EC",
+        "button_text_color": "#8b1f3f",
+        "button_hover_bg": "#FFD1DD",
+        "button_hover_text": "#8b1f3f"
+      }
+    }
+  ]
+}
+{% endschema %}

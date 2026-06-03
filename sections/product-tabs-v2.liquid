@@ -1,0 +1,1130 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c       = section.settings.inactive_tab_bg -%}
+  {%- assign text_c     = section.settings.inactive_tab_text -%}
+  {%- assign active_bg  = section.settings.active_tab_bg -%}
+  {%- assign active_txt = section.settings.active_tab_text -%}
+  {%- assign border_c   = section.settings.border_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c       = 'var(--color-background)' -%}
+  {%- assign text_c     = 'var(--color-foreground)' -%}
+  {%- assign active_bg  = 'var(--color-primary-button-background)' -%}
+  {%- assign active_txt = 'var(--color-primary-button-text)' -%}
+  {%- assign border_c   = 'var(--color-border)' -%}
+{%- else -%}
+  {%- assign bg_c       = section.settings.color_scheme.settings.background -%}
+  {%- assign text_c     = section.settings.color_scheme.settings.foreground -%}
+  {%- assign active_bg  = section.settings.color_scheme.settings.primary_button_background -%}
+  {%- assign active_txt = section.settings.color_scheme.settings.primary_button_text -%}
+  {%- assign border_c   = section.settings.color_scheme.settings.border -%}
+{%- endif -%}
+
+{% comment %} Determine first enabled tab for default active state {% endcomment %}
+{% assign first_tab_id = '' %}
+{% if section.settings.enable_reviews_tab %}
+  {% assign first_tab_id = 'reviews' %}
+{% elsif section.settings.enable_details_tab %}
+  {% assign first_tab_id = 'details' %}
+{% elsif section.settings.enable_payment_tab %}
+  {% assign first_tab_id = 'payment' %}
+{% elsif section.settings.enable_return_tab %}
+  {% assign first_tab_id = 'return' %}
+{% endif %}
+
+{% style %}
+  .product-tabs-{{ ai_gen_id }} {
+    display: block;
+    width: 100vw;
+    margin: 0;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+
+  .product-tabs__nav-{{ ai_gen_id }} {
+    display: flex;
+    width: 100%;
+    background: {{ bg_c }};
+    overflow: hidden;
+    {% if section.settings.sticky_tabs %}
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    {% endif %}
+  }
+
+  .product-tabs__tab-{{ ai_gen_id }} {
+    flex: 1;
+    padding: 16px 20px;
+    background: {{ bg_c }};
+    color: {{ text_c }};
+    border: none;
+    cursor: pointer;
+    font-size: {{ section.settings.tab_font_size }}px;
+    font-weight: {{ section.settings.tab_font_weight }};
+    transition: all 0.3s ease;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: var(--font-body--family);
+    text-transform: {% if section.settings.tab_text_uppercase %}uppercase{% else %}none{% endif %};
+    letter-spacing: {{ section.settings.tab_letter_spacing }}px;
+  }
+
+  .product-tabs__tab-{{ ai_gen_id }}:last-child {
+    border-right: none;
+  }
+
+  .product-tabs__tab-{{ ai_gen_id }}:hover {
+    background-color: {{ active_bg }};
+    color: {{ active_txt }};
+    opacity: 0.9;
+  }
+
+  .product-tabs__tab-{{ ai_gen_id }}.active {
+    background-color: {{ active_bg }};
+    color: {{ active_txt }};
+  }
+
+  .product-tabs__count-{{ ai_gen_id }} {
+    margin-left: 6px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .product-tabs__content-{{ ai_gen_id }} {
+    background: {{ bg_c }};
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .product-tabs__panel-{{ ai_gen_id }} {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-tabs__panel-{{ ai_gen_id }}.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .product-tabs-reviews-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .product-tabs-reviews-summary-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .product-tabs-reviews-rating-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .product-tabs-reviews-score-{{ ai_gen_id }} {
+    font-size: {{ section.settings.rating_score_size }}px;
+    font-weight: {{ section.settings.rating_score_weight }};
+    color: {{ text_c }};
+    line-height: 1;
+    font-family: var(--font-heading--family);
+  }
+
+  .product-tabs-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    margin: 8px 0;
+  }
+
+  .product-tabs-reviews-star-{{ ai_gen_id }} {
+    color: {{ section.settings.star_color }};
+    font-size: 20px;
+  }
+
+  .product-tabs-reviews-count-{{ ai_gen_id }} {
+    font-size: {{ section.settings.review_count_size }}px;
+    color: {{ text_c }};
+    opacity: 0.7;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-reviews-sort-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .product-tabs-reviews-sort-{{ ai_gen_id }} select {
+    padding: 10px 40px 10px 16px;
+    border: 1px solid {{ border_c }};
+    border-radius: var(--style-border-radius-global);
+    background-color: var(--color-background);
+    color: {{ text_c }};
+    font-size: 14px;
+    cursor: pointer;
+    appearance: none;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-reviews-sort-{{ ai_gen_id }}::after {
+    content: '▼';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 10px;
+    color: {{ text_c }};
+  }
+
+  .product-tabs-login-notice-{{ ai_gen_id }} {
+    background: {{ bg_c }};
+    color: {{ text_c }};
+    padding: 16px 20px;
+    border-radius: var(--style-border-radius-cards);
+    margin-bottom: 30px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-login-notice-{{ ai_gen_id }}::before {
+    content: 'ℹ';
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .product-tabs-ai-summary-{{ ai_gen_id }} {
+    background: {{ bg_c }};
+    border: 1px solid {{ border_c }};
+    border-radius: var(--style-border-radius-cards);
+    padding: 24px;
+    margin-bottom: 30px;
+  }
+
+  .product-tabs-ai-summary__title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.summary_title_size }}px;
+    font-weight: {{ section.settings.summary_title_weight }};
+    color: {{ text_c }};
+    margin-bottom: 12px;
+    font-family: var(--font-heading--family);
+  }
+
+  .product-tabs-ai-summary__text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.body_text_size }}px;
+    line-height: 1.6;
+    color: {{ text_c }};
+    margin-bottom: 12px;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-ai-summary__note-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ text_c }};
+    opacity: 0.6;
+    font-style: italic;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-card-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ border_c }};
+    padding: 24px 0;
+  }
+
+  .product-tabs-review-card-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .product-tabs-review-header-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .product-tabs-review-avatar-{{ ai_gen_id }} {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: {{ active_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .product-tabs-review-info-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .product-tabs-review-user-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .product-tabs-review-name-{{ ai_gen_id }} {
+    font-weight: {{ section.settings.reviewer_name_weight }};
+    color: {{ text_c }};
+    font-size: {{ section.settings.reviewer_name_size }}px;
+    font-family: var(--font-heading--family);
+  }
+
+  .product-tabs-review-location-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ text_c }};
+    opacity: 0.6;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-store-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ active_bg }};
+    font-size: 13px;
+    text-decoration: none;
+    margin-left: 8px;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-store-{{ ai_gen_id }}:hover {
+    text-decoration: underline;
+  }
+
+  .product-tabs-review-meta-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .product-tabs-review-rating-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .product-tabs-review-rating-{{ ai_gen_id }} .product-tabs-reviews-star-{{ ai_gen_id }} {
+    font-size: 16px;
+  }
+
+  .product-tabs-review-date-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ text_c }};
+    opacity: 0.6;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.review_text_size }}px;
+    line-height: 1.6;
+    color: {{ text_c }};
+    margin-bottom: 16px;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-actions-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+  }
+
+  .product-tabs-review-action-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid {{ border_c }};
+    padding: 6px 12px;
+    border-radius: var(--style-border-radius-buttons-primary);
+    cursor: pointer;
+    font-size: 13px;
+    color: {{ text_c }};
+    transition: all 0.2s ease;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-review-action-{{ ai_gen_id }}:hover {
+    background-color: {{ border_c }};
+  }
+
+  .product-tabs-load-more-{{ ai_gen_id }} {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .product-tabs-load-more-btn-{{ ai_gen_id }} {
+    padding: 12px 32px;
+    background-color: transparent;
+    color: {{ text_c }};
+    border: 2px solid {{ border_c }};
+    border-radius: var(--style-border-radius-buttons-primary);
+    cursor: pointer;
+    font-size: {{ section.settings.button_text_size }}px;
+    font-weight: {{ section.settings.button_font_weight }};
+    transition: all 0.3s ease;
+    font-family: var(--font-body--family);
+  }
+
+  .product-tabs-load-more-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ active_bg }};
+    color: {{ active_txt }};
+    border-color: {{ section.settings.active_tab_bg }};
+  }
+
+  .product-tabs-content-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.body_text_size }}px;
+    line-height: 1.8;
+    color: {{ text_c }};
+    font-family: var(--font-body--family);
+  }
+
+  @media screen and (max-width: 768px) {
+    .product-tabs__nav-{{ ai_gen_id }} {
+      flex-wrap: wrap;
+    }
+
+    .product-tabs__tab-{{ ai_gen_id }} {
+      flex: 1 1 50%;
+      font-size: 14px;
+      padding: 14px 12px;
+    }
+
+    .product-tabs-reviews-header-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .product-tabs-reviews-score-{{ ai_gen_id }} {
+      font-size: 36px;
+    }
+
+    .product-tabs__content-{{ ai_gen_id }} {
+      padding: 20px;
+    }
+  }
+{% endstyle %}
+
+<product-tabs-v2 class="product-tabs-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="product-tabs__nav-{{ ai_gen_id }}">
+    {% if section.settings.enable_reviews_tab %}
+      <button class="product-tabs__tab-{{ ai_gen_id }}{% if first_tab_id == 'reviews' %} active{% endif %}" data-product-tab data-tab="reviews">
+        {{ section.settings.reviews_tab_label }}
+        {% if section.settings.show_review_count %}
+          <span class="product-tabs__count-{{ ai_gen_id }}">({{ section.settings.total_reviews }})</span>
+        {% endif %}
+      </button>
+    {% endif %}
+
+    {% if section.settings.enable_details_tab %}
+      <button class="product-tabs__tab-{{ ai_gen_id }}{% if first_tab_id == 'details' %} active{% endif %}" data-product-tab data-tab="details">
+        {{ section.settings.details_tab_label }}
+      </button>
+    {% endif %}
+
+    {% if section.settings.enable_payment_tab %}
+      <button class="product-tabs__tab-{{ ai_gen_id }}{% if first_tab_id == 'payment' %} active{% endif %}" data-product-tab data-tab="payment">
+        {{ section.settings.payment_tab_label }}
+      </button>
+    {% endif %}
+
+    {% if section.settings.enable_return_tab %}
+      <button class="product-tabs__tab-{{ ai_gen_id }}{% if first_tab_id == 'return' %} active{% endif %}" data-product-tab data-tab="return">
+        {{ section.settings.return_tab_label }}
+      </button>
+    {% endif %}
+  </div>
+
+  <div class="product-tabs__content-{{ ai_gen_id }}">
+    {% if section.settings.enable_reviews_tab %}
+      <div class="product-tabs__panel-{{ ai_gen_id }}{% if first_tab_id == 'reviews' %} active{% endif %}" data-product-panel data-panel="reviews">
+        <div class="product-tabs-reviews-header-{{ ai_gen_id }}">
+          <div class="product-tabs-reviews-summary-{{ ai_gen_id }}">
+            <div class="product-tabs-reviews-rating-{{ ai_gen_id }}">
+              <div class="product-tabs-reviews-score-{{ ai_gen_id }}">{{ section.settings.average_rating }}</div>
+              <div class="product-tabs-reviews-stars-{{ ai_gen_id }}">
+                {% for i in (1..5) %}
+                  <span class="product-tabs-reviews-star-{{ ai_gen_id }}">★</span>
+                {% endfor %}
+              </div>
+              <div class="product-tabs-reviews-count-{{ ai_gen_id }}">{{ section.settings.total_reviews }} Reviews</div>
+            </div>
+          </div>
+
+          <div class="product-tabs-reviews-sort-{{ ai_gen_id }}">
+            <select>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="highest">Highest rating</option>
+              <option value="lowest">Lowest rating</option>
+            </select>
+          </div>
+        </div>
+
+        {% if section.settings.show_login_notice %}
+          <div class="product-tabs-login-notice-{{ ai_gen_id }}">
+            {{ section.settings.login_notice_text }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.enable_ai_summary %}
+          <div class="product-tabs-ai-summary-{{ ai_gen_id }}">
+            <div class="product-tabs-ai-summary__title-{{ ai_gen_id }}">{{ section.settings.ai_summary_title }}</div>
+            <div class="product-tabs-ai-summary__text-{{ ai_gen_id }}">{{ section.settings.ai_summary_text }}</div>
+            <div class="product-tabs-ai-summary__note-{{ ai_gen_id }}">{{ section.settings.ai_summary_note }}</div>
+          </div>
+        {% endif %}
+
+        <div class="product-tabs-reviews-list-{{ ai_gen_id }}">
+          {% for i in (1..section.settings.reviews_per_page) %}
+            <div class="product-tabs-review-card-{{ ai_gen_id }}">
+              <div class="product-tabs-review-header-{{ ai_gen_id }}">
+                <div class="product-tabs-review-avatar-{{ ai_gen_id }}">
+                  {{ section.settings.sample_reviewer_initial }}
+                </div>
+                <div class="product-tabs-review-info-{{ ai_gen_id }}">
+                  <div class="product-tabs-review-user-{{ ai_gen_id }}">
+                    <span class="product-tabs-review-name-{{ ai_gen_id }}">{{ section.settings.sample_reviewer_name }}</span>
+                    <span class="product-tabs-review-location-{{ ai_gen_id }}">{{ section.settings.sample_reviewer_location }}</span>
+                    {% if section.settings.show_store_tag %}
+                      <a href="#" class="product-tabs-review-store-{{ ai_gen_id }}">Store</a>
+                    {% endif %}
+                  </div>
+                  <div class="product-tabs-review-meta-{{ ai_gen_id }}">
+                    <div class="product-tabs-review-rating-{{ ai_gen_id }}">
+                      {% for j in (1..5) %}
+                        <span class="product-tabs-reviews-star-{{ ai_gen_id }}">★</span>
+                      {% endfor %}
+                    </div>
+                    <span class="product-tabs-review-date-{{ ai_gen_id }}">{{ section.settings.sample_review_date }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-tabs-review-text-{{ ai_gen_id }}">
+                {{ section.settings.sample_review_text }}
+              </div>
+              {% if section.settings.show_like_dislike %}
+                <div class="product-tabs-review-actions-{{ ai_gen_id }}">
+                  <button class="product-tabs-review-action-{{ ai_gen_id }}">
+                    👍 <span>{{ section.settings.sample_like_count }}</span>
+                  </button>
+                  <button class="product-tabs-review-action-{{ ai_gen_id }}">
+                    👎 <span>{{ section.settings.sample_dislike_count }}</span>
+                  </button>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="product-tabs-load-more-{{ ai_gen_id }}">
+          <button class="product-tabs-load-more-btn-{{ ai_gen_id }}">{{ section.settings.load_more_text }}</button>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.enable_details_tab %}
+      <div class="product-tabs__panel-{{ ai_gen_id }}{% if first_tab_id == 'details' %} active{% endif %}" data-product-panel data-panel="details">
+        <div class="product-tabs-content-text-{{ ai_gen_id }}">
+          {{ section.settings.details_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.enable_payment_tab %}
+      <div class="product-tabs__panel-{{ ai_gen_id }}{% if first_tab_id == 'payment' %} active{% endif %}" data-product-panel data-panel="payment">
+        <div class="product-tabs-content-text-{{ ai_gen_id }}">
+          {{ section.settings.payment_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.enable_return_tab %}
+      <div class="product-tabs__panel-{{ ai_gen_id }}{% if first_tab_id == 'return' %} active{% endif %}" data-product-panel data-panel="return">
+        <div class="product-tabs-content-text-{{ ai_gen_id }}">
+          {{ section.settings.return_content }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</product-tabs-v2>
+
+<script>
+  (function() {
+    if (customElements.get('product-tabs-v2')) return;
+
+    class ProductTabsV2 extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.tabs = this.querySelectorAll('[data-product-tab]');
+        this.panels = this.querySelectorAll('[data-product-panel]');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.tabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            const targetPanel = tab.getAttribute('data-tab');
+            this.switchTab(targetPanel);
+          });
+        });
+      }
+
+      switchTab(targetPanel) {
+        this.tabs.forEach((tab) => {
+          if (tab.getAttribute('data-tab') === targetPanel) {
+            tab.classList.add('active');
+          } else {
+            tab.classList.remove('active');
+          }
+        });
+
+        this.panels.forEach((panel) => {
+          if (panel.getAttribute('data-panel') === targetPanel) {
+            panel.classList.remove('active');
+            setTimeout(() => {
+              panel.classList.add('active');
+            }, 10);
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('product-tabs-v2', ProductTabsV2);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Tab navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_tabs",
+      "label": "Sticky tabs on scroll",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "active_tab_bg",
+      "label": "Active tab background",
+      "default": "#3B82F6"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_text",
+      "label": "Active tab text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "inactive_tab_bg",
+      "label": "Inactive tab background",
+      "default": "#374151"
+    },
+    {
+      "type": "color",
+      "id": "inactive_tab_text",
+      "label": "Inactive tab text",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "tab_font_size",
+      "label": "Tab font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "tab_font_weight",
+      "label": "Tab font weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 500
+    },
+    {
+      "type": "checkbox",
+      "id": "tab_text_uppercase",
+      "label": "Tab text uppercase",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "tab_letter_spacing",
+      "label": "Tab letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_text_size",
+      "label": "Body text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "rating_score_size",
+      "label": "Rating score size",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "rating_score_weight",
+      "label": "Rating score weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "review_count_size",
+      "label": "Review count size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "summary_title_size",
+      "label": "Summary title size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "summary_title_weight",
+      "label": "Summary title weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "reviewer_name_size",
+      "label": "Reviewer name size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "reviewer_name_weight",
+      "label": "Reviewer name weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "review_text_size",
+      "label": "Review text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Button text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "button_font_weight",
+      "label": "Button font weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Reviews tab"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews_tab",
+      "label": "Enable reviews tab",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "reviews_tab_label",
+      "label": "Tab label",
+      "default": "Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_review_count",
+      "label": "Show review count in tab",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "total_reviews",
+      "label": "Total reviews",
+      "min": 0,
+      "max": 1000,
+      "step": 10,
+      "default": 810
+    },
+    {
+      "type": "text",
+      "id": "average_rating",
+      "label": "Average rating",
+      "default": "4.8"
+    },
+    {
+      "type": "header",
+      "content": "Product details tab"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_details_tab",
+      "label": "Enable details tab",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "details_tab_label",
+      "label": "Tab label",
+      "default": "Product Details"
+    },
+    {
+      "type": "richtext",
+      "id": "details_content",
+      "label": "Content",
+      "default": "<p>Add your product details here. Include specifications, materials, dimensions, and other important information.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Login notice"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_login_notice",
+      "label": "Show login notice",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "login_notice_text",
+      "label": "Notice text",
+      "default": "Please log in and purchase the product to leave a review."
+    },
+    {
+      "type": "color",
+      "id": "notice_bg",
+      "label": "Notice background",
+      "default": "#FEF3C7"
+    },
+    {
+      "type": "color",
+      "id": "notice_text",
+      "label": "Notice text color",
+      "default": "#92400E"
+    },
+    {
+      "type": "range",
+      "id": "notice_border_radius",
+      "label": "Notice border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "AI summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_ai_summary",
+      "label": "Enable AI summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "ai_summary_title",
+      "label": "Summary title",
+      "default": "Review Summary"
+    },
+    {
+      "type": "textarea",
+      "id": "ai_summary_text",
+      "label": "Summary text",
+      "default": "Customers love this product for its quality and durability. Many reviewers mention excellent value for money and fast shipping."
+    },
+    {
+      "type": "text",
+      "id": "ai_summary_note",
+      "label": "Summary note",
+      "default": "This summary was generated using AI analysis of customer reviews."
+    },
+    {
+      "type": "color",
+      "id": "ai_summary_bg",
+      "label": "Summary background",
+      "default": "#F3F4F6"
+    },
+    {
+      "type": "range",
+      "id": "ai_summary_border_radius",
+      "label": "Summary border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Review cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_like_dislike",
+      "label": "Show like/dislike buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_store_tag",
+      "label": "Show store tag",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "reviews_per_page",
+      "label": "Reviews per page",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "sample_reviewer_name",
+      "label": "Sample reviewer name",
+      "default": "F**** D****"
+    },
+    {
+      "type": "text",
+      "id": "sample_reviewer_initial",
+      "label": "Sample reviewer initial",
+      "default": "F"
+    },
+    {
+      "type": "text",
+      "id": "sample_reviewer_location",
+      "label": "Sample location",
+      "default": "Istanbul"
+    },
+    {
+      "type": "text",
+      "id": "sample_review_date",
+      "label": "Sample review date",
+      "default": "2 days ago"
+    },
+    {
+      "type": "textarea",
+      "id": "sample_review_text",
+      "label": "Sample review text",
+      "default": "Great product! Exactly as described. Fast shipping and excellent quality. Would definitely recommend to others."
+    },
+    {
+      "type": "range",
+      "id": "sample_like_count",
+      "label": "Sample like count",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "sample_dislike_count",
+      "label": "Sample dislike count",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Payment options tab"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_payment_tab",
+      "label": "Enable payment tab",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "payment_tab_label",
+      "label": "Tab label",
+      "default": "Payment Options"
+    },
+    {
+      "type": "richtext",
+      "id": "payment_content",
+      "label": "Content",
+      "default": "<p>We accept all major credit cards, PayPal, and bank transfers. Secure checkout guaranteed.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Return policy tab"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_return_tab",
+      "label": "Enable return tab",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "return_tab_label",
+      "label": "Tab label",
+      "default": "Return Policy"
+    },
+    {
+      "type": "richtext",
+      "id": "return_content",
+      "label": "Content",
+      "default": "<p>30-day return policy. Items must be unused and in original packaging. Free returns on all orders.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Load more"
+    },
+    {
+      "type": "text",
+      "id": "load_more_text",
+      "label": "Button text",
+      "default": "Load More Reviews"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "content_bg",
+      "label": "Content background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1F2937"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#FBBF24"
+    },
+    {
+      "type": "color",
+      "id": "avatar_bg",
+      "label": "Avatar background",
+      "default": "#3B82F6"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product tabs v2"
+    }
+  ]
+}
+{% endschema %}

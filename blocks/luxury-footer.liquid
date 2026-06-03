@@ -1,0 +1,786 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-luxury-footer-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-luxury-footer-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ block.settings.horizontal_padding }}px;
+  }
+
+  .ai-luxury-footer-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-luxury-footer-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.link_spacing }}px;
+  }
+
+  .ai-luxury-footer-heading-{{ ai_gen_id }} {
+    font-family: {{ block.settings.heading_font.family }}, {{ block.settings.heading_font.fallback_families }};
+    font-weight: {{ block.settings.heading_font.weight }};
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    text-transform: uppercase;
+    letter-spacing: {{ block.settings.heading_letter_spacing }}px;
+    margin: 0 0 {{ block.settings.heading_margin_bottom }}px 0;
+  }
+
+  .ai-luxury-footer-link-{{ ai_gen_id }} {
+    font-family: {{ block.settings.link_font.family }}, {{ block.settings.link_font.fallback_families }};
+    font-weight: {{ block.settings.link_font.weight }};
+    font-size: {{ block.settings.link_size }}px;
+    color: {{ block.settings.link_color }};
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    line-height: 1.6;
+  }
+
+  .ai-luxury-footer-link-{{ ai_gen_id }}:hover {
+    opacity: {{ block.settings.link_hover_opacity | divided_by: 100.0 }};
+    {% if block.settings.link_hover_underline %}
+      text-decoration: underline;
+    {% endif %}
+  }
+
+  /* Scoped overrides so a nested `social-links` theme block inherits the
+     luxury-footer's social icon controls (color, size, spacing, hover). */
+  .ai-luxury-footer-social-slot-{{ ai_gen_id }} {
+    color: {{ block.settings.social_icon_color }};
+  }
+
+  .ai-luxury-footer-social-slot-{{ ai_gen_id }} .social-icons__wrapper {
+    gap: {{ block.settings.social_icon_spacing }}px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ai-luxury-footer-social-slot-{{ ai_gen_id }} .social-icons__icon-wrapper {
+    height: {{ block.settings.social_icon_size }}px;
+    width: {{ block.settings.social_icon_size }}px;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-luxury-footer-social-slot-{{ ai_gen_id }} .social-icons__icon-wrapper:hover {
+    opacity: {{ block.settings.social_icon_hover_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-luxury-footer-social-slot-{{ ai_gen_id }} .social-icons__icon {
+    width: {{ block.settings.social_icon_size }}px;
+    height: {{ block.settings.social_icon_size }}px;
+    fill: currentColor;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-luxury-footer-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ block.settings.mobile_column_gap }}px {{ block.settings.column_gap }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-luxury-footer-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_padding_top }}px 0 {{ block.settings.mobile_padding_bottom }}px;
+    }
+
+    .ai-luxury-footer-container-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.mobile_horizontal_padding }}px;
+    }
+
+    .ai-luxury-footer-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_column_gap }}px;
+    }
+
+    .ai-luxury-footer-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_heading_size }}px;
+    }
+
+    .ai-luxury-footer-link-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_link_size }}px;
+    }
+  }
+{% endstyle %}
+
+<luxury-footer-{{ ai_gen_id }} class="ai-luxury-footer-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-luxury-footer-container-{{ ai_gen_id }}">
+    <div class="ai-luxury-footer-grid-{{ ai_gen_id }}">
+
+      <div class="ai-luxury-footer-column-{{ ai_gen_id }}">
+        <h3 class="ai-luxury-footer-heading-{{ ai_gen_id }}">{{ block.settings.column_1_heading }}</h3>
+        {% if block.settings.column_1_link_1_text != blank %}
+          <a href="{{ block.settings.column_1_link_1_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_1_link_1_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_1_link_2_text != blank %}
+          <a href="{{ block.settings.column_1_link_2_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_1_link_2_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_1_link_3_text != blank %}
+          <a href="{{ block.settings.column_1_link_3_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_1_link_3_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_1_link_4_text != blank %}
+          <a href="{{ block.settings.column_1_link_4_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_1_link_4_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_1_link_5_text != blank %}
+          <a href="{{ block.settings.column_1_link_5_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_1_link_5_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="ai-luxury-footer-column-{{ ai_gen_id }}">
+        <h3 class="ai-luxury-footer-heading-{{ ai_gen_id }}">{{ block.settings.column_2_heading }}</h3>
+        {% if block.settings.column_2_link_1_text != blank %}
+          <a href="{{ block.settings.column_2_link_1_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_1_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_2_text != blank %}
+          <a href="{{ block.settings.column_2_link_2_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_2_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_3_text != blank %}
+          <a href="{{ block.settings.column_2_link_3_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_3_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_4_text != blank %}
+          <a href="{{ block.settings.column_2_link_4_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_4_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_5_text != blank %}
+          <a href="{{ block.settings.column_2_link_5_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_5_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_6_text != blank %}
+          <a href="{{ block.settings.column_2_link_6_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_6_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_7_text != blank %}
+          <a href="{{ block.settings.column_2_link_7_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_7_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_2_link_8_text != blank %}
+          <a href="{{ block.settings.column_2_link_8_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_2_link_8_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="ai-luxury-footer-column-{{ ai_gen_id }}">
+        <h3 class="ai-luxury-footer-heading-{{ ai_gen_id }}">{{ block.settings.column_3_heading }}</h3>
+        {% if block.settings.column_3_link_1_text != blank %}
+          <a href="{{ block.settings.column_3_link_1_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_1_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_3_link_2_text != blank %}
+          <a href="{{ block.settings.column_3_link_2_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_2_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_3_link_3_text != blank %}
+          <a href="{{ block.settings.column_3_link_3_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_3_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_3_link_4_text != blank %}
+          <a href="{{ block.settings.column_3_link_4_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_4_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_3_link_5_text != blank %}
+          <a href="{{ block.settings.column_3_link_5_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_5_text }}
+          </a>
+        {% endif %}
+        {% if block.settings.column_3_link_6_text != blank %}
+          <a href="{{ block.settings.column_3_link_6_url }}" class="ai-luxury-footer-link-{{ ai_gen_id }}">
+            {{ block.settings.column_3_link_6_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="ai-luxury-footer-column-{{ ai_gen_id }}">
+        <h3 class="ai-luxury-footer-heading-{{ ai_gen_id }}">{{ block.settings.column_4_heading }}</h3>
+        <div class="ai-luxury-footer-social-slot-{{ ai_gen_id }}">
+          {% content_for 'blocks' %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</luxury-footer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class LuxuryFooter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('luxury-footer-{{ ai_gen_id }}', LuxuryFooter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxury footer",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "social-links"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "Horizontal padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Mobile top padding",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Mobile bottom padding",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_horizontal_padding",
+      "label": "Mobile horizontal padding",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_column_gap",
+      "label": "Mobile column gap",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f5f1"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#2c2c2c"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link",
+      "default": "#5a5a5a"
+    },
+    {
+      "type": "color",
+      "id": "social_icon_color",
+      "label": "Social icon",
+      "default": "#2c2c2c"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_size",
+      "label": "Mobile heading size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Heading letter spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Heading bottom margin",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "font_picker",
+      "id": "link_font",
+      "label": "Link font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "label": "Link size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_link_size",
+      "label": "Mobile link size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "link_spacing",
+      "label": "Link spacing",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Hover effects"
+    },
+    {
+      "type": "range",
+      "id": "link_hover_opacity",
+      "label": "Link hover opacity",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "checkbox",
+      "id": "link_hover_underline",
+      "label": "Link hover underline",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "social_icon_hover_opacity",
+      "label": "Social icon hover opacity",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Social icons",
+      "info": "Add a `Social media links` block to column 4 to render the icons. Manage URLs (Instagram, Pinterest, YouTube, Facebook, TikTok, X, etc.) inside that nested block."
+    },
+    {
+      "type": "range",
+      "id": "social_icon_size",
+      "label": "Icon size",
+      "min": 18,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "social_icon_spacing",
+      "label": "Icon spacing",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "text",
+      "id": "column_1_heading",
+      "label": "Heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_1_text",
+      "label": "Link 1 text",
+      "default": "Email"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link_1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_2_text",
+      "label": "Link 2 text",
+      "default": "Live Chat"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link_2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_3_text",
+      "label": "Link 3 text",
+      "default": "Store Locations"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link_3_url",
+      "label": "Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_4_text",
+      "label": "Link 4 text"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link_4_url",
+      "label": "Link 4 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_5_text",
+      "label": "Link 5 text"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link_5_url",
+      "label": "Link 5 URL"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "text",
+      "id": "column_2_heading",
+      "label": "Heading",
+      "default": "Help"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_1_text",
+      "label": "Link 1 text",
+      "default": "Returns"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_2_text",
+      "label": "Link 2 text",
+      "default": "Track Order & Return"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_3_text",
+      "label": "Link 3 text",
+      "default": "Ordering & Payment"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_3_url",
+      "label": "Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_4_text",
+      "label": "Link 4 text",
+      "default": "Delivery"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_4_url",
+      "label": "Link 4 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_5_text",
+      "label": "Link 5 text",
+      "default": "Size Guides"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_5_url",
+      "label": "Link 5 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_6_text",
+      "label": "Link 6 text",
+      "default": "Terms of Sale"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_6_url",
+      "label": "Link 6 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_7_text",
+      "label": "Link 7 text",
+      "default": "Gift Cards"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_7_url",
+      "label": "Link 7 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_8_text",
+      "label": "Link 8 text",
+      "default": "Cookie Settings"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link_8_url",
+      "label": "Link 8 URL"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "text",
+      "id": "column_3_heading",
+      "label": "Heading",
+      "default": "About Us"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_1_text",
+      "label": "Link 1 text",
+      "default": "Our Story"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_2_text",
+      "label": "Link 2 text",
+      "default": "Careers"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_3_text",
+      "label": "Link 3 text",
+      "default": "Investors"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_3_url",
+      "label": "Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_4_text",
+      "label": "Link 4 text",
+      "default": "Fabric & Technology"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_4_url",
+      "label": "Link 4 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_5_text",
+      "label": "Link 5 text",
+      "default": "Privacy Policy"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_5_url",
+      "label": "Link 5 URL"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_6_text",
+      "label": "Link 6 text",
+      "default": "Sitemap"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link_6_url",
+      "label": "Link 6 URL"
+    },
+    {
+      "type": "header",
+      "content": "Column 4"
+    },
+    {
+      "type": "text",
+      "id": "column_4_heading",
+      "label": "Heading",
+      "default": "Connect With Us"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury footer",
+      "category": "t:categories.footer",
+      "blocks": {
+        "social-links": {
+          "type": "social-links"
+        }
+      },
+      "block_order": ["social-links"]
+    }
+  ]
+}
+{% endschema %}

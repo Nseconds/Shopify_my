@@ -1,0 +1,124 @@
+{% comment %}
+  Emits translated strings for the <forge-reviews> web component.
+  Render INSIDE the <forge-reviews> tag so the component can read it
+  with this.querySelector('script.forge-reviews__i18n') on connect.
+
+  Resolution order for each string:
+    1. Merchant override stored in shop metafield `forge_reviews.widget_i18n`
+       under the current locale (or its base locale, e.g. "en" for "en-CA").
+    2. Theme/extension locale file (`reviews.* | t`).
+{% endcomment %}
+{%- liquid
+  assign forge_reviews_count_placeholder = '{{ count }}'
+  assign forge_reviews_page_placeholder = '{{ page }}'
+
+  assign forge_reviews_i18n_all = shop.metafields.forge_reviews.widget_i18n.value
+  assign forge_reviews_current_locale = request.locale.iso_code
+  assign forge_reviews_overrides = forge_reviews_i18n_all[forge_reviews_current_locale]
+  if forge_reviews_overrides == blank
+    assign forge_reviews_base_locale = forge_reviews_current_locale | split: '-' | first
+    assign forge_reviews_overrides = forge_reviews_i18n_all[forge_reviews_base_locale]
+  endif
+
+  assign d_add_review = 'reviews.add_a_review' | t
+  assign d_dialog_title = 'reviews.dialog_title' | t
+  assign d_name_label = 'reviews.form_name_label' | t
+  assign d_name_ph = 'reviews.form_name_placeholder' | t
+  assign d_email_label = 'reviews.form_email_label_short' | t
+  assign d_email_ph = 'reviews.form_email_placeholder' | t
+  assign d_feedback_label = 'reviews.form_feedback_label' | t
+  assign d_feedback_ph = 'reviews.form_feedback_placeholder' | t
+  assign d_min_chars = 'reviews.form_min_chars_hint' | t
+  assign d_photos_hint = 'reviews.form_photos_hint' | t
+  assign d_photos_selected = 'reviews.form_photos_selected' | t
+  assign d_cancel = 'reviews.form_cancel' | t
+  assign d_submit = 'reviews.form_submit_short' | t
+  assign d_thanks = 'reviews.submit_thanks' | t
+  assign d_generic_error = 'reviews.form_generic_error' | t
+  assign d_rating_label = 'reviews.form_rating_label' | t
+  assign d_pag_nav = 'reviews.pagination_nav_label' | t
+  assign d_pag_prev = 'reviews.pagination_previous' | t
+  assign d_pag_next = 'reviews.pagination_next' | t
+  assign d_summary_heading = 'reviews.summary_heading' | t
+  assign d_pros = 'reviews.pros_heading' | t
+  assign d_cons = 'reviews.cons_heading' | t
+  assign d_ai_badge = 'reviews.summary_ai_badge' | t
+  assign d_rating_poor = 'reviews.rating_poor' | t
+  assign d_rating_fair = 'reviews.rating_fair' | t
+  assign d_rating_good = 'reviews.rating_good' | t
+  assign d_rating_very_good = 'reviews.rating_very_good' | t
+  assign d_rating_excellent = 'reviews.rating_excellent' | t
+  assign d_err_email = 'reviews.submit_error_email_invalid' | t
+  assign d_err_body_short = 'reviews.submit_error_body_too_short' | t
+  assign d_err_body_long = 'reviews.submit_error_body_too_long' | t
+  assign d_err_rating = 'reviews.submit_error_invalid_rating' | t
+  assign d_err_input = 'reviews.submit_error_invalid_input' | t
+  assign d_err_shop = 'reviews.submit_error_invalid_shop' | t
+  assign d_err_product = 'reviews.submit_error_invalid_product' | t
+  assign d_err_too_many = 'reviews.submit_error_too_many_photos' | t
+  assign d_err_photo_type = 'reviews.submit_error_photo_invalid_type' | t
+  assign d_err_photo_size = 'reviews.submit_error_photo_too_large' | t
+
+  # Stars aria label: source uses {{ rating }}, JS expects {{ count }}.
+  assign forge_reviews_stars_override = forge_reviews_overrides.rating_n_of_5
+  if forge_reviews_stars_override != blank
+    assign forge_reviews_stars_aria = forge_reviews_stars_override | replace: '{{ rating }}', forge_reviews_count_placeholder
+  else
+    assign forge_reviews_stars_aria = 'reviews.rating_n_of_5' | t: rating: forge_reviews_count_placeholder
+  endif
+
+  assign forge_reviews_pag_goto_override = forge_reviews_overrides.pagination_goto_page
+  if forge_reviews_pag_goto_override != blank
+    assign forge_reviews_pag_goto = forge_reviews_pag_goto_override
+  else
+    assign forge_reviews_pag_goto = 'reviews.pagination_goto_page' | t: page: forge_reviews_page_placeholder
+  endif
+-%}
+<script type="application/json" class="forge-reviews__i18n">
+{
+  "addReview": {{ forge_reviews_overrides.add_a_review | default: d_add_review | json }},
+  "dialogTitle": {{ forge_reviews_overrides.dialog_title | default: d_dialog_title | json }},
+  "nameLabel": {{ forge_reviews_overrides.form_name_label | default: d_name_label | json }},
+  "namePlaceholder": {{ forge_reviews_overrides.form_name_placeholder | default: d_name_ph | json }},
+  "emailLabel": {{ forge_reviews_overrides.form_email_label_short | default: d_email_label | json }},
+  "emailPlaceholder": {{ forge_reviews_overrides.form_email_placeholder | default: d_email_ph | json }},
+  "feedbackLabel": {{ forge_reviews_overrides.form_feedback_label | default: d_feedback_label | json }},
+  "feedbackPlaceholder": {{ forge_reviews_overrides.form_feedback_placeholder | default: d_feedback_ph | json }},
+  "minCharsHint": {{ forge_reviews_overrides.form_min_chars_hint | default: d_min_chars | json }},
+  "photosHint": {{ forge_reviews_overrides.form_photos_hint | default: d_photos_hint | json }},
+  "photosSelected": {{ forge_reviews_overrides.form_photos_selected | default: d_photos_selected | json }},
+  "cancel": {{ forge_reviews_overrides.form_cancel | default: d_cancel | json }},
+  "submit": {{ forge_reviews_overrides.form_submit_short | default: d_submit | json }},
+  "submitThanks": {{ forge_reviews_overrides.submit_thanks | default: d_thanks | json }},
+  "genericError": {{ forge_reviews_overrides.form_generic_error | default: d_generic_error | json }},
+  "yourRatingLabel": {{ forge_reviews_overrides.form_rating_label | default: d_rating_label | json }},
+  "starsAriaLabel": {{ forge_reviews_stars_aria | json }},
+  "paginationNavLabel": {{ forge_reviews_overrides.pagination_nav_label | default: d_pag_nav | json }},
+  "paginationPrevious": {{ forge_reviews_overrides.pagination_previous | default: d_pag_prev | json }},
+  "paginationNext": {{ forge_reviews_overrides.pagination_next | default: d_pag_next | json }},
+  "paginationGotoPage": {{ forge_reviews_pag_goto | json }},
+  "summaryHeading": {{ forge_reviews_overrides.summary_heading | default: d_summary_heading | json }},
+  "summaryProsHeading": {{ forge_reviews_overrides.pros_heading | default: d_pros | json }},
+  "summaryConsHeading": {{ forge_reviews_overrides.cons_heading | default: d_cons | json }},
+  "summaryAiBadge": {{ forge_reviews_overrides.summary_ai_badge | default: d_ai_badge | json }},
+  "ratingLabels": {
+    "1": {{ forge_reviews_overrides.rating_poor | default: d_rating_poor | json }},
+    "2": {{ forge_reviews_overrides.rating_fair | default: d_rating_fair | json }},
+    "3": {{ forge_reviews_overrides.rating_good | default: d_rating_good | json }},
+    "4": {{ forge_reviews_overrides.rating_very_good | default: d_rating_very_good | json }},
+    "5": {{ forge_reviews_overrides.rating_excellent | default: d_rating_excellent | json }}
+  },
+  "submitErrors": {
+    "email_invalid": {{ forge_reviews_overrides.submit_error_email_invalid | default: d_err_email | json }},
+    "body_too_short": {{ forge_reviews_overrides.submit_error_body_too_short | default: d_err_body_short | json }},
+    "body_too_long": {{ forge_reviews_overrides.submit_error_body_too_long | default: d_err_body_long | json }},
+    "invalid_rating": {{ forge_reviews_overrides.submit_error_invalid_rating | default: d_err_rating | json }},
+    "invalid_input": {{ forge_reviews_overrides.submit_error_invalid_input | default: d_err_input | json }},
+    "invalid_shop": {{ forge_reviews_overrides.submit_error_invalid_shop | default: d_err_shop | json }},
+    "invalid_product": {{ forge_reviews_overrides.submit_error_invalid_product | default: d_err_product | json }},
+    "too_many_photos": {{ forge_reviews_overrides.submit_error_too_many_photos | default: d_err_too_many | json }},
+    "photo_invalid_type": {{ forge_reviews_overrides.submit_error_photo_invalid_type | default: d_err_photo_type | json }},
+    "photo_too_large": {{ forge_reviews_overrides.submit_error_photo_too_large | default: d_err_photo_size | json }}
+  }
+}
+</script>

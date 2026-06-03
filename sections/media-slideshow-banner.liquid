@@ -1,0 +1,858 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c    = section.settings.background_color -%}
+  {%- assign title_c = section.settings.heading_color -%}
+  {%- assign text_c  = section.settings.text_color -%}
+  {%- assign btn_bg  = section.settings.button_background -%}
+  {%- assign btn_txt = section.settings.button_text_color -%}
+  {%- assign btn_hov = section.settings.button_hover_background -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c    = 'var(--color-background)' -%}
+  {%- assign title_c = 'var(--color-foreground)' -%}
+  {%- assign text_c  = 'var(--color-foreground)' -%}
+  {%- assign btn_bg  = 'var(--color-primary-button-background)' -%}
+  {%- assign btn_txt = 'var(--color-primary-button-text)' -%}
+  {%- assign btn_hov = 'var(--color-primary-hover)' -%}
+{%- else -%}
+  {%- assign bg_c    = section.settings.color_scheme.settings.background -%}
+  {%- assign title_c = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+  {%- assign btn_bg  = section.settings.color_scheme.settings.primary_button_background -%}
+  {%- assign btn_txt = section.settings.color_scheme.settings.primary_button_text -%}
+  {%- assign btn_hov = btn_bg | color_darken: 10 -%}
+{%- endif -%}
+
+{% style %}
+  .ai-media-slideshow-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    overflow: hidden;
+    background: {{ bg_c }};
+  }
+
+  .ai-media-slideshow-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: {{ section.settings.padding }}px;
+  }
+
+  .ai-media-slideshow-media-wrapper-{{ ai_gen_id }} {
+    flex: {{ section.settings.media_flex_ratio }};
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-media-slideshow-slides-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ section.settings.aspect_ratio }};
+  }
+
+  .ai-media-slideshow-slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+    pointer-events: none;
+  }
+
+  .ai-media-slideshow-slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ai-media-slideshow-slide-{{ ai_gen_id }} img,
+  .ai-media-slideshow-slide-{{ ai_gen_id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-media-slideshow-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-media-slideshow-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-media-slideshow-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-media-slideshow-content-{{ ai_gen_id }} {
+    flex: {{ section.settings.content_flex_ratio }};
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-media-slideshow-heading-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ title_c }};
+    font-size: {{ section.settings.heading_size }}px;
+    font-family: var(--font-heading--family);
+    line-height: 1.2;
+  }
+
+  .ai-media-slideshow-text-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ text_c }};
+    font-size: {{ section.settings.text_size }}px;
+    font-family: var(--font-body--family);
+    line-height: 1.5;
+  }
+
+  .ai-media-slideshow-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    background: {{ btn_bg }};
+    color: {{ btn_txt }};
+    text-decoration: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ section.settings.button_text_size }}px;
+    font-family: var(--font-body--family);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+
+  .ai-media-slideshow-button-{{ ai_gen_id }}:hover {
+    background: {{ btn_hov }};
+    color: {{ btn_txt }};
+  }
+
+  .ai-media-slideshow-controls-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .ai-media-slideshow-control-btn-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: {{ section.settings.control_background }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: {{ section.settings.control_icon_color }};
+  }
+
+  .ai-media-slideshow-control-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.control_hover_background }};
+    transform: scale(1.1);
+  }
+
+  .ai-media-slideshow-control-btn-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-media-slideshow-indicators-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .ai-media-slideshow-indicator-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: {{ section.settings.indicator_color }};
+    opacity: 0.5;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+  }
+
+  .ai-media-slideshow-indicator-{{ ai_gen_id }}.active {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-media-slideshow-container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 24px;
+      padding: {{ section.settings.padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-media-slideshow-media-wrapper-{{ ai_gen_id }} {
+      flex: 0 0 auto;
+      width: 100%;
+      min-width: 0;
+      order: 0;
+    }
+
+    .ai-media-slideshow-slides-{{ ai_gen_id }} {
+      width: 100%;
+      min-height: 180px;
+    }
+
+    .ai-media-slideshow-content-{{ ai_gen_id }} {
+      text-align: center;
+      order: 1;
+    }
+
+    .ai-media-slideshow-button-{{ ai_gen_id }} {
+      align-self: center;
+    }
+
+    .ai-media-slideshow-heading-{{ ai_gen_id }} {
+      font-size: calc({{ section.settings.heading_size }}px * 0.8);
+    }
+
+    .ai-media-slideshow-text-{{ ai_gen_id }} {
+      font-size: calc({{ section.settings.text_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<media-slideshow-banner class="ai-media-slideshow-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.autoplay_interval }}" {{ section.shopify_attributes }}>
+  <div class="ai-media-slideshow-container-{{ ai_gen_id }}">
+    <div class="ai-media-slideshow-media-wrapper-{{ ai_gen_id }}">
+      <div class="ai-media-slideshow-slides-{{ ai_gen_id }}">
+        {% liquid
+          assign has_media = false
+          for i in (1..8)
+            assign image_key = 'slide_' | append: i | append: '_image'
+            assign video_key = 'slide_' | append: i | append: '_video'
+            assign image = section.settings[image_key]
+            assign video = section.settings[video_key]
+            
+            if image != blank or video != blank
+              assign has_media = true
+            endif
+          endfor
+        %}
+
+        {% if has_media %}
+          {% for i in (1..8) %}
+            {% liquid
+              assign image_key = 'slide_' | append: i | append: '_image'
+              assign video_key = 'slide_' | append: i | append: '_video'
+              assign image = section.settings[image_key]
+              assign video = section.settings[video_key]
+            %}
+
+            <div data-forge-slot-id="slide_{{ i }}_image"{% if image == blank %} data-forge-slot-blank="true"{% endif %} style="display:contents">
+            {% if video != blank %}
+              <div class="ai-media-slideshow-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index }}">
+                {{
+                  video
+                  | video_tag:
+                    image_size: '1080x',
+                    autoplay: true,
+                    loop: true,
+                    muted: true,
+                    controls: false
+                }}
+              </div>
+            {% elsif image != blank %}
+              <div class="ai-media-slideshow-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index }}">
+                <img
+                  src="{{ image | image_url: width: 1500 }}"
+                  alt="{{ image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ image.width }}"
+                  height="{{ image.height }}"
+                >
+              </div>
+            {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="ai-media-slideshow-slide-{{ ai_gen_id }} active">
+            <div class="ai-media-slideshow-placeholder-{{ ai_gen_id }}">
+              {{ 'hero-apparel-1' | placeholder_svg_tag }}
+              <div class="ai-media-slideshow-empty-state-{{ ai_gen_id }}">
+                Next, add images or videos to your slideshow
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if has_media %}
+        <div class="ai-media-slideshow-controls-{{ ai_gen_id }}">
+          <button
+            class="ai-media-slideshow-control-btn-{{ ai_gen_id }} ai-media-slideshow-prev-{{ ai_gen_id }}"
+            aria-label="Previous slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button
+            class="ai-media-slideshow-control-btn-{{ ai_gen_id }} ai-media-slideshow-next-{{ ai_gen_id }}"
+            aria-label="Next slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="ai-media-slideshow-indicators-{{ ai_gen_id }}">
+          {% for i in (1..8) %}
+            {% liquid
+              assign image_key = 'slide_' | append: i | append: '_image'
+              assign video_key = 'slide_' | append: i | append: '_video'
+              assign image = section.settings[image_key]
+              assign video = section.settings[video_key]
+            %}
+            {% if image != blank or video != blank %}
+              <button
+                class="ai-media-slideshow-indicator-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                data-slide="{{ forloop.index }}"
+                aria-label="Go to slide {{ forloop.index }}"
+              ></button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-media-slideshow-content-{{ ai_gen_id }}">
+      {% if section.settings.heading != blank %}
+        <h2 class="ai-media-slideshow-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="ai-media-slideshow-text-{{ ai_gen_id }}">{{ section.settings.text }}</div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a
+          href="{{ section.settings.button_link }}"
+          class="ai-media-slideshow-button-{{ ai_gen_id }}"
+        >
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</media-slideshow-banner>
+
+<script>
+  (function() {
+    if (customElements.get('media-slideshow-banner')) return;
+
+    class MediaSlideshowBanner extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 1;
+        this.autoplayInterval = null;
+      }
+
+      connectedCallback() {
+        this.slides = this.querySelectorAll('[class*="ai-media-slideshow-slide-"]');
+        this.indicators = this.querySelectorAll('[class*="ai-media-slideshow-indicator-"]');
+        this.prevBtn = this.querySelector('[class*="ai-media-slideshow-prev-"]');
+        this.nextBtn = this.querySelector('[class*="ai-media-slideshow-next-"]');
+        this.autoplay = this.dataset.autoplay === 'true';
+        this.interval = parseInt(this.dataset.interval || '5', 10) * 1000;
+
+        this.totalSlides = this.slides.length;
+
+        if (this.totalSlides > 1) {
+          this.setupEventListeners();
+          if (this.autoplay) {
+            this.startAutoplay();
+          }
+        }
+      }
+
+      setupEventListeners() {
+        if (this.prevBtn) {
+          this.prevBtn.addEventListener('click', () => {
+            this.goToSlide(this.currentSlide - 1);
+            this.resetAutoplay();
+          });
+        }
+
+        if (this.nextBtn) {
+          this.nextBtn.addEventListener('click', () => {
+            this.goToSlide(this.currentSlide + 1);
+            this.resetAutoplay();
+          });
+        }
+
+        this.indicators.forEach((indicator) => {
+          indicator.addEventListener('click', (e) => {
+            const slideNum = parseInt(e.target.dataset.slide, 10);
+            this.goToSlide(slideNum);
+            this.resetAutoplay();
+          });
+        });
+      }
+
+      goToSlide(slideNum) {
+        if (slideNum > this.totalSlides) {
+          slideNum = 1;
+        } else if (slideNum < 1) {
+          slideNum = this.totalSlides;
+        }
+
+        this.slides.forEach((slide) => {
+          slide.classList.remove('active');
+        });
+
+        this.indicators.forEach((indicator) => {
+          indicator.classList.remove('active');
+        });
+
+        const targetSlide = this.slides[slideNum - 1];
+        const targetIndicator = this.indicators[slideNum - 1];
+
+        if (targetSlide) {
+          targetSlide.classList.add('active');
+        }
+
+        if (targetIndicator) {
+          targetIndicator.classList.add('active');
+        }
+
+        this.currentSlide = slideNum;
+      }
+
+      startAutoplay() {
+        this.autoplayInterval = setInterval(() => {
+          this.goToSlide(this.currentSlide + 1);
+        }, this.interval);
+      }
+
+      stopAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      resetAutoplay() {
+        if (this.autoplay) {
+          this.stopAutoplay();
+          this.startAutoplay();
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+      }
+    }
+
+    customElements.define('media-slideshow-banner', MediaSlideshowBanner);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Media slideshow banner",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FDFDFD"
+    },
+    {
+      "type": "header",
+      "content": "Proportions"
+    },
+    {
+      "type": "range",
+      "id": "media_flex_ratio",
+      "label": "Media width ratio",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "content_flex_ratio",
+      "label": "Content width ratio",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Media settings"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "21/9",
+          "label": "21:9 (Ultra wide)"
+        },
+        {
+          "value": "16/9",
+          "label": "16:9 (Wide)"
+        },
+        {
+          "value": "4/3",
+          "label": "4:3 (Standard)"
+        },
+        {
+          "value": "1/1",
+          "label": "1:1 (Square)"
+        },
+        {
+          "value": "3/4",
+          "label": "3:4 (Portrait)"
+        },
+        {
+          "value": "9/16",
+          "label": "9:16 (Tall)"
+        }
+      ],
+      "default": "16/9"
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_1_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_2_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_3_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_4_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_5_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_6_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_7_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Slide 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "slide_8_video",
+      "label": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Content on right"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Discover our collection</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#141414"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Explore our latest products and find something special for you.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2C2C2C"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Button text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#2B3A42"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#253138"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button hover text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Slideshow controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "label": "Autoplay interval",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "color",
+      "id": "control_background",
+      "label": "Control background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "control_hover_background",
+      "label": "Control hover background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "control_icon_color",
+      "label": "Control icon color",
+      "default": "#2B3A42"
+    },
+    {
+      "type": "color",
+      "id": "indicator_color",
+      "label": "Indicator color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Media slideshow banner"
+    }
+  ]
+}
+{% endschema %}

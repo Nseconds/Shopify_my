@@ -1,0 +1,784 @@
+forge-reviews {
+  display: block;
+}
+
+.forge-reviews__stars,
+.forge-reviews__aggregate {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* Optional rich-text snippet (mode="stars" only). Sits to the right of the
+   count. Shopify's richtext filter wraps content in <p>; we collapse the
+   paragraph to inline so it flows naturally within the flex row. */
+.forge-reviews__stars-inline {
+  margin-inline-start: 0.4rem;
+  font-size: 0.95em;
+}
+
+.forge-reviews__stars-inline p {
+  display: inline;
+  margin: 0;
+}
+
+.forge-reviews__stars-inline a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.forge-reviews__box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.forge-reviews__box--align-center .forge-reviews__box-header {
+  justify-content: center;
+}
+
+.forge-reviews__box--align-center .forge-reviews__empty {
+  text-align: center;
+}
+
+.forge-reviews__box--align-right .forge-reviews__box-header {
+  justify-content: flex-end;
+}
+
+.forge-reviews__box--align-right .forge-reviews__empty {
+  text-align: right;
+}
+
+.forge-reviews__aggregate {
+  font-size: 1.1rem;
+}
+
+.forge-reviews__aggregate-score {
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.forge-reviews__aggregate-count {
+  color: color-mix(in srgb, currentColor 60%, transparent);
+}
+
+/* Works even when theme forge-reviews.js registered before extension JS. */
+forge-reviews[data-show-count="0"] .forge-reviews__aggregate-count {
+  display: none;
+}
+
+.forge-reviews__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border: 1px solid #111;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.forge-reviews__add-btn:hover,
+.forge-reviews__add-btn:focus-visible {
+  background: #2d2f31;
+  border-color: #2d2f31;
+}
+
+.forge-reviews__add-btn span {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.forge-reviews__item {
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  padding: 1rem 0;
+}
+
+.forge-reviews__empty {
+  color: color-mix(in srgb, currentColor 60%, transparent);
+  padding: 1rem 0;
+}
+
+/* Review photos */
+.forge-reviews__photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.forge-reviews__photo {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  background: transparent;
+  padding: 0;
+  border-radius: 8px;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.forge-reviews__photo:hover,
+.forge-reviews__photo:focus-visible {
+  transform: scale(1.03);
+  box-shadow: 0 2px 8px color-mix(in srgb, currentColor 18%, transparent);
+  outline: none;
+}
+
+.forge-reviews__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Photo lightbox dialog */
+.forge-reviews__photo-dialog {
+  max-width: min(96vw, 1200px);
+  max-height: 96vh;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+}
+
+.forge-reviews__photo-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.forge-reviews__photo-img {
+  display: block;
+  max-width: min(96vw, 1200px);
+  max-height: 96vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  background: #000;
+}
+
+.forge-reviews__photo-close,
+.forge-reviews__photo-nav {
+  position: absolute;
+  appearance: none;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forge-reviews__photo-close:hover,
+.forge-reviews__photo-nav:hover,
+.forge-reviews__photo-close:focus-visible,
+.forge-reviews__photo-nav:focus-visible {
+  background: rgba(0, 0, 0, 0.8);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.forge-reviews__photo-close {
+  top: 8px;
+  right: 8px;
+  font-size: 1.75rem;
+}
+
+.forge-reviews__photo-nav--prev {
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  font-size: 1.75rem;
+}
+
+.forge-reviews__photo-nav--next {
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  font-size: 1.75rem;
+}
+
+.forge-reviews__photo-nav[hidden] {
+  display: none;
+}
+
+/* AI Summary */
+.forge-reviews__summary {
+  --forge-reviews-summary-accent: var(--forge-stars-color, #f5a623);
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.forge-reviews__summary--card {
+  padding: 1.5rem 1.75rem;
+  background: color-mix(in srgb, var(--forge-reviews-summary-accent) 6%, #fff);
+  border: 1px solid color-mix(in srgb, var(--forge-reviews-summary-accent) 18%, transparent);
+  border-radius: 12px;
+}
+
+.forge-reviews__summary--align-center {
+  text-align: center;
+}
+
+.forge-reviews__summary--align-right {
+  text-align: right;
+}
+
+.forge-reviews__summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--forge-reviews-summary-accent);
+  background: color-mix(in srgb, var(--forge-reviews-summary-accent) 12%, transparent);
+  border-radius: 999px;
+}
+
+.forge-reviews__summary-badge-icon {
+  flex-shrink: 0;
+}
+
+.forge-reviews__summary-heading {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: inherit;
+}
+
+.forge-reviews__summary-heading--small {
+  font-size: 1rem;
+}
+
+.forge-reviews__summary-heading--medium {
+  font-size: 1.25rem;
+}
+
+.forge-reviews__summary-heading--large {
+  font-size: 1.625rem;
+}
+
+.forge-reviews__summary-text {
+  margin: 0 0 1.25rem;
+}
+
+.forge-reviews__summary-text:last-child {
+  margin-bottom: 0;
+}
+
+.forge-reviews__summary-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.forge-reviews__summary--side-by-side .forge-reviews__summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.forge-reviews__summary--stacked .forge-reviews__summary-grid {
+  grid-template-columns: 1fr;
+}
+
+.forge-reviews__summary-list-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.forge-reviews__summary-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.forge-reviews__summary-list li {
+  position: relative;
+  padding: 0.2rem 0 0.2rem 1.3rem;
+  font-size: 0.95rem;
+}
+
+.forge-reviews__summary--align-center .forge-reviews__summary-list,
+.forge-reviews__summary--align-right .forge-reviews__summary-list {
+  text-align: left;
+}
+
+.forge-reviews__summary-list--pros li::before,
+.forge-reviews__summary-list--cons li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.forge-reviews__summary-list--pros li::before {
+  background: color-mix(in srgb, var(--forge-reviews-summary-accent) 80%, #16a34a);
+}
+
+.forge-reviews__summary-list--cons li::before {
+  background: color-mix(in srgb, currentColor 30%, transparent);
+}
+
+@media (max-width: 520px) {
+  .forge-reviews__summary--card {
+    padding: 1.25rem 1.1rem;
+  }
+
+  .forge-reviews__summary--side-by-side .forge-reviews__summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pagination */
+.forge-reviews__list[aria-busy="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.forge-reviews__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  flex-wrap: wrap;
+}
+
+.forge-reviews__pagination[hidden] {
+  display: none;
+}
+
+.forge-reviews__pagination-pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.forge-reviews__pagination-arrow,
+.forge-reviews__pagination-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.65rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.forge-reviews__pagination-arrow:hover:not([disabled]),
+.forge-reviews__pagination-page:hover:not(.is-current) {
+  background: color-mix(in srgb, currentColor 6%, transparent);
+  border-color: color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.forge-reviews__pagination-arrow:focus-visible,
+.forge-reviews__pagination-page:focus-visible {
+  outline: 2px solid var(--forge-stars-color, #f5a623);
+  outline-offset: 2px;
+}
+
+.forge-reviews__pagination-arrow[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.forge-reviews__pagination-page.is-current {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  cursor: default;
+}
+
+.forge-reviews__pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  color: color-mix(in srgb, currentColor 50%, transparent);
+}
+
+/* Dialog */
+.forge-reviews__dialog {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  width: min(960px, calc(100vw - 2rem));
+  max-width: 960px;
+  background: #fff;
+  color: inherit;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+}
+
+.forge-reviews__dialog::backdrop {
+  background: rgba(15, 18, 22, 0.45);
+}
+
+.forge-reviews__dialog-inner {
+  padding: 1.5rem 1.75rem;
+}
+
+.forge-reviews__form-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* Form layout */
+.forge-reviews__form {
+  display: block;
+}
+
+/* Inline submit-form width variants (mode="form"). The dialog form ignores
+   these caps because it's rendered inside the box, not directly on the host. */
+forge-reviews[class*="forge-reviews--form-width-"] {
+  display: block;
+  padding-block: 2.5rem;
+}
+
+forge-reviews.forge-reviews--form-width-narrow > form.forge-reviews__form {
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+forge-reviews.forge-reviews--form-width-medium > form.forge-reviews__form {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+/* Wide breaks out of the parent section's width constraint. App blocks are
+   embedded inside a theme section whose container is often capped at ~720-
+   960px, which would otherwise make "wide" look identical to "medium". We
+   use the standard full-bleed pattern (left: 50% + negative viewport margin)
+   to escape the parent, capped at 1100px so the form never goes edge-to-edge
+   on ultrawide displays. */
+forge-reviews.forge-reviews--form-width-wide {
+  width: min(100vw, 1100px);
+  position: relative;
+  left: 50%;
+  margin-left: calc(-1 * min(50vw, 550px));
+}
+
+forge-reviews.forge-reviews--form-width-wide > form.forge-reviews__form {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+.forge-reviews__form-grid {
+  display: grid;
+  grid-template-columns: minmax(140px, 180px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.forge-reviews__form-product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.forge-reviews__form-product-image {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+
+.forge-reviews__rating-picker {
+  display: inline-flex;
+  gap: 0.15rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.forge-reviews__rating-star {
+  background: none;
+  border: none;
+  padding: 0.1rem;
+  cursor: pointer;
+  color: #d1d5db;
+  font-size: inherit;
+  line-height: 1;
+  transition: color 0.1s ease;
+}
+
+.forge-reviews__rating-star:focus-visible {
+  outline: 2px solid var(--forge-stars-color, #f5a623);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.forge-reviews__rating-star.is-filled {
+  color: var(--forge-stars-color, #f5a623);
+}
+
+.forge-reviews__rating-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.forge-reviews__form-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1rem;
+}
+
+.forge-reviews__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.forge-reviews__field--full {
+  grid-column: 1 / -1;
+}
+
+.forge-reviews__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.forge-reviews__label em {
+  color: #dc2626;
+  font-style: normal;
+  margin-left: 0.15rem;
+}
+
+.forge-reviews__form input[type="text"],
+.forge-reviews__form input[type="email"],
+.forge-reviews__form input:not([type]),
+.forge-reviews__form textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.forge-reviews__form input:focus,
+.forge-reviews__form textarea:focus {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.forge-reviews__form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.forge-reviews__hint {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  text-align: center;
+  color: #1f2937;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+}
+
+.forge-reviews__dropzone {
+  position: relative;
+  display: block;
+  padding: 1.25rem;
+  text-align: center;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.forge-reviews__dropzone:hover {
+  border-color: #9ca3af;
+  background: #fafafa;
+}
+
+.forge-reviews__dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.forge-reviews__dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.forge-reviews__dropzone-icon {
+  color: #6b7280;
+}
+
+.forge-reviews__dropzone-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.forge-reviews__message {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+}
+
+.forge-reviews__message[data-tone="success"] {
+  color: #047857;
+}
+
+.forge-reviews__message[data-tone="error"] {
+  color: #b91c1c;
+}
+
+.forge-reviews__form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.forge-reviews__btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.forge-reviews__btn--ghost {
+  background: #fff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.forge-reviews__btn--ghost:hover,
+.forge-reviews__btn--ghost:focus-visible {
+  background: #f3f4f6;
+}
+
+.forge-reviews__btn--primary {
+  background: #111827;
+  color: #fff;
+  border: 1px solid #111827;
+}
+
+.forge-reviews__btn--primary:hover,
+.forge-reviews__btn--primary:focus-visible {
+  background: #2d2f31;
+}
+
+.forge-reviews__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Inline (non-dialog) form sits flush in the page */
+.forge-reviews__form:not(.forge-reviews__form--dialog) {
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.forge-reviews__sample-badge {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a5a00;
+  background: #fff3cd;
+  border: 1px dashed #d4a72c;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .forge-reviews__dialog-inner {
+    padding: 1.25rem 1rem;
+  }
+
+  .forge-reviews__form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forge-reviews__form-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .forge-reviews__form-product {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .forge-reviews__form-product-image {
+    max-width: 80px;
+  }
+
+  .forge-reviews__form-footer {
+    flex-direction: column-reverse;
+  }
+
+  .forge-reviews__btn {
+    width: 100%;
+  }
+}

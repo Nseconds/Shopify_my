@@ -1,0 +1,336 @@
+
+{% assign ai_gen_id = section.id | replace: '_', '-' | downcase %}
+{% assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_text   = section.settings.headline_color
+    assign sc_muted  = section.settings.overline_color
+    assign sc_accent = section.settings.accent_color
+    assign sc_bg     = 'none'
+  else
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_muted  = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+    assign sc_bg     = 'none'
+  endif
+-%}
+{% style %}
+  .ai-editorial-headline-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ section.settings.section_padding_top }}px 20px {{ section.settings.section_padding_bottom }}px;
+    text-align: center;
+    {% if sc_bg != 'none' %}background: {{ sc_bg }};{% endif %}
+  }
+
+  .ai-editorial-headline__overline-{{ ai_gen_id }} {
+    font-size: {{ section.settings.overline_size }}px;
+    letter-spacing: {{ section.settings.overline_letter_spacing }}px;
+    text-transform: uppercase;
+    color: {{ sc_muted }};
+    margin: 0 0 {{ section.settings.overline_spacing }}px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .ai-editorial-headline__title-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family, inherit);
+    font-size: {{ section.settings.headline_size }}px;
+    line-height: {{ section.settings.headline_line_height }};
+    letter-spacing: {{ section.settings.headline_letter_spacing }}px;
+    color: {{ sc_text }};
+    margin: 0;
+    font-weight: {{ section.settings.headline_weight }};
+    {% if section.settings.headline_transform == 'uppercase' %}
+      text-transform: uppercase;
+    {% endif %}
+  }
+
+  .ai-editorial-headline__accent-{{ ai_gen_id }} {
+    color: {{ sc_accent }};
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-editorial-headline__accent-{{ ai_gen_id }} {
+    background: var(--color-card-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  {% endif %}
+
+  @media screen and (max-width: 749px) {
+    .ai-editorial-headline-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding_top | times: 0.6 }}px 16px {{ section.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-editorial-headline__overline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.overline_size | times: 0.8 }}px;
+      margin-bottom: {{ section.settings.overline_spacing | times: 0.7 }}px;
+    }
+
+    .ai-editorial-headline__title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.5 }}px;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .ai-editorial-headline__overline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.overline_size | times: 0.9 }}px;
+    }
+
+    .ai-editorial-headline__title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<editorial-headline-{{ ai_gen_id }} class="ai-editorial-headline-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}">
+  {% if section.settings.overline_text != blank %}
+    <p class="ai-editorial-headline__overline-{{ ai_gen_id }}">
+      {{ section.settings.overline_text }}
+    </p>
+  {% endif %}
+
+  {% if section.settings.headline_text != blank %}
+    <h2 class="ai-editorial-headline__title-{{ ai_gen_id }}">
+      {% assign words = section.settings.headline_text | split: ' ' %}
+      {% for word in words %}
+        {% assign word_index = forloop.index | minus: 1 %}
+        {% if word_index == section.settings.accent_word_position %}
+          <span class="ai-editorial-headline__accent-{{ ai_gen_id }}">{{ word }}</span>
+        {% else %}
+          {{ word }}
+        {% endif %}
+        {% unless forloop.last %} {% endunless %}
+      {% endfor %}
+    </h2>
+  {% endif %}
+</editorial-headline-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class EditorialHeadline{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+
+    customElements.define('editorial-headline-{{ ai_gen_id }}', EditorialHeadline{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Editorial headline",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Overline"
+    },
+    {
+      "type": "text",
+      "id": "overline_text",
+      "label": "Overline text",
+      "default": "1,000,000+ WOMEN HAVE SWITCHED TO ESSENCE"
+    },
+    {
+      "type": "range",
+      "id": "overline_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "overline_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1.5
+    },
+    {
+      "type": "color",
+      "id": "overline_color",
+      "label": "Color",
+      "default": "#6B6B6B",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "overline_spacing",
+      "label": "Spacing below",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline_text",
+      "label": "Headline text",
+      "default": "TRANSFORM YOUR ESSENCE"
+    },
+    {
+      "type": "range",
+      "id": "accent_word_position",
+      "label": "Accent word position",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 2,
+      "info": "Position of the word to highlight (0 = first word)"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Font size",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "headline_line_height",
+      "label": "Line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "headline_letter_spacing",
+      "label": "Letter spacing",
+      "min": -2,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "headline_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "300"
+    },
+    {
+      "type": "select",
+      "id": "headline_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#1A1A1A",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#8B7355",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial headline"
+    }
+  ]
+}
+{% endschema %}

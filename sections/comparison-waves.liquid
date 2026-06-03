@@ -1,0 +1,513 @@
+{%- liquid
+  assign title = section.settings.title
+  assign description = section.settings.description
+  assign brand_name = section.settings.brand_name
+  assign competitor_name = section.settings.competitor_name
+
+  assign btn_link = section.settings.button_link
+  if btn_link == blank
+    assign btn_link = routes.all_products_collection_url
+  endif
+
+  assign top_wave_pad = '0px'
+  if section.settings.show_top_wave
+    assign top_wave_pad = 'calc(var(--apc-wave-height) * 0.20)'
+  endif
+
+  assign bottom_wave_pad = '0px'
+  if section.settings.show_wave
+    assign bottom_wave_pad = 'calc(var(--apc-wave-height) * 0.35)'
+  endif
+
+  if section.settings.use_custom_colors
+    assign apc_grad_1 = section.settings.gradient_color_1
+    assign apc_grad_2 = section.settings.gradient_color_2
+    assign apc_grad_3 = section.settings.gradient_color_3
+  else
+    assign apc_grad_1 = section.settings.color_scheme.settings.gradient_1
+    assign apc_grad_2 = section.settings.color_scheme.settings.gradient_2
+    assign apc_grad_3 = section.settings.color_scheme.settings.gradient_3
+  endif
+
+  assign apc_wave_color = section.settings.color_scheme.settings.background
+-%}
+
+<section id="shopify-section-{{ section.id }}" class="anchor-product-comparison color-{{ section.settings.color_scheme }}">
+  {% style %}
+    #shopify-section-{{ section.id }}{
+      --apc-grad-1: {{ apc_grad_1 }};
+      --apc-grad-2: {{ apc_grad_2 }};
+      --apc-grad-3: {{ apc_grad_3 }};
+
+      --apc-text: {{ section.settings.text_color }};
+      --apc-muted: {{ section.settings.muted_text_color }};
+
+      --apc-x-color: {{ section.settings.x_color }};
+
+      --apc-wave-height: {{ section.settings.wave_height }}px;
+
+      --apc-btn-bg: {{ section.settings.button_bg }};
+      --apc-btn-bg-hover: {{ section.settings.button_bg_hover }};
+      --apc-btn-text: {{ section.settings.button_text }};
+    }
+
+    /* Kill theme section background if it creates seams */
+    #shopify-section-{{ section.id }} .section-background{ display:none !important; }
+    #shopify-section-{{ section.id }}{ background: transparent !important; }
+
+    /* Full-bleed gradient behind everything */
+    #shopify-section-{{ section.id }}.anchor-product-comparison{
+      position: relative;
+      overflow: hidden;
+    }
+    #shopify-section-{{ section.id }}.anchor-product-comparison::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(135deg, var(--apc-grad-1), var(--apc-grad-2) 55%, var(--apc-grad-3));
+      z-index: 0;
+    }
+
+    /* subtle texture (like hero) */
+    #shopify-section-{{ section.id }}.anchor-product-comparison::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(1200px 600px at 10% 15%, rgba(255,255,255,.12), transparent 55%),
+        radial-gradient(900px 500px at 90% 80%, rgba(255,255,255,.10), transparent 60%);
+      opacity: .9;
+      pointer-events:none;
+      z-index: 0;
+    }
+
+    /* WAVES */
+    #shopify-section-{{ section.id }} .apc-waves{
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: var(--apc-wave-height);
+      pointer-events: none;
+      z-index: 1; /* above bg, below content */
+      overflow: hidden;
+    }
+
+    #shopify-section-{{ section.id }} .apc-waves svg{
+      width: 100%;
+      height: 100%;
+      display: block;
+      margin: 0;
+    }
+
+    #shopify-section-{{ section.id }} .apc-waves--bottom{
+      bottom: -1px;
+    }
+
+    /* TOP wave wrapper stays normal */
+    #shopify-section-{{ section.id }} .apc-waves--top{
+      top: -1px;
+      transform: none !important;
+    }
+
+    /* Flip the wave SVGs themselves (not the wrapper) */
+    #shopify-section-{{ section.id }} .apc-waves--top svg{
+      transform: scaleY(-1);
+      transform-origin: center;
+    }
+
+
+    #shopify-section-{{ section.id }} .apc-wave-1 path{ fill: rgba(255,255,255,.20); }
+    #shopify-section-{{ section.id }} .apc-wave-2 path{ fill: rgba(255,255,255,.45); }
+    #shopify-section-{{ section.id }} .apc-wave-3 path{ fill: {{ apc_wave_color }}; }
+
+    /* container */
+    #shopify-section-{{ section.id }} .apc-wrap{
+      position: relative;
+      z-index: 2; /* content above waves */
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+
+      padding:
+        calc({{ section.settings.padding_top }}px + {{ top_wave_pad }})
+        20px
+        calc({{ section.settings.padding_bottom }}px + {{ bottom_wave_pad }})
+        20px;
+    }
+
+    /* layout */
+    #shopify-section-{{ section.id }} .apc-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    /* content */
+    #shopify-section-{{ section.id }} .apc-content{
+      max-width: 560px;
+      color: var(--apc-text);
+    }
+
+    #shopify-section-{{ section.id }} .apc-title{
+      margin: 0 0 14px 0;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.06;
+      font-size: clamp(30px, 3vw, 52px);
+      color: var(--apc-text);
+    }
+    #shopify-section-{{ section.id }} .apc-title.rte p{ margin:0; }
+
+    #shopify-section-{{ section.id }} .apc-desc{
+      margin: 0 0 22px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--apc-text);
+      opacity: .95;
+      max-width: 56ch;
+    }
+    #shopify-section-{{ section.id }} .apc-desc p{ margin:0; color: inherit; }
+
+    #shopify-section-{{ section.id }} .apc-actions{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .apc-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px 22px;
+      border-radius: 14px;
+      text-decoration:none;
+      font-weight: 800;
+      font-size: 15px;
+      background: var(--apc-btn-bg);
+      color: var(--apc-btn-text);
+      border: 0;
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,.16);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #shopify-section-{{ section.id }} .apc-btn:hover{
+      background: var(--apc-btn-bg-hover);
+      transform: translateY(-1px);
+    }
+
+    #shopify-section-{{ section.id }} .apc-secondary{
+      font-size: 13px;
+      color: var(--apc-muted);
+      opacity: .95;
+    }
+
+    /* table card */
+    #shopify-section-{{ section.id }} .apc-table-card{
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    #shopify-section-{{ section.id }} .apc-table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #shopify-section-{{ section.id }} .apc-table thead th{
+      background: rgba(255,255,255,.12);
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.80rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.92);
+    }
+
+    #shopify-section-{{ section.id }} .apc-th-empty{
+      background: transparent !important;
+      width: 50%;
+    }
+
+    #shopify-section-{{ section.id }} .apc-table tbody tr{
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    #shopify-section-{{ section.id }} .apc-table tbody tr:last-child{
+      border-bottom: none;
+    }
+
+    #shopify-section-{{ section.id }} .apc-table td{
+      padding: 1.15rem 1rem;
+      color: rgba(255,255,255,.92);
+      vertical-align: middle;
+    }
+
+    #shopify-section-{{ section.id }} .apc-feature{
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: left;
+      line-height: 1.25;
+    }
+
+    #shopify-section-{{ section.id }} .apc-cell{
+      text-align: center;
+      width: 25%;
+    }
+
+    #shopify-section-{{ section.id }} .apc-icon-box{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    #shopify-section-{{ section.id }} .apc-check,
+    #shopify-section-{{ section.id }} .apc-x{
+      width: 22px;
+      height: 22px;
+      display: inline-block;
+    }
+
+    #shopify-section-{{ section.id }} .apc-check{ color: #fff; }
+
+    #shopify-section-{{ section.id }} .apc-x{
+      color: var(--apc-x-color);
+      opacity: 0.9;
+    }
+
+    /* responsive */
+    @media (max-width: 989px){
+      #shopify-section-{{ section.id }}{
+        --apc-wave-height: {{ section.settings.wave_height_mobile }}px;
+      }
+
+      #shopify-section-{{ section.id }} .apc-grid{
+        grid-template-columns: 1fr;
+        gap: 2.25rem;
+      }
+
+      #shopify-section-{{ section.id }} .apc-content{
+        max-width: 100%;
+        text-align: center;
+      }
+
+      #shopify-section-{{ section.id }} .apc-actions{
+        justify-content: center;
+      }
+
+      #shopify-section-{{ section.id }} .apc-table thead th{
+        padding: 0.75rem 0.5rem;
+        font-size: 0.72rem;
+      }
+
+      #shopify-section-{{ section.id }} .apc-table td{
+        padding: 1rem 0.6rem;
+      }
+
+      #shopify-section-{{ section.id }} .apc-feature{
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 749px){
+      #shopify-section-{{ section.id }} .apc-wrap{
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+  {% endstyle %}
+
+  {% if section.settings.show_top_wave %}
+    <div class="apc-waves apc-waves--top" aria-hidden="true">
+      <svg class="apc-wave-1" viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,80 C180,110 360,50 540,78 C720,106 900,66 1080,88 C1260,110 1350,98 1440,90 L1440,120 L0,120 Z"></path>
+      </svg>
+      <svg class="apc-wave-2" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+        <path d="M0,92 C200,70 380,110 560,92 C740,74 920,114 1100,90 C1280,66 1360,74 1440,86 L1440,120 L0,120 Z"></path>
+      </svg>
+      <svg class="apc-wave-3" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+        <path d="M0,102 C240,122 420,82 600,102 C780,122 960,88 1140,104 C1320,120 1380,112 1440,106 L1440,120 L0,120 Z"></path>
+      </svg>
+    </div>
+  {% endif %}
+
+  <div class="apc-wrap">
+    <div class="apc-grid">
+      <div class="apc-content">
+        {% if title != blank %}
+          <div class="apc-title rte">{{ title }}</div>
+        {% endif %}
+
+        {% if description != blank %}
+          <div class="apc-desc rte">{{ description }}</div>
+        {% endif %}
+
+        {% if section.settings.button_label != blank or section.settings.secondary_line != blank %}
+          <div class="apc-actions">
+            {% if section.settings.button_label != blank %}
+              <a class="apc-btn" href="{{ btn_link }}">{{ section.settings.button_label }}</a>
+            {% endif %}
+            {% if section.settings.secondary_line != blank %}
+              <div class="apc-secondary">{{ section.settings.secondary_line }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="apc-table-card">
+        <table class="apc-table" role="table">
+          <thead>
+            <tr>
+              <th class="apc-th-empty"></th>
+              <th>{{ brand_name }}</th>
+              <th>{{ competitor_name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for block in section.blocks %}
+              {% if block.type == 'feature' %}
+                <tr {{ block.shopify_attributes }}>
+                  <td class="apc-feature">{{ block.settings.feature_name }}</td>
+
+                  <td class="apc-cell">
+                    {% if block.settings.brand_has %}
+                      <span class="apc-icon-box" aria-hidden="true">
+                        <svg class="apc-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                    {% else %}
+                      <svg class="apc-x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    {% endif %}
+                  </td>
+
+                  <td class="apc-cell">
+                    {% if block.settings.competitor_has %}
+                      <span class="apc-icon-box" aria-hidden="true">
+                        <svg class="apc-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                    {% else %}
+                      <svg class="apc-x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {% if section.settings.show_wave %}
+    <div class="apc-waves apc-waves--bottom" aria-hidden="true">
+      <svg class="apc-wave-1" viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,80 C180,110 360,50 540,78 C720,106 900,66 1080,88 C1260,110 1350,98 1440,90 L1440,120 L0,120 Z"></path>
+      </svg>
+      <svg class="apc-wave-2" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+        <path d="M0,92 C200,70 380,110 560,92 C740,74 920,114 1100,90 C1280,66 1360,74 1440,86 L1440,120 L0,120 Z"></path>
+      </svg>
+      <svg class="apc-wave-3" viewBox="0 0 1440 120" preserveAspectRatio="none" style="position:absolute; inset:0;">
+        <path d="M0,102 C240,122 420,82 600,102 C780,122 960,88 1140,104 C1320,120 1380,112 1440,106 L1440,120 L0,120 Z"></path>
+      </svg>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Comparison Waves",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "richtext", "id": "title", "label": "Title", "default": "<p>Facecube Face Massager vs. Competitors</p>" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>See why our ear hooks are the superior choice for securing your eyewear.</p>" },
+
+    { "type": "header", "content": "Table Headers" },
+    { "type": "text", "id": "brand_name", "label": "Your brand name", "default": "Facecube Face Massager" },
+    { "type": "text", "id": "competitor_name", "label": "Competitor name", "default": "Others" },
+
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
+    { "type": "url", "id": "button_link", "label": "Button link (optional)" },
+    { "type": "text", "id": "secondary_line", "label": "Secondary line (optional)", "default": "Free shipping over $14" },
+
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Override gradient colors",
+      "info": "When off, the gradient inherits the color scheme's gradient_1\u20133.",
+      "default": false
+    },
+
+    { "type": "color", "id": "gradient_color_1", "label": "Gradient color 1", "default": "#0EA5E9", "visible_if": "{{ section.settings.use_custom_colors }}" },
+    { "type": "color", "id": "gradient_color_2", "label": "Gradient color 2", "default": "#06B6D4", "visible_if": "{{ section.settings.use_custom_colors }}" },
+    { "type": "color", "id": "gradient_color_3", "label": "Gradient color 3", "default": "#1D4ED8", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#FFFFFF" },
+    { "type": "color", "id": "muted_text_color", "label": "Muted text color", "default": "#E6F7FF" },
+
+    { "type": "color", "id": "button_bg", "label": "Button background", "default": "#0B1020" },
+    { "type": "color", "id": "button_bg_hover", "label": "Button hover background", "default": "#101a33" },
+    { "type": "color", "id": "button_text", "label": "Button text", "default": "#FFFFFF" },
+
+    { "type": "color", "id": "x_color", "label": "X mark color", "default": "#F44336" },
+
+    { "type": "checkbox", "id": "show_top_wave", "label": "Show top wave", "default": true },
+    { "type": "checkbox", "id": "show_wave", "label": "Show bottom wave", "default": false },
+
+    { "type": "range", "id": "wave_height", "label": "Wave height (desktop)", "min": 60, "max": 180, "step": 6, "default": 120 },
+    { "type": "range", "id": "wave_height_mobile", "label": "Wave height (mobile)", "min": 70, "max": 220, "step": 5, "default": 140 },
+
+    { "type": "header", "content": "Section padding" },
+    { "type": "range", "id": "padding_top", "label": "Top", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 52 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 52 }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "text", "id": "feature_name", "label": "Feature name", "default": "Premium Silicone Material" },
+        { "type": "checkbox", "id": "brand_has", "label": "Brand has", "default": true },
+        { "type": "checkbox", "id": "competitor_has", "label": "Competitor has", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison Waves",
+      "blocks": [
+        { "type": "feature", "settings": { "feature_name": "Premium Silicone Material", "brand_has": true, "competitor_has": false } },
+        { "type": "feature", "settings": { "feature_name": "Discreet Design", "brand_has": true, "competitor_has": false } },
+        { "type": "feature", "settings": { "feature_name": "Flexible Fit", "brand_has": true, "competitor_has": false } },
+        { "type": "feature", "settings": { "feature_name": "Family Pack Included", "brand_has": true, "competitor_has": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

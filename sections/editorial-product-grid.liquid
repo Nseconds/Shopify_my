@@ -1,0 +1,391 @@
+{% liquid
+  assign max_products = section.settings.max_products | default: 20
+  assign collection = section.settings.collection
+
+  if collection != blank
+    assign products_to_show = collection.products
+  else
+    assign products_to_show = collections['all'].products
+  endif
+
+  if section.settings.heading != blank
+    assign epg_heading = section.settings.heading
+  elsif collection != blank
+    assign epg_heading = collection.title | upcase
+  else
+    assign epg_heading = 'New Arrivals'
+  endif
+
+  if section.settings.view_all_text != blank
+    assign epg_view_all = section.settings.view_all_text
+  elsif collection != blank
+    assign epg_view_all = 'Shop ' | append: collection.title
+  else
+    assign epg_view_all = 'View All'
+  endif
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="editorial-product-grid section spacing-style color-{{ section.settings.color_scheme }}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="editorial-product-grid__container">
+    {% if epg_heading != blank %}
+      <div class="editorial-product-grid__header">
+        <h2 class="editorial-product-grid__heading">{{ epg_heading }}</h2>
+        {% if section.settings.show_view_all %}
+          <a href="{{ collection.url | default: '/collections/all' }}" class="editorial-product-grid__view-all">
+            {{ epg_view_all }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="editorial-product-grid__grid" data-columns="{{ section.settings.columns }}">
+      {% if products_to_show.size > 0 %}
+        {% for product in products_to_show limit: max_products %}
+          <div class="epg-card">
+            <a href="{{ product.url }}" class="epg-card__link">
+              <div class="epg-card__image-wrap">
+                {% if product.featured_image %}
+                  {%- capture sizes -%}
+                    (min-width: 990px) calc(100vw / {{ section.settings.columns }}), (min-width: 750px) 33vw, 50vw
+                  {%- endcapture -%}
+                  {{
+                    product.featured_image
+                    | image_url: width: 600
+                    | image_tag:
+                      class: 'epg-card__image',
+                      loading: 'lazy',
+                      widths: '300, 450, 600',
+                      sizes: sizes
+                  }}
+                {% else %}
+                  <div class="epg-card__placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'epg-card__placeholder-svg' }}
+                  </div>
+                {% endif %}
+
+                {% if product.compare_at_price > product.price %}
+                  <span class="epg-card__badge epg-card__badge--sale">SALE</span>
+                {% elsif product.tags contains 'new' or product.tags contains 'New' %}
+                  <span class="epg-card__badge epg-card__badge--new">NEW</span>
+                {% endif %}
+              </div>
+
+              <div class="epg-card__info">
+                <p class="epg-card__name">{{ product.title }}</p>
+                <div class="epg-card__prices">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="epg-card__price epg-card__price--sale">{{ product.price | money }}</span>
+                    <span class="epg-card__price epg-card__price--compare">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="epg-card__price">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..max_products) %}
+          <div class="epg-card epg-card--placeholder">
+            <div class="epg-card__image-wrap">
+              <div class="epg-card__placeholder">
+                {{ 'product-1' | placeholder_svg_tag: 'epg-card__placeholder-svg' }}
+              </div>
+            </div>
+            <div class="epg-card__info">
+              <p class="epg-card__name">Product Name</p>
+              <div class="epg-card__prices">
+                <span class="epg-card__price">€35</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .editorial-product-grid {
+    overflow: hidden;
+  }
+
+  .editorial-product-grid__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--page-margin, 24px);
+  }
+
+  .editorial-product-grid__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .editorial-product-grid__heading {
+    margin: 0;
+    font-family: var(--font-heading--family, inherit);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-foreground-heading);
+  }
+
+  .editorial-product-grid__view-all {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .editorial-product-grid__view-all:hover {
+    opacity: 0.6;
+  }
+
+  .editorial-product-grid__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+
+  .editorial-product-grid__grid[data-columns="4"] {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .editorial-product-grid__grid[data-columns="3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* min-width: 0 prevents grid cells from overflowing their column */
+  .epg-card {
+    min-width: 0;
+  }
+
+  .epg-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .epg-card__image-wrap {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: var(--color-card-background, #f5f5f5);
+    border-radius: var(--style-border-radius-cards, 0px);
+    margin-bottom: 8px;
+  }
+
+  /* Two-class selector beats most base-theme img resets (e.g. img { height: auto }) */
+  .epg-card__image-wrap .epg-card__image {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.4s ease;
+  }
+
+  .epg-card__link:hover .epg-card__image {
+    transform: scale(1.04);
+  }
+
+  .epg-card__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .epg-card__placeholder-svg {
+    width: 40%;
+    height: auto;
+    opacity: 0.2;
+  }
+
+  .epg-card__badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-family: var(--font-body--family, inherit);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    text-transform: uppercase;
+    border-radius: var(--style-border-radius-xs, 2px);
+    background: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .epg-card__info {
+    min-width: 0;
+  }
+
+  .epg-card__name {
+    margin: 0 0 3px 0;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--color-foreground);
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .epg-card__prices {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    min-width: 0;
+  }
+
+  .epg-card__price {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .epg-card__price--sale {
+    color: var(--color-error, #c0392b);
+    font-weight: 600;
+  }
+
+  .epg-card__price--compare {
+    text-decoration: line-through;
+    opacity: 0.45;
+    font-weight: 400;
+  }
+
+  @media screen and (max-width: 989px) {
+    .editorial-product-grid__grid,
+    .editorial-product-grid__grid[data-columns="4"],
+    .editorial-product-grid__grid[data-columns="5"] {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .editorial-product-grid__container {
+      padding: 0 12px;
+    }
+    .editorial-product-grid__grid,
+    .editorial-product-grid__grid[data-columns="3"],
+    .editorial-product-grid__grid[data-columns="4"],
+    .editorial-product-grid__grid[data-columns="5"] {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Product Grid",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to show all products"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View All link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Link text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max products",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "3", "label": "3 columns" },
+        { "value": "4", "label": "4 columns" },
+        { "value": "5", "label": "5 columns" }
+      ],
+      "default": "5"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Product Grid",
+      "settings": {
+        "heading": "New Arrivals",
+        "max_products": 20,
+        "columns": "5"
+      }
+    }
+  ]
+}
+{% endschema %}

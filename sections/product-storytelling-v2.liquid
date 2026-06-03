@@ -1,0 +1,614 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.text_color
+    assign sc_circle = section.settings.circle_background
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_circle = 'var(--color-card-gradient)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_circle = section.settings.color_scheme.settings.background_secondary
+  endif
+-%}
+{% style %}
+  .ai-product-story-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ section.settings.section_padding }}px 20px;
+    background: {{ sc_bg }};
+  }
+
+  .ai-product-story-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-product-story-circles-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ section.settings.circle_gap }}px;
+    margin-bottom: {{ section.settings.content_spacing }}px;
+  }
+
+  .ai-product-story-circle-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+    background: {{ sc_circle }};
+  }
+
+  .ai-product-story-circle-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .ai-product-story-circle-{{ ai_gen_id }}:hover .ai-product-story-circle-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-product-story-circle-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ sc_circle }};
+  }
+
+  .ai-product-story-circle-placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .ai-product-story-content-{{ ai_gen_id }} {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ai-product-story-headline-{{ ai_gen_id }} {
+    font-size: {{ section.settings.headline_size }}px;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.headline_spacing }}px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+  }
+
+  .ai-product-story-intro-{{ ai_gen_id }} {
+    font-size: {{ section.settings.intro_size }}px;
+    color: {{ sc_text }};
+    line-height: 1.7;
+    margin: 0 0 {{ section.settings.intro_spacing }}px;
+    opacity: 0.85;
+  }
+
+  .ai-product-story-blocks-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.blocks_columns }}, 1fr);
+    gap: {{ section.settings.blocks_gap }}px;
+    margin-bottom: {{ section.settings.blocks_spacing }}px;
+  }
+
+  .ai-product-story-block-{{ ai_gen_id }} {
+    text-align: left;
+    padding: {{ section.settings.block_padding }}px;
+    border-top: {{ section.settings.divider_width }}px solid {{ section.settings.divider_color }};
+  }
+
+  .ai-product-story-block-title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.block_title_size }}px;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.block_title_spacing }}px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .ai-product-story-block-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.block_text_size }}px;
+    color: {{ sc_text }};
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.75;
+  }
+
+  .ai-product-story-closing-{{ ai_gen_id }} {
+    font-size: {{ section.settings.closing_size }}px;
+    color: {{ sc_text }};
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-story-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-product-story-circles-{{ ai_gen_id }} {
+      gap: {{ section.settings.circle_gap | times: 0.7 }}px;
+      margin-bottom: {{ section.settings.content_spacing | times: 0.7 }}px;
+    }
+
+    .ai-product-story-headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.7 }}px;
+      margin-bottom: {{ section.settings.headline_spacing | times: 0.7 }}px;
+    }
+
+    .ai-product-story-intro-{{ ai_gen_id }} {
+      font-size: {{ section.settings.intro_size | times: 0.9 }}px;
+      margin-bottom: {{ section.settings.intro_spacing | times: 0.7 }}px;
+    }
+
+    .ai-product-story-blocks-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.blocks_gap | times: 0.7 }}px;
+      margin-bottom: {{ section.settings.blocks_spacing | times: 0.7 }}px;
+    }
+
+    .ai-product-story-block-{{ ai_gen_id }} {
+      padding: {{ section.settings.block_padding | times: 0.7 }}px;
+    }
+
+    .ai-product-story-block-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.block_title_size | times: 0.9 }}px;
+      margin-bottom: {{ section.settings.block_title_spacing | times: 0.7 }}px;
+    }
+
+    .ai-product-story-block-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.block_text_size | times: 0.9 }}px;
+    }
+
+    .ai-product-story-closing-{{ ai_gen_id }} {
+      font-size: {{ section.settings.closing_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-product-story-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-product-story-container-{{ ai_gen_id }}">
+    <div class="ai-product-story-circles-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'circle_image_' | append: i
+          assign image = section.settings[image_key]
+        %}
+        <div class="ai-product-story-circle-{{ ai_gen_id }}" data-forge-slot-id="circle_image_{{ i }}"{% if image == blank %} data-forge-slot-blank="true"{% endif %}>
+          {% if image %}
+            <img
+              src="{{ image | image_url: width: 600 }}"
+              alt="{{ image.alt | escape }}"
+              loading="lazy"
+              width="600"
+              height="600"
+              class="ai-product-story-circle-image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-product-story-circle-placeholder-{{ ai_gen_id }}">
+              {{ 'product-1' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="ai-product-story-content-{{ ai_gen_id }}">
+      {% if section.settings.headline != blank %}
+        <h2 class="ai-product-story-headline-{{ ai_gen_id }}">
+          {{ section.settings.headline }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.intro_text != blank %}
+        <div class="ai-product-story-intro-{{ ai_gen_id }}">
+          {{ section.settings.intro_text }}
+        </div>
+      {% endif %}
+
+      <div class="ai-product-story-blocks-{{ ai_gen_id }}">
+        {% for i in (1..3) %}
+          {% liquid
+            assign title_key = 'block_' | append: i | append: '_title'
+            assign text_key = 'block_' | append: i | append: '_text'
+            assign title = section.settings[title_key]
+            assign text = section.settings[text_key]
+          %}
+          {% if title != blank or text != blank %}
+            <div class="ai-product-story-block-{{ ai_gen_id }}">
+              {% if title != blank %}
+                <h3 class="ai-product-story-block-title-{{ ai_gen_id }}">
+                  {{ title }}
+                </h3>
+              {% endif %}
+              {% if text != blank %}
+                <div class="ai-product-story-block-text-{{ ai_gen_id }}">
+                  {{ text }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if section.settings.closing_text != blank %}
+        <p class="ai-product-story-closing-{{ ai_gen_id }}">
+          {{ section.settings.closing_text }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const sectionElement = document.querySelector(`#shopify-section-${sectionId}`);
+    
+    if (!sectionElement) return;
+    
+    const circles = sectionElement.querySelectorAll('.ai-product-story-circle-{{ ai_gen_id }}');
+    
+    if ('IntersectionObserver' in window && circles.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, index * 100);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.2
+      });
+
+      circles.forEach((circle) => {
+        circle.style.opacity = '0';
+        circle.style.transform = 'translateY(20px)';
+        circle.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(circle);
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product storytelling",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Circular images"
+    },
+    {
+      "type": "image_picker",
+      "id": "circle_image_1",
+      "label": "Circle image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "circle_image_2",
+      "label": "Circle image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "circle_image_3",
+      "label": "Circle image 3"
+    },
+    {
+      "type": "range",
+      "id": "circle_gap",
+      "label": "Gap between circles",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "circle_background",
+      "label": "Circle background",
+      "default": "#f5f5f5",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Space below circles",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "inline_richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Designed for Daily Skin Balance"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "label": "Headline spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Introduction text",
+      "default": "<p>A thoughtfully formulated approach to skincare that prioritizes comfort and efficacy. Developed with medical-grade precision for seamless integration into your daily routine.</p>"
+    },
+    {
+      "type": "range",
+      "id": "intro_size",
+      "label": "Introduction size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "intro_spacing",
+      "label": "Introduction spacing",
+      "min": 20,
+      "max": 70,
+      "step": 5,
+      "unit": "px",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "Information blocks"
+    },
+    {
+      "type": "select",
+      "id": "blocks_columns",
+      "label": "Columns",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "range",
+      "id": "blocks_gap",
+      "label": "Gap between blocks",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "blocks_spacing",
+      "label": "Space below blocks",
+      "min": 20,
+      "max": 70,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "block_padding",
+      "label": "Block padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "inline_richtext",
+      "id": "block_1_title",
+      "label": "Block 1 title",
+      "default": "Texture & Absorption"
+    },
+    {
+      "type": "richtext",
+      "id": "block_1_text",
+      "label": "Block 1 text",
+      "default": "<p>Lightweight gel-cream formula absorbs quickly without residue, suitable for layering.</p>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "block_2_title",
+      "label": "Block 2 title",
+      "default": "Active Complex"
+    },
+    {
+      "type": "richtext",
+      "id": "block_2_text",
+      "label": "Block 2 text",
+      "default": "<p>Clinically tested ingredients work synergistically to support skin barrier function.</p>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "block_3_title",
+      "label": "Block 3 title",
+      "default": "Skin Compatibility"
+    },
+    {
+      "type": "richtext",
+      "id": "block_3_text",
+      "label": "Block 3 text",
+      "default": "<p>Dermatologically tested for sensitive skin. Non-comedogenic and fragrance-free.</p>"
+    },
+    {
+      "type": "range",
+      "id": "block_title_size",
+      "label": "Block title size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "block_title_spacing",
+      "label": "Block title spacing",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "block_text_size",
+      "label": "Block text size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Dividers"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e0e0e0"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Closing statement"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "closing_text",
+      "label": "Closing text",
+      "default": "Precision formulated. Thoughtfully designed."
+    },
+    {
+      "type": "range",
+      "id": "closing_size",
+      "label": "Closing size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#faf8f6",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2c2c2c",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product storytelling"
+    }
+  ]
+}
+{% endschema %}

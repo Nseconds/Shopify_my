@@ -1,0 +1,998 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-luxury-lifestyle-{{ ai_gen_id }} {
+    display: block;
+    background-color: var(--color-background, {{ section.settings.background_color }});
+    padding: {{ section.settings.section_padding_desktop }}px 40px;
+    width: 100%;
+  }
+
+  .ai-luxury-lifestyle-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-luxury-lifestyle-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ section.settings.header_spacing }}px;
+  }
+
+  .ai-luxury-lifestyle-headline-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.headline_size_desktop }}px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    color: var(--color-foreground, {{ section.settings.headline_color }});
+    margin: 0 0 {{ section.settings.headline_spacing }}px;
+  }
+
+  .ai-luxury-lifestyle-description-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.6;
+    color: var(--color-foreground, {{ section.settings.description_color }});
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ai-luxury-lifestyle-content-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: {{ section.settings.content_gap }}px;
+    align-items: center;
+    margin-top: {{ section.settings.content_spacing }}px;
+  }
+
+  .ai-luxury-lifestyle-media-{{ ai_gen_id }} {
+    position: relative;
+    border-radius: var(--style-border-radius-images);
+    overflow: hidden;
+    box-shadow: var(--style-shadow-card);
+    aspect-ratio: {{ section.settings.media_aspect_ratio }};
+  }
+
+  .ai-luxury-lifestyle-media-{{ ai_gen_id }} img,
+  .ai-luxury-lifestyle-media-{{ ai_gen_id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-luxury-lifestyle-media-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-luxury-lifestyle-media-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-luxury-lifestyle-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-luxury-lifestyle-benefits-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.benefit_spacing }}px;
+  }
+
+  .ai-luxury-lifestyle-benefit-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .ai-luxury-lifestyle-benefits-left-{{ ai_gen_id }} .ai-luxury-lifestyle-benefit-{{ ai_gen_id }} {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .ai-luxury-lifestyle-benefits-right-{{ ai_gen_id }} .ai-luxury-lifestyle-benefit-{{ ai_gen_id }} {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .ai-luxury-lifestyle-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-luxury-lifestyle-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: var(--color-primary, {{ section.settings.icon_color }});
+    stroke-width: {{ section.settings.icon_stroke_width }};
+    fill: none;
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-luxury-lifestyle-icon-{{ ai_gen_id }} svg {
+    stroke: url(#ll-icon-grad-{{ ai_gen_id }});
+  }
+  {% endif %}
+
+  .ai-luxury-lifestyle-benefit-content-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-luxury-lifestyle-benefit-title-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.benefit_title_size }}px;
+    line-height: 1.3;
+    color: var(--color-foreground, {{ section.settings.benefit_title_color }});
+    margin: 0 0 8px;
+  }
+
+  .ai-luxury-lifestyle-benefit-text-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.benefit_text_size }}px;
+    line-height: 1.5;
+    color: var(--color-foreground, {{ section.settings.benefit_text_color }});
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-luxury-lifestyle-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding_mobile }}px 24px;
+    }
+
+    .ai-luxury-lifestyle-headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size_mobile }}px;
+    }
+
+    .ai-luxury-lifestyle-content-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.content_gap_mobile }}px;
+    }
+
+    .ai-luxury-lifestyle-benefits-left-{{ ai_gen_id }},
+    .ai-luxury-lifestyle-benefits-right-{{ ai_gen_id }} {
+      order: 2;
+    }
+
+    .ai-luxury-lifestyle-media-{{ ai_gen_id }} {
+      order: 1;
+    }
+
+    .ai-luxury-lifestyle-benefits-right-{{ ai_gen_id }} .ai-luxury-lifestyle-benefit-{{ ai_gen_id }} {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+{% endstyle %}
+
+{% if settings.style_mode == 'gradient' %}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="ll-icon-grad-{{ ai_gen_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color: var(--color-gradient-1)"/>
+        <stop offset="50%" style="stop-color: var(--color-gradient-2)"/>
+        <stop offset="100%" style="stop-color: var(--color-gradient-3)"/>
+      </linearGradient>
+    </defs>
+  </svg>
+{% endif %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-luxury-lifestyle-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-luxury-lifestyle-container-{{ ai_gen_id }}">
+    <div class="ai-luxury-lifestyle-header-{{ ai_gen_id }}">
+      {% if section.settings.headline != blank %}
+        <h2 class="ai-luxury-lifestyle-headline-{{ ai_gen_id }}">{{ section.settings.headline }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div class="ai-luxury-lifestyle-description-{{ ai_gen_id }}">{{ section.settings.description }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-luxury-lifestyle-content-{{ ai_gen_id }}">
+      <div class="ai-luxury-lifestyle-benefits-{{ ai_gen_id }} ai-luxury-lifestyle-benefits-left-{{ ai_gen_id }}">
+        {% for i in (1..3) %}
+          {% liquid
+            assign benefit_enabled_key = 'benefit_left_' | append: i | append: '_enabled'
+            assign benefit_icon_key = 'benefit_left_' | append: i | append: '_icon'
+            assign benefit_title_key = 'benefit_left_' | append: i | append: '_title'
+            assign benefit_text_key = 'benefit_left_' | append: i | append: '_text'
+
+            assign benefit_enabled = section.settings[benefit_enabled_key]
+            assign benefit_icon = section.settings[benefit_icon_key]
+            assign benefit_title = section.settings[benefit_title_key]
+            assign benefit_text = section.settings[benefit_text_key]
+          %}
+
+          {% if benefit_enabled %}
+            <div class="ai-luxury-lifestyle-benefit-{{ ai_gen_id }}">
+              <div class="ai-luxury-lifestyle-icon-{{ ai_gen_id }}">
+                {% case benefit_icon %}
+                  {% when 'sparkle' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                  {% when 'leaf' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z"/></svg>
+                  {% when 'heart' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  {% when 'droplet' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  {% when 'feather' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+                  {% when 'star' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></polygon></svg>
+                {% endcase %}
+              </div>
+              <div class="ai-luxury-lifestyle-benefit-content-{{ ai_gen_id }}">
+                {% if benefit_title != blank %}
+                  <h3 class="ai-luxury-lifestyle-benefit-title-{{ ai_gen_id }}">{{ benefit_title }}</h3>
+                {% endif %}
+                {% if benefit_text != blank %}
+                  <p class="ai-luxury-lifestyle-benefit-text-{{ ai_gen_id }}">{{ benefit_text }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="ai-luxury-lifestyle-media-{{ ai_gen_id }}" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+        {% if section.settings.media_type == 'video' and section.settings.video != blank %}
+          <video autoplay muted loop playsinline>
+            {% # theme-check-disable RemoteAsset %}<source src="{{ section.settings.video }}" type="video/mp4">{% # theme-check-enable RemoteAsset %}
+          </video>
+        {% elsif section.settings.media_type == 'image' and section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {% else %}
+          <div class="ai-luxury-lifestyle-media-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-luxury-lifestyle-empty-state-{{ ai_gen_id }}">
+              Next, add an image or video
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-luxury-lifestyle-benefits-{{ ai_gen_id }} ai-luxury-lifestyle-benefits-right-{{ ai_gen_id }}">
+        {% for i in (1..3) %}
+          {% liquid
+            assign benefit_enabled_key = 'benefit_right_' | append: i | append: '_enabled'
+            assign benefit_icon_key = 'benefit_right_' | append: i | append: '_icon'
+            assign benefit_title_key = 'benefit_right_' | append: i | append: '_title'
+            assign benefit_text_key = 'benefit_right_' | append: i | append: '_text'
+
+            assign benefit_enabled = section.settings[benefit_enabled_key]
+            assign benefit_icon = section.settings[benefit_icon_key]
+            assign benefit_title = section.settings[benefit_title_key]
+            assign benefit_text = section.settings[benefit_text_key]
+          %}
+
+          {% if benefit_enabled %}
+            <div class="ai-luxury-lifestyle-benefit-{{ ai_gen_id }}">
+              <div class="ai-luxury-lifestyle-icon-{{ ai_gen_id }}">
+                {% case benefit_icon %}
+                  {% when 'sparkle' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                  {% when 'leaf' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z"/></svg>
+                  {% when 'heart' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  {% when 'droplet' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  {% when 'feather' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+                  {% when 'star' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></polygon></svg>
+                {% endcase %}
+              </div>
+              <div class="ai-luxury-lifestyle-benefit-content-{{ ai_gen_id }}">
+                {% if benefit_title != blank %}
+                  <h3 class="ai-luxury-lifestyle-benefit-title-{{ ai_gen_id }}">{{ benefit_title }}</h3>
+                {% endif %}
+                {% if benefit_text != blank %}
+                  <p class="ai-luxury-lifestyle-benefit-text-{{ ai_gen_id }}">{{ benefit_text }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const sectionElement = document.querySelector(`#shopify-section-${sectionId}`);
+    if (sectionElement) {
+      const video = sectionElement.querySelector('video');
+      if (video) {
+        video.play().catch(() => {});
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxury lifestyle",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Desktop padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Mobile padding",
+      "min": 20,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5eff6"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Timeless Elegance"
+    },
+    {
+      "type": "range",
+      "id": "headline_size_desktop",
+      "label": "Desktop size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "headline_size_mobile",
+      "label": "Mobile size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#3d2e3f"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "label": "Bottom spacing",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Discover a world where sophistication meets serenity. Each moment crafted with intention.</p>"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color",
+      "default": "#6b5a6d"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header bottom spacing",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Video URL"
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "16/9",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Content spacing"
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Top spacing",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Desktop gap",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "content_gap_mobile",
+      "label": "Mobile gap",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "benefit_spacing",
+      "label": "Benefit spacing",
+      "min": 15,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Benefit icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color",
+      "default": "#9b7a9e"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_stroke_width",
+      "label": "Stroke width",
+      "min": 1,
+      "max": 3,
+      "step": 0.5,
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Benefit text"
+    },
+    {
+      "type": "range",
+      "id": "benefit_title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "color",
+      "id": "benefit_title_color",
+      "label": "Title color",
+      "default": "#3d2e3f"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "benefit_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "benefit_text_color",
+      "label": "Text color",
+      "default": "#6b5a6d"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_left_1_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_left_1_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "sparkle"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_1_title",
+      "label": "Title",
+      "default": "Pure Ingredients"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_1_text",
+      "label": "Text",
+      "default": "Carefully sourced botanicals"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_left_2_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_left_2_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "leaf"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_2_title",
+      "label": "Title",
+      "default": "Sustainable"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_2_text",
+      "label": "Text",
+      "default": "Ethically crafted with care"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_left_3_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_left_3_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "heart"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_3_title",
+      "label": "Title",
+      "default": "Cruelty Free"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_3_text",
+      "label": "Text",
+      "default": "Never tested on animals"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_right_1_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_right_1_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "droplet"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_1_title",
+      "label": "Title",
+      "default": "Hydrating"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_1_text",
+      "label": "Text",
+      "default": "Deep moisture that lasts"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_right_2_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_right_2_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "feather"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_2_title",
+      "label": "Title",
+      "default": "Lightweight"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_2_text",
+      "label": "Text",
+      "default": "Silky smooth application"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "benefit_right_3_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "benefit_right_3_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "feather",
+          "label": "Feather"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        }
+      ],
+      "default": "star"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_3_title",
+      "label": "Title",
+      "default": "Radiant Glow"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_3_text",
+      "label": "Text",
+      "default": "Luminous, healthy skin"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury lifestyle"
+    }
+  ]
+}
+{% endschema %}

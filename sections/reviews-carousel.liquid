@@ -1,0 +1,886 @@
+{%- comment -%}
+  Reviews Carousel Section
+  
+  A section showcasing customer testimonials with photos in UGC (User Generated Content) style.
+  Features interactive carousel with navigation controls and responsive design.
+{%- endcomment -%}
+
+{% liquid
+  assign section_id = section.id | handle
+  if settings.style_mode == 'gradient'
+    assign rc_card_bg   = 'var(--color-card-background)'
+    assign rc_card_text = 'var(--color-foreground)'
+    assign rc_star      = 'var(--color-primary)'
+  endif
+%}
+{% if settings.style_mode == 'gradient' %}
+  {% style %}
+    #shopify-section-{{ section.id }} .reviews-carousel {
+      --reviews-card-bg: {{ rc_card_bg }};
+      --reviews-card-text: {{ rc_card_text }};
+      --reviews-star-color: {{ rc_star }};
+      --reviews-text: {{ rc_card_text }};
+    }
+  {% endstyle %}
+{% endif %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style color-{{ section.settings.color_scheme }}"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <reviews-carousel-component
+    class="reviews-carousel"
+    style="
+      --reviews-bg: transparent;
+      --reviews-text: var(--color-foreground);
+      --reviews-card-bg: var(--color-card-background, {{ section.settings.card_background }});
+      --reviews-card-text: var(--color-foreground, {{ section.settings.card_text_color }});
+      --reviews-card-border-radius: var(--style-border-radius-cards);
+      --reviews-image-border-radius: var(--style-border-radius-images);
+      --reviews-card-gap: var(--style-gap-cards);
+      --reviews-star-color: var(--color-primary, {{ section.settings.star_color }});
+      --reviews-avatar-bg: var(--color-foreground, {{ section.settings.avatar_background }});
+      --reviews-avatar-text: var(--color-background, {{ section.settings.avatar_text_color }});
+      --reviews-verified-color: var(--color-primary, {{ section.settings.verified_color }});
+      --reviews-button-bg: var(--color-foreground, {{ section.settings.button_background }});
+      --reviews-button-color: var(--color-background, {{ section.settings.button_color }});
+      --reviews-button-hover-bg: var(--color-foreground-muted, {{ section.settings.button_hover_background }});
+      --reviews-dot-color: var(--color-foreground, {{ section.settings.dot_color }});
+      --reviews-text-font-size: {{ section.settings.review_text_font_size }}px;
+      --reviews-author-font-size: {{ section.settings.author_name_font_size }}px;
+    "
+    data-section-id="{{ section_id }}"
+  >
+    <div class="reviews-carousel__container">
+      {% if section.settings.title != blank or section.settings.subtitle != blank %}
+        <div class="reviews-carousel__header">
+          {% if section.settings.title != blank %}
+            <h2 class="reviews-carousel__title h2{% if section.settings.title_color != blank %} reviews-carousel__title--custom-color{% endif %}" style="font-size: {{ section.settings.title_font_size }}px;{% if section.settings.title_color != blank %} color: {{ section.settings.title_color }};{% endif %}">{{ section.settings.title }}</h2>
+          {% endif %}
+          {% if section.settings.subtitle != blank %}
+            <p class="reviews-carousel__subtitle{% if section.settings.subtitle_color != blank %} reviews-carousel__subtitle--custom-color{% endif %}" style="font-size: {{ section.settings.subtitle_font_size }}px;{% if section.settings.subtitle_color != blank %} color: {{ section.settings.subtitle_color }};{% endif %}">{{ section.settings.subtitle }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="reviews-carousel__track-wrapper">
+        <div class="reviews-carousel__track" data-track>
+          {% for i in (1..4) %}
+            {% liquid
+              assign enabled_key = 'review_' | append: i | append: '_enabled'
+              assign image_key = 'review_' | append: i | append: '_image'
+              assign rating_key = 'review_' | append: i | append: '_rating'
+              assign text_key = 'review_' | append: i | append: '_text'
+              assign name_key = 'review_' | append: i | append: '_name'
+              assign verified_key = 'review_' | append: i | append: '_verified'
+              
+              assign review_enabled = section.settings[enabled_key]
+              assign review_image = section.settings[image_key]
+              assign review_rating = section.settings[rating_key]
+              assign review_text = section.settings[text_key]
+              assign review_name = section.settings[name_key]
+              assign review_verified = section.settings[verified_key]
+            %}
+
+            {% if review_enabled %}
+              <div class="reviews-carousel__card">
+                <div class="reviews-carousel__image-wrapper">
+                  {% if review_image %}
+                    {%- render 'image',
+                      image: review_image,
+                      height: 600,
+                      class: 'reviews-carousel__image'
+                    -%}
+                  {% else %}
+                    <div class="reviews-carousel__image-placeholder">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="reviews-carousel__rating">
+                  {% for star in (1..5) %}
+                    <svg class="reviews-carousel__star" viewBox="0 0 24 24" fill="{% if star <= review_rating %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  {% endfor %}
+                  <span class="visually-hidden">{{ review_rating }} out of 5 stars</span>
+                </div>
+
+                {% if review_text != blank %}
+                  <div class="reviews-carousel__text">{{ review_text }}</div>
+                {% endif %}
+
+                <div class="reviews-carousel__author">
+                  <div class="reviews-carousel__avatar">
+                    {% if review_name != blank %}
+                      {{ review_name | slice: 0 | upcase }}
+                    {% else %}
+                      ?
+                    {% endif %}
+                  </div>
+                  <div class="reviews-carousel__author-info">
+                    <p class="reviews-carousel__author-name">
+                      {% if review_name != blank %}
+                        {{ review_name }}
+                      {% else %}
+                        Customer
+                      {% endif %}
+                    </p>
+                    {% if review_verified %}
+                      <div class="reviews-carousel__verified">
+                        <svg class="reviews-carousel__verified-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        <span>Verified Purchase</span>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="reviews-carousel__controls">
+        <button class="reviews-carousel__button" data-prev aria-label="Previous review" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="reviews-carousel__dots" data-dots role="tablist" aria-label="Choose review"></div>
+
+        <button class="reviews-carousel__button" data-next aria-label="Next review" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </reviews-carousel-component>
+</div>
+
+{% stylesheet %}
+  .reviews-carousel {
+    overflow: hidden;
+  }
+
+  .reviews-carousel__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .reviews-carousel__header {
+    text-align: center;
+    margin-block-end: 40px;
+  }
+
+  .reviews-carousel__title {
+    color: var(--reviews-text);
+    margin: 0 0 10px;
+  }
+
+  .reviews-carousel__title--custom-color {
+    color: inherit;
+  }
+
+  .reviews-carousel__subtitle {
+    color: var(--reviews-text);
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .reviews-carousel__subtitle--custom-color {
+    opacity: 1;
+    color: inherit;
+  }
+
+  .reviews-carousel__track-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reviews-carousel__track {
+    display: flex;
+    gap: var(--reviews-card-gap);
+    transition: transform 0.5s ease;
+  }
+
+  .reviews-carousel__card {
+    flex: 0 0 calc(33.333% - var(--reviews-card-gap) * 2 / 3);
+    background-color: var(--reviews-card-bg);
+    border-radius: var(--reviews-card-border-radius);
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .reviews-carousel__image-wrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    margin-block-end: 16px;
+    border-radius: var(--reviews-image-border-radius);
+    overflow: hidden;
+  }
+
+  .reviews-carousel__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .reviews-carousel__image-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reviews-carousel__image-placeholder svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .reviews-carousel__rating {
+    display: flex;
+    gap: 4px;
+    margin-block-end: 12px;
+  }
+
+  .reviews-carousel__star {
+    width: 16px;
+    height: 16px;
+    color: var(--reviews-star-color);
+  }
+
+  .reviews-carousel__text {
+    color: var(--reviews-card-text);
+    font-size: var(--reviews-text-font-size);
+    line-height: 1.5;
+    margin-block-end: 16px;
+  }
+
+  .reviews-carousel__text p {
+    margin: 0;
+  }
+
+  .reviews-carousel__text > :first-child {
+    margin-top: 0;
+  }
+
+  .reviews-carousel__text > :last-child {
+    margin-bottom: 0;
+  }
+
+  .reviews-carousel__author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .reviews-carousel__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--reviews-avatar-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--reviews-avatar-text);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .reviews-carousel__author-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .reviews-carousel__author-name {
+    font-weight: 600;
+    color: var(--reviews-card-text);
+    margin: 0 0 4px;
+    font-size: var(--reviews-author-font-size);
+  }
+
+  .reviews-carousel__verified {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--reviews-verified-color);
+  }
+
+  .reviews-carousel__verified-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .reviews-carousel__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-block-start: 32px;
+  }
+
+  .reviews-carousel__button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--reviews-button-bg);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--reviews-button-color);
+    transition: background-color 0.3s ease;
+  }
+
+  .reviews-carousel__button:hover {
+    background-color: var(--reviews-button-hover-bg);
+  }
+
+  .reviews-carousel__button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .reviews-carousel__button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .reviews-carousel__dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .reviews-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--reviews-dot-color);
+    opacity: 0.3;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .reviews-carousel__dot[aria-selected="true"] {
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 989px) {
+    .reviews-carousel__card {
+      flex: 0 0 calc(50% - var(--reviews-card-gap) / 2);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .reviews-carousel__container {
+      padding: 0 16px;
+    }
+
+    .reviews-carousel__card {
+      flex: 0 0 100%;
+    }
+
+    .reviews-carousel__header {
+      margin-block-end: 32px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ReviewsCarouselComponent extends HTMLElement {
+    constructor() {
+      super();
+      this.currentIndex = 0;
+      this.itemsPerView = 3;
+    }
+
+    connectedCallback() {
+      this.track = this.querySelector('[data-track]');
+      this.prevButton = this.querySelector('[data-prev]');
+      this.nextButton = this.querySelector('[data-next]');
+      this.dotsContainer = this.querySelector('[data-dots]');
+      this.cards = Array.from(this.track.children);
+
+      this.updateItemsPerView();
+      this.createDots();
+      this.updateCarousel();
+      this.setupEventListeners();
+
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateItemsPerView();
+        this.createDots();
+        this.updateCarousel();
+      });
+      this.resizeObserver.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.resizeObserver?.disconnect();
+    }
+
+    updateItemsPerView() {
+      const width = window.innerWidth;
+      if (width <= 749) {
+        this.itemsPerView = 1;
+      } else if (width <= 989) {
+        this.itemsPerView = 2;
+      } else {
+        this.itemsPerView = 3;
+      }
+    }
+
+    createDots() {
+      this.dotsContainer.innerHTML = '';
+      const totalDots = Math.max(0, this.cards.length - this.itemsPerView + 1);
+
+      for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'reviews-carousel__dot';
+        dot.setAttribute('type', 'button');
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', `Go to review ${i + 1}`);
+        dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        
+        dot.addEventListener('click', () => {
+          this.currentIndex = i;
+          this.updateCarousel();
+        });
+        
+        this.dotsContainer.appendChild(dot);
+      }
+    }
+
+    setupEventListeners() {
+      this.prevButton.addEventListener('click', () => {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.updateCarousel();
+        }
+      });
+
+      this.nextButton.addEventListener('click', () => {
+        const maxIndex = this.cards.length - this.itemsPerView;
+        if (this.currentIndex < maxIndex) {
+          this.currentIndex++;
+          this.updateCarousel();
+        }
+      });
+    }
+
+    updateCarousel() {
+      if (this.cards.length === 0) return;
+
+      const cardWidth = this.cards[0].offsetWidth;
+      const gap = parseInt(getComputedStyle(this.track).gap) || 0;
+      const offset = -(this.currentIndex * (cardWidth + gap));
+
+      this.track.style.transform = `translateX(${offset}px)`;
+
+      const maxIndex = this.cards.length - this.itemsPerView;
+      this.prevButton.disabled = this.currentIndex === 0;
+      this.nextButton.disabled = this.currentIndex >= maxIndex;
+
+      const dots = this.dotsContainer.querySelectorAll('.reviews-carousel__dot');
+      dots.forEach((dot, index) => {
+        dot.setAttribute('aria-selected', index === this.currentIndex ? 'true' : 'false');
+      });
+    }
+  }
+
+  if (!customElements.get('reviews-carousel-component')) {
+    customElements.define('reviews-carousel-component', ReviewsCarouselComponent);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Reviews carousel",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Real reviews from real customers"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "info": "Leave empty to use default color"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "info": "Leave empty to use default color with opacity"
+    },
+    {
+      "type": "range",
+      "id": "review_text_font_size",
+      "label": "Review text font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "author_name_font_size",
+      "label": "Author name font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_enabled",
+      "label": "Enable review",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_1_image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "range",
+      "id": "review_1_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "review_1_text",
+      "label": "Review text",
+      "default": "<p>Absolutely love this product! The quality exceeded my expectations and it arrived so quickly.</p>"
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Customer name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_enabled",
+      "label": "Enable review",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_2_image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "range",
+      "id": "review_2_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "review_2_text",
+      "label": "Review text",
+      "default": "<p>Best purchase I've made this year! Highly recommend to anyone looking for quality.</p>"
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Customer name",
+      "default": "Jessica L."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_enabled",
+      "label": "Enable review",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_3_image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "range",
+      "id": "review_3_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "review_3_text",
+      "label": "Review text",
+      "default": "<p>Amazing quality and customer service. Will definitely be ordering again!</p>"
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Customer name",
+      "default": "Emily R."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_4_enabled",
+      "label": "Enable review",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_4_image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "range",
+      "id": "review_4_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "review_4_text",
+      "label": "Review text",
+      "default": "<p>Exceeded all my expectations! The photos don't do it justice.</p>"
+    },
+    {
+      "type": "text",
+      "id": "review_4_name",
+      "label": "Customer name",
+      "default": "Amanda K."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_4_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#FFB800"
+    },
+    {
+      "type": "color",
+      "id": "avatar_background",
+      "label": "Avatar background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "avatar_text_color",
+      "label": "Avatar text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "verified_color",
+      "label": "Verified badge",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "t:content.size"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews carousel",
+      "category": "t:categories.storytelling"
+    }
+  ]
+}
+{% endschema %}

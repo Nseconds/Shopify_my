@@ -1,0 +1,173 @@
+
+{%- liquid
+  if section.settings.use_custom_colors
+    assign asp_text      = section.settings.text_color
+    assign asp_grad_1    = section.settings.accent_color
+    assign asp_grad_2    = section.settings.accent_color
+    assign asp_grad_3    = section.settings.accent_color
+    assign asp_pill_bg   = section.settings.pill_bg
+    assign asp_pill_bg2  = section.settings.pill_bg_2
+    assign asp_pill_text = section.settings.pill_text_color
+    assign asp_star      = section.settings.star_color
+  elsif settings.style_mode == 'gradient'
+    assign asp_text      = 'var(--color-foreground)'
+    assign asp_grad_1    = 'var(--color-gradient-1)'
+    assign asp_grad_2    = 'var(--color-gradient-2)'
+    assign asp_grad_3    = 'var(--color-gradient-3)'
+    assign asp_pill_bg   = 'var(--color-gradient-1)'
+    assign asp_pill_bg2  = 'var(--color-gradient-3)'
+    assign asp_pill_text = 'var(--color-gradient-text)'
+    assign asp_star      = 'var(--color-gradient-1)'
+  else
+    assign asp_text      = 'var(--color-foreground)'
+    assign asp_grad_1    = section.settings.color_scheme.settings.primary
+    assign asp_grad_2    = section.settings.color_scheme.settings.primary
+    assign asp_grad_3    = section.settings.color_scheme.settings.primary
+    assign asp_pill_bg   = section.settings.color_scheme.settings.primary
+    assign asp_pill_bg2  = section.settings.color_scheme.settings.primary
+    assign asp_pill_text = section.settings.color_scheme.settings.background
+    assign asp_star      = section.settings.color_scheme.settings.primary
+  endif
+-%}
+
+<section id="shopify-section-{{ section.id }}" class="anchor-social-proof color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }}{
+        --asp-text: {{ asp_text }};
+        --asp-pill-text: {{ asp_pill_text }};
+        --asp-pill-bg: {{ asp_pill_bg }};
+        --asp-pill-bg2: {{ asp_pill_bg2 }};
+        --asp-pill-border: rgba(255,255,255,.22);
+        --asp-max: {{ section.settings.max_width }}px;
+        --asp-pad-y: {{ section.settings.padding_y }}px;
+      }
+
+      #shopify-section-{{ section.id }} .asp-wrap{
+        max-width: var(--asp-max);
+        margin: 0 auto;
+        padding: var(--asp-pad-y) 16px;
+        text-align: center;
+      }
+
+      #shopify-section-{{ section.id }} .asp-title{
+        margin: 0 0 14px 0;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        color: var(--asp-text);
+        font-size: clamp(26px, 3vw, 44px);
+      }
+
+      #shopify-section-{{ section.id }} .asp-title .asp-accent{
+        background: linear-gradient(135deg, {{ asp_grad_1 }}, {{ asp_grad_2 }} 55%, {{ asp_grad_3 }});
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      #shopify-section-{{ section.id }} .asp-badge{
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-radius: var(--style-border-radius-global);
+        color: var(--asp-pill-text);
+        background: linear-gradient(135deg, var(--asp-pill-bg), var(--asp-pill-bg2));
+        border: 1px solid var(--asp-pill-border);
+        box-shadow: 0 12px 30px rgba(0,0,0,.14);
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      #shopify-section-{{ section.id }} .asp-stars{
+        display: inline-flex;
+        gap: 2px;
+        line-height: 0;
+      }
+      #shopify-section-{{ section.id }} .asp-stars svg{
+        width: 14px;
+        height: 14px;
+        fill: {{ asp_star }};
+        opacity: .95;
+      }
+  
+      #shopify-section-{{ section.id }} .asp-divider{
+        width: 1px;
+        height: 14px;
+        background: rgba(255,255,255,.35);
+      }
+  
+      @media (max-width: 749px){
+        #shopify-section-{{ section.id }} .asp-wrap{
+          padding: var(--asp-pad-y) 14px;
+        }
+        #shopify-section-{{ section.id }} .asp-badge{
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+      }
+    {% endstyle %}
+  
+    <div class="asp-wrap">
+      <h2 class="asp-title">
+        {{ section.settings.title_before }}
+        <span class="asp-accent">{{ section.settings.title_accent }}</span>
+      </h2>
+  
+      {% if section.settings.show_badge %}
+        <div class="asp-badge" aria-label="Rating">
+          <span class="asp-stars" aria-hidden="true">
+            {% for i in (1..5) %}
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+              </svg>
+            {% endfor %}
+          </span>
+  
+          <span>{{ section.settings.rating_text }}</span>
+  
+          <span class="asp-divider" aria-hidden="true"></span>
+  
+          <span>{{ section.settings.customer_text }}</span>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Social Proof",
+    "tag": "section",
+    "class": "section-wrapper",
+    "settings": [
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+  
+      { "type": "text", "id": "title_before", "label": "Title (before accent)", "default": "Join over 10,000+ " },
+      { "type": "text", "id": "title_accent", "label": "Title (accent word)", "default": "Happy Customers" },
+  
+      { "type": "checkbox", "id": "show_badge", "label": "Show rating badge", "default": true },
+      { "type": "text", "id": "rating_text", "label": "Rating text", "default": "4.8" },
+      { "type": "text", "id": "customer_text", "label": "Customer text", "default": "12,319 Customers" },
+  
+      { "type": "header", "content": "Colors" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+      { "type": "color", "id": "text_color", "label": "Title color", "default": "#0B1020", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "accent_color", "label": "Accent start color", "default": "#19B6E6", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "pill_bg", "label": "Badge gradient 1", "default": "#19B6E6", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "pill_bg_2", "label": "Badge gradient 2", "default": "#1D4ED8", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "pill_text_color", "label": "Badge text color", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "star_color", "label": "Star color", "default": "#FFD700", "visible_if": "{{ section.settings.use_custom_colors }}" },
+  
+      { "type": "header", "content": "Layout" },
+      { "type": "range", "id": "max_width", "label": "Max width (px)", "min": 600, "max": 1600, "step": 20, "default": 1200 },
+      { "type": "range", "id": "padding_y", "label": "Vertical padding (px)", "min": 0, "max": 120, "step": 4, "default": 28 }
+    ],
+    "presets": [
+      { "name": "Social Proof", "category": "Social Proof" }
+    ]
+  }
+  {% endschema %}
+  

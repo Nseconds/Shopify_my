@@ -1,0 +1,658 @@
+{% doc %}
+  @prompt
+    Add a high-converting recent purchases block to show that the item is popular.
+{% enddoc %}
+
+{% assign recent_purchases_id = block.id | replace: '_', '' | downcase %}
+{% assign product_ref = closest.product | default: product %}
+
+{% style %}
+  .recent-purchases-{{ recent_purchases_id }} {
+    position: fixed;
+    inset-block-end: {{ block.settings.position_bottom }}px;
+    inset-inline-start: {{ block.settings.position_left }}px;
+    z-index: 9999;
+    width: min({{ block.settings.desktop_width_percent }}%, 420px);
+    opacity: 0;
+    transform: translateX(-120%);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+
+  .recent-purchases-{{ recent_purchases_id }}.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  {% if block.settings.use_scheme_colors == false %}
+    {% assign rp_text = block.settings.text_color %}
+    {% assign rp_bg = block.settings.background_color %}
+    {% assign rp_accent_color = block.settings.accent_color | default: 'var(--color-primary)' %}
+  {% else %}
+    {% assign rp_text = 'var(--color-foreground)' %}
+    {% assign rp_bg = '' %}
+    {% assign rp_accent_color = 'var(--color-primary)' %}
+  {% endif %}
+
+  .recent-purchases__card-{{ recent_purchases_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: {{ block.settings.border_radius }}px;
+    border: 1px solid color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 10%, transparent);
+    {% if rp_bg != blank %}
+    background: linear-gradient(
+      145deg,
+      color-mix(in oklab, {{ rp_bg }} 92%, white),
+      {{ rp_bg }}
+    );
+    {% else %}
+    background: var(--color-background);
+    {% endif %}
+    box-shadow:
+      0 14px 34px -18px color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 30%, transparent),
+      0 3px 8px -4px color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 20%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .recent-purchases__close-{{ recent_purchases_id }} {
+    position: absolute;
+    inset-block-start: 6px;
+    inset-inline-end: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 8%, transparent);
+    color: {{ rp_text | default: 'var(--color-foreground)' }};
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .recent-purchases__close-{{ recent_purchases_id }}:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .recent-purchases__close-{{ recent_purchases_id }}:focus-visible {
+    outline: 2px solid {{ rp_accent_color }};
+    outline-offset: 2px;
+    opacity: 1;
+  }
+
+  .recent-purchases__image-{{ recent_purchases_id }} {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    background: color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 8%, transparent);
+  }
+
+  .recent-purchases__image-{{ recent_purchases_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .recent-purchases__content-{{ recent_purchases_id }} {
+    flex: 1;
+    min-width: 0;
+    padding-inline-end: 26px;
+  }
+
+  .recent-purchases__name-{{ recent_purchases_id }} {
+    margin: 0 0 4px;
+    font-size: {{ block.settings.name_font_size }}px;
+    font-weight: 650;
+    line-height: 1.25;
+    color: {{ rp_text | default: 'var(--color-foreground)' }};
+    overflow-wrap: anywhere;
+  }
+
+  .recent-purchases__location-{{ recent_purchases_id }} {
+    margin: 0 0 4px;
+    font-size: {{ block.settings.location_font_size }}px;
+    line-height: 1.3;
+    color: color-mix(in oklab, {{ rp_text | default: 'var(--color-foreground)' }} 76%, transparent);
+  }
+
+  .recent-purchases__time-{{ recent_purchases_id }} {
+    margin: 0;
+    font-size: {{ block.settings.time_font_size }}px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: {{ rp_accent_color }};
+  }
+
+  .recent-purchases__verified-{{ recent_purchases_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: {{ rp_accent_color }};
+  }
+
+  .recent-purchases__verified-{{ recent_purchases_id }} svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .recent-purchases-{{ recent_purchases_id }} {
+      inset-block-end: {{ block.settings.position_bottom_mobile }}px;
+      inset-inline-start: {{ block.settings.position_left_mobile }}px;
+      inset-inline-end: {{ block.settings.position_left_mobile }}px;
+      width: auto;
+      max-width: none;
+    }
+
+    .recent-purchases__card-{{ recent_purchases_id }} {
+      padding: 12px;
+      gap: 10px;
+    }
+
+    .recent-purchases__image-{{ recent_purchases_id }} {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .recent-purchases-{{ recent_purchases_id }} {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+<recent-purchases-{{ recent_purchases_id }}
+  class="recent-purchases-{{ recent_purchases_id }}"
+  data-display-duration="{{ block.settings.display_duration }}"
+  data-delay-between="{{ block.settings.delay_between }}"
+  data-initial-delay="{{ block.settings.initial_delay }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="recent-purchases__card-{{ recent_purchases_id }}">
+    <button
+      type="button"
+      class="recent-purchases__close-{{ recent_purchases_id }}"
+      aria-label="Close recent purchase notification"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="recent-purchases__image-{{ recent_purchases_id }}">
+      {% if product_ref.featured_image %}
+        <img
+          src="{{ product_ref.featured_image | image_url: width: 120 }}"
+          alt="{{ product_ref.featured_image.alt | default: product_ref.title | escape }}"
+          width="120"
+          height="120"
+          loading="lazy"
+        >
+      {% else %}
+        <div style="background-color: #f4f4f4; width: 100%; height: 100%;"></div>
+      {% endif %}
+    </div>
+
+    <div class="recent-purchases__content-{{ recent_purchases_id }}" aria-live="polite" aria-atomic="true">
+      <p class="recent-purchases__name-{{ recent_purchases_id }}"></p>
+      <p class="recent-purchases__location-{{ recent_purchases_id }}"></p>
+      <p class="recent-purchases__time-{{ recent_purchases_id }}"></p>
+      {% if block.settings.show_verified_badge %}
+        <div class="recent-purchases__verified-{{ recent_purchases_id }}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          <span>{{ block.settings.verified_text }}</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</recent-purchases-{{ recent_purchases_id }}>
+
+<script>
+  (function() {
+    class RecentPurchases{{ recent_purchases_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.isVisible = false;
+        this.displayTimeout = null;
+        this.startTimeout = null;
+        this.intervalId = null;
+        this.closedByUser = false;
+      }
+
+      connectedCallback() {
+        // Move to <body> so parent transforms/stacking contexts can't affect position:fixed
+        if (this.parentElement !== document.body) {
+          document.body.appendChild(this);
+          return;
+        }
+
+        this.displayDuration = Number.parseInt(this.dataset.displayDuration || '6', 10) * 1000;
+        this.delayBetween = Number.parseInt(this.dataset.delayBetween || '10', 10) * 1000;
+        this.initialDelay = Number.parseInt(this.dataset.initialDelay || '5', 10) * 1000;
+
+        this.nameEl = this.querySelector('.recent-purchases__name-{{ recent_purchases_id }}');
+        this.locationEl = this.querySelector('.recent-purchases__location-{{ recent_purchases_id }}');
+        this.timeEl = this.querySelector('.recent-purchases__time-{{ recent_purchases_id }}');
+        this.closeBtn = this.querySelector('.recent-purchases__close-{{ recent_purchases_id }}');
+
+        this.purchases = [
+          { name: '{{ block.settings.purchase_1_name }}', location: '{{ block.settings.purchase_1_location }}', time: '{{ block.settings.purchase_1_time }}' },
+          { name: '{{ block.settings.purchase_2_name }}', location: '{{ block.settings.purchase_2_location }}', time: '{{ block.settings.purchase_2_time }}' },
+          { name: '{{ block.settings.purchase_3_name }}', location: '{{ block.settings.purchase_3_location }}', time: '{{ block.settings.purchase_3_time }}' },
+          { name: '{{ block.settings.purchase_4_name }}', location: '{{ block.settings.purchase_4_location }}', time: '{{ block.settings.purchase_4_time }}' },
+          { name: '{{ block.settings.purchase_5_name }}', location: '{{ block.settings.purchase_5_location }}', time: '{{ block.settings.purchase_5_time }}' }
+        ].filter((purchase) => purchase.name && purchase.location && purchase.time);
+
+        if (this.purchases.length === 0 || !this.nameEl || !this.locationEl || !this.timeEl) return;
+
+        this.closeBtn?.addEventListener('click', this.handleCloseClick);
+        this.startTimeout = window.setTimeout(() => this.startCycle(), this.initialDelay);
+      }
+
+      handleCloseClick = () => {
+        this.closedByUser = true;
+        this.stopTimers();
+        this.hide();
+      };
+
+      stopTimers() {
+        if (this.displayTimeout) {
+          window.clearTimeout(this.displayTimeout);
+          this.displayTimeout = null;
+        }
+
+        if (this.startTimeout) {
+          window.clearTimeout(this.startTimeout);
+          this.startTimeout = null;
+        }
+
+        if (this.intervalId) {
+          window.clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+      }
+
+      startCycle() {
+        if (this.closedByUser) return;
+        this.showNext();
+        this.intervalId = window.setInterval(() => this.showNext(), this.displayDuration + this.delayBetween);
+      }
+
+      showNext() {
+        if (this.closedByUser) return;
+
+        if (this.isVisible) {
+          this.hide();
+          window.setTimeout(() => {
+            this.currentIndex = (this.currentIndex + 1) % this.purchases.length;
+            this.show();
+          }, 450);
+          return;
+        }
+
+        this.show();
+      }
+
+      show() {
+        const purchase = this.purchases[this.currentIndex];
+        this.nameEl.textContent = purchase.name;
+        this.locationEl.textContent = purchase.location;
+        this.timeEl.textContent = purchase.time;
+
+        window.requestAnimationFrame(() => {
+          this.classList.add('is-visible');
+          this.isVisible = true;
+        });
+
+        this.displayTimeout = window.setTimeout(() => this.hide(), this.displayDuration);
+      }
+
+      hide() {
+        this.classList.remove('is-visible');
+        this.isVisible = false;
+      }
+
+      disconnectedCallback() {
+        this.closeBtn?.removeEventListener('click', this.handleCloseClick);
+        this.stopTimers();
+      }
+    }
+
+    customElements.define('recent-purchases-{{ recent_purchases_id }}', RecentPurchases{{ recent_purchases_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Recent purchases",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Display settings"
+    },
+    {
+      "type": "range",
+      "id": "initial_delay",
+      "label": "Initial delay",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "display_duration",
+      "label": "Display duration",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "delay_between",
+      "label": "Delay between notifications",
+      "min": 3,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Position"
+    },
+    {
+      "type": "range",
+      "id": "position_bottom",
+      "label": "Bottom position (desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "position_left",
+      "label": "Left position (desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "position_bottom_mobile",
+      "label": "Bottom position (mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "position_left_mobile",
+      "label": "Side position (mobile)",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_scheme_colors",
+      "label": "Use theme color scheme",
+      "default": true,
+      "info": "When enabled, colors adapt automatically to the current color scheme."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "info": "Only applies when 'Use theme color scheme' is disabled."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "name_font_size",
+      "label": "Name font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "location_font_size",
+      "label": "Location font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "time_font_size",
+      "label": "Time font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "header",
+      "content": "Verified badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_verified_badge",
+      "label": "Show verified badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "verified_text",
+      "label": "Verified text",
+      "default": "Verified purchase"
+    },
+    {
+      "type": "header",
+      "content": "Purchase 1"
+    },
+    {
+      "type": "text",
+      "id": "purchase_1_name",
+      "label": "Customer name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "text",
+      "id": "purchase_1_location",
+      "label": "Location",
+      "default": "New York, NY"
+    },
+    {
+      "type": "text",
+      "id": "purchase_1_time",
+      "label": "Time ago",
+      "default": "2 hours ago"
+    },
+    {
+      "type": "header",
+      "content": "Purchase 2"
+    },
+    {
+      "type": "text",
+      "id": "purchase_2_name",
+      "label": "Customer name",
+      "default": "Michael R."
+    },
+    {
+      "type": "text",
+      "id": "purchase_2_location",
+      "label": "Location",
+      "default": "Los Angeles, CA"
+    },
+    {
+      "type": "text",
+      "id": "purchase_2_time",
+      "label": "Time ago",
+      "default": "4 hours ago"
+    },
+    {
+      "type": "header",
+      "content": "Purchase 3"
+    },
+    {
+      "type": "text",
+      "id": "purchase_3_name",
+      "label": "Customer name",
+      "default": "Emma L."
+    },
+    {
+      "type": "text",
+      "id": "purchase_3_location",
+      "label": "Location",
+      "default": "Chicago, IL"
+    },
+    {
+      "type": "text",
+      "id": "purchase_3_time",
+      "label": "Time ago",
+      "default": "6 hours ago"
+    },
+    {
+      "type": "header",
+      "content": "Purchase 4"
+    },
+    {
+      "type": "text",
+      "id": "purchase_4_name",
+      "label": "Customer name",
+      "default": "James K."
+    },
+    {
+      "type": "text",
+      "id": "purchase_4_location",
+      "label": "Location",
+      "default": "Houston, TX"
+    },
+    {
+      "type": "text",
+      "id": "purchase_4_time",
+      "label": "Time ago",
+      "default": "8 hours ago"
+    },
+    {
+      "type": "header",
+      "content": "Purchase 5"
+    },
+    {
+      "type": "text",
+      "id": "purchase_5_name",
+      "label": "Customer name",
+      "default": "Olivia P."
+    },
+    {
+      "type": "text",
+      "id": "purchase_5_location",
+      "label": "Location",
+      "default": "Miami, FL"
+    },
+    {
+      "type": "text",
+      "id": "purchase_5_time",
+      "label": "Time ago",
+      "default": "12 hours ago"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recent purchases",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

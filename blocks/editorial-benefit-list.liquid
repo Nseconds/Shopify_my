@@ -1,0 +1,115 @@
+{% liquid
+  assign points = ''
+
+  if block.settings.point_1 != blank
+    assign points = block.settings.point_1
+  endif
+  if block.settings.point_2 != blank
+    assign points = points | append: '|' | append: block.settings.point_2
+  endif
+  if block.settings.point_3 != blank
+    assign points = points | append: '|' | append: block.settings.point_3
+  endif
+  if block.settings.point_4 != blank
+    assign points = points | append: '|' | append: block.settings.point_4
+  endif
+
+  assign point_array = points | split: '|'
+%}
+
+<div
+  class="editorial-benefit-list spacing-style"
+  {{ block.shopify_attributes }}
+>
+  <ul class="editorial-benefit-list__list" role="list">
+    {% for point in point_array %}
+      {% if point != blank %}
+        <li class="editorial-benefit-list__item">
+          <span class="editorial-benefit-list__icon" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="editorial-benefit-list__text">{{ point }}</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+{% stylesheet %}
+  .editorial-benefit-list {
+    padding-block: 12px;
+  }
+
+  .editorial-benefit-list__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .editorial-benefit-list__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .editorial-benefit-list__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-foreground);
+    flex-shrink: 0;
+  }
+
+  .editorial-benefit-list__text {
+    font-family: var(--font-body--family);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Benefits",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "point_1",
+      "label": "Point 1",
+      "default": "Premium Cotton Fabric"
+    },
+    {
+      "type": "text",
+      "id": "point_2",
+      "label": "Point 2",
+      "default": "Tailored Slim Fit"
+    },
+    {
+      "type": "text",
+      "id": "point_3",
+      "label": "Point 3",
+      "default": "Handmade in Europe"
+    },
+    {
+      "type": "text",
+      "id": "point_4",
+      "label": "Point 4",
+      "default": "Sustainable Materials"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Benefits"
+    }
+  ]
+}
+{% endschema %}

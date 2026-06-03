@@ -1,0 +1,625 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.heading_color
+    assign sc_body   = section.settings.answer_color
+    assign sc_accent = section.settings.icon_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_body   = 'var(--color-foreground)'
+    assign sc_accent = 'var(--color-gradient-1)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_body   = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+  endif
+-%}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ section.settings.section_padding }}px 20px;
+    background: {{ sc_bg }};
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: {{ section.settings.heading_alignment }};
+    margin-bottom: {{ section.settings.heading_spacing }}px;
+  }
+
+  .ai-faq-heading-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ sc_text }};
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .ai-faq-subheading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ sc_body }};
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    border-bottom: {{ section.settings.divider_width }}px solid {{ section.settings.divider_color }};
+    transition: background-color 0.3s ease;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}:hover {
+    background-color: var(--color-card-background, {{ section.settings.hover_background }});
+  }
+
+  .ai-faq-question-button-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: {{ section.settings.item_padding }}px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 20px;
+  }
+
+  .ai-faq-question-text-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.question_size }}px;
+    color: {{ sc_text }};
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }}::before,
+  .ai-faq-icon-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    background-color: {{ sc_accent }};
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }}::before {
+    width: 20px;
+    height: 1px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }}::after {
+    width: 1px;
+    height: 20px;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-icon-{{ ai_gen_id }}::after {
+    transform: translateX(-50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    padding: 0;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 1000px;
+    padding-bottom: {{ section.settings.item_padding }}px;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.answer_size }}px;
+    color: {{ sc_body }};
+    line-height: 1.7;
+    padding-right: 40px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      width: 100%;
+      padding: {{ section.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-faq-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.7 }}px;
+    }
+
+    .ai-faq-subheading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.subheading_size | times: 0.9 }}px;
+    }
+
+    .ai-faq-question-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.question_size | times: 0.9 }}px;
+    }
+
+    .ai-faq-answer-content-{{ ai_gen_id }} {
+      font-size: {{ section.settings.answer_size | times: 0.9 }}px;
+      padding-right: 0;
+    }
+
+    .ai-faq-question-button-{{ ai_gen_id }} {
+      padding: {{ section.settings.item_padding | times: 0.8 }}px 0;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-faq-section-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-faq-header-{{ ai_gen_id }}">
+    {% if section.settings.heading != blank %}
+      <h2 class="ai-faq-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <div class="ai-faq-subheading-{{ ai_gen_id }}">{{ section.settings.subheading }}</div>
+    {% endif %}
+  </div>
+
+  <ul class="ai-faq-list-{{ ai_gen_id }}">
+    {% for i in (1..8) %}
+      {% liquid
+        assign question_key = 'question_' | append: i
+        assign answer_key = 'answer_' | append: i
+        assign question = section.settings[question_key]
+        assign answer = section.settings[answer_key]
+      %}
+
+      {% if question != blank and answer != blank %}
+        <li class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+          <button
+            class="ai-faq-question-button-{{ ai_gen_id }}"
+            aria-expanded="false"
+            aria-controls="ai-faq-answer-{{ ai_gen_id }}-{{ i }}"
+          >
+            <span class="ai-faq-question-text-{{ ai_gen_id }}">{{ question }}</span>
+            <span class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true"></span>
+          </button>
+          <div
+            class="ai-faq-answer-{{ ai_gen_id }}"
+            id="ai-faq-answer-{{ ai_gen_id }}-{{ i }}"
+          >
+            <div class="ai-faq-answer-content-{{ ai_gen_id }}">{{ answer }}</div>
+          </div>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const sectionElement = document.querySelector(`#shopify-section-${sectionId}`);
+    
+    if (!sectionElement) return;
+    
+    const items = sectionElement.querySelectorAll('[data-faq-item]');
+    
+    items.forEach((item) => {
+      const button = item.querySelector('.ai-faq-question-button-{{ ai_gen_id }}');
+      
+      button.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        if (isActive) {
+          closeItem(item);
+        } else {
+          items.forEach((otherItem) => {
+            if (otherItem !== item) {
+              closeItem(otherItem);
+            }
+          });
+          openItem(item);
+        }
+      });
+    });
+    
+    function openItem(item) {
+      const button = item.querySelector('.ai-faq-question-button-{{ ai_gen_id }}');
+      item.classList.add('active');
+      button.setAttribute('aria-expanded', 'true');
+    }
+    
+    function closeItem(item) {
+      const button = item.querySelector('.ai-faq-question-button-{{ ai_gen_id }}');
+      item.classList.remove('active');
+      button.setAttribute('aria-expanded', 'false');
+    }
+  })();
+</script>
+
+{%- capture faq_ld -%}
+{%- assign faq_first = true -%}
+{%- for faq_i in (1..8) -%}
+{%- assign faq_qk = 'question_' | append: faq_i -%}{%- assign faq_ak = 'answer_' | append: faq_i -%}
+{%- assign faq_fq = section.settings[faq_qk] -%}{%- assign faq_fa = section.settings[faq_ak] -%}
+{%- if faq_fq != blank and faq_fa != blank -%}
+{%- unless faq_first -%},{%- endunless -%}
+{"@type":"Question","name":{{ faq_fq | json }},"acceptedAnswer":{"@type":"Answer","text":{{ faq_fa | strip_html | json }}}}
+{%- assign faq_first = false -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endcapture -%}
+{%- assign faq_ld_s = faq_ld | strip -%}
+{%- if faq_ld_s != '' -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ faq_ld_s }}]}
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Premium FAQ section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Frequently Asked Questions</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Everything you need to know about your device</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Question 1"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "Question",
+      "default": "Who is the device suitable for?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_1",
+      "label": "Answer",
+      "default": "The device is designed for all skin types and concerns. It is particularly effective for those seeking to improve skin texture, reduce fine lines, and enhance overall skin clarity. Consult with a dermatologist if you have specific skin conditions."
+    },
+    {
+      "type": "header",
+      "content": "Question 2"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "Question",
+      "default": "How often should I use the device?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_2",
+      "label": "Answer",
+      "default": "For optimal results, use the device 3-4 times per week. Begin with 2-3 sessions per week during the first two weeks to allow your skin to adjust. Consistency is key to achieving visible improvements."
+    },
+    {
+      "type": "header",
+      "content": "Question 3"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "Question",
+      "default": "Is it safe for sensitive skin?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_3",
+      "label": "Answer",
+      "default": "Yes, the device has been dermatologically tested and is safe for sensitive skin. Start with the lowest intensity setting and gradually increase as your skin builds tolerance. Discontinue use if irritation occurs."
+    },
+    {
+      "type": "header",
+      "content": "Question 4"
+    },
+    {
+      "type": "text",
+      "id": "question_4",
+      "label": "Question",
+      "default": "When can I expect to see results?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_4",
+      "label": "Answer",
+      "default": "Most users notice improvements in skin texture and radiance within 2-4 weeks of consistent use. Visible reduction in fine lines and enhanced firmness typically appear after 6-8 weeks. Individual results may vary."
+    },
+    {
+      "type": "header",
+      "content": "Question 5"
+    },
+    {
+      "type": "text",
+      "id": "question_5",
+      "label": "Question",
+      "default": "Can it be used with other skincare products?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_5",
+      "label": "Answer",
+      "default": "Yes, the device works effectively with your existing skincare routine. Apply serums or moisturizers after treatment for enhanced absorption. Avoid using with retinol or exfoliating acids immediately before or after treatment."
+    },
+    {
+      "type": "header",
+      "content": "Question 6"
+    },
+    {
+      "type": "text",
+      "id": "question_6",
+      "label": "Question",
+      "default": "How do I clean and store the device?"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_6",
+      "label": "Answer",
+      "default": "Clean the device head with a soft, damp cloth after each use. Do not submerge in water. Store in a cool, dry place away from direct sunlight. Ensure the device is completely dry before storing."
+    },
+    {
+      "type": "header",
+      "content": "Question 7"
+    },
+    {
+      "type": "text",
+      "id": "question_7",
+      "label": "Question"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_7",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "Question 8"
+    },
+    {
+      "type": "text",
+      "id": "question_8",
+      "label": "Question"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_8",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "label": "Item padding",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f5f9",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "hover_background",
+      "label": "Hover background",
+      "default": "#ffffff"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading",
+      "default": "#6b7280",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer",
+      "default": "#4b5563",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider",
+      "default": "#e5e7eb"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#9ca3af",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Question size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Answer size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Dividers"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium FAQ section"
+    }
+  ]
+}
+{% endschema %}

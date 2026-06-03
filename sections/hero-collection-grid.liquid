@@ -1,0 +1,392 @@
+{% style %}
+  .hero-collection-grid-{{ section.id }} {
+    --card-border-radius: var(--style-border-radius-cards);
+  }
+{% endstyle %}
+
+<div class="hero-collection-grid hero-collection-grid-{{ section.id }} color-{{ section.settings.color_scheme }}">
+  <div class="hero-collection-grid__container {% if section.settings.layout == 'full-width' %}force-full-width{% else %}page-width{% endif %}">
+    
+    <!-- Header -->
+    <div class="hero-collection-grid__header">
+      {% if section.settings.heading != blank %}
+        <h1 class="hero-collection-grid__heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+      
+      {% if section.settings.subheading != blank %}
+        <p class="hero-collection-grid__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Collection Cards Grid -->
+    <div class="hero-collection-grid__cards" style="--columns: {{ section.blocks.size | at_most: 4 }};">
+      {% for block in section.blocks %}
+        {% if block.type == 'collection_card' %}
+          <a 
+            href="{{ block.settings.link | default: '#' }}" 
+            class="hero-collection-grid__card"
+            {{ block.shopify_attributes }}
+          >
+            <div class="hero-collection-grid__card-image-wrapper">
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 800 }}"
+                  alt="{{ block.settings.title | escape }}"
+                  class="hero-collection-grid__card-image"
+                  loading="eager"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}"
+                >
+              {% else %}
+                <div class="hero-collection-grid__card-placeholder">
+                  {{ 'collection-1' | placeholder_svg_tag: 'hero-collection-grid__placeholder-svg' }}
+                </div>
+              {% endif %}
+              <div class="hero-collection-grid__card-overlay"></div>
+            </div>
+            <div class="hero-collection-grid__card-content">
+              {% if block.settings.title != blank %}
+                <h3 class="hero-collection-grid__card-title">{{ block.settings.title }}</h3>
+              {% endif %}
+              {% if block.settings.subtitle != blank %}
+                <p class="hero-collection-grid__card-subtitle">{{ block.settings.subtitle }}</p>
+              {% endif %}
+              {% if section.settings.show_shop_button %}
+                <span class="hero-collection-grid__card-button">{{ section.settings.button_text }}</span>
+              {% endif %}
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .hero-collection-grid {
+    width: 100%;
+    padding: 4rem 0;
+  }
+
+  .hero-collection-grid__container {
+    width: 100%;
+  }
+
+  .hero-collection-grid__header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1.5rem;
+  }
+
+  .hero-collection-grid__heading {
+    font-size: 3rem;
+    line-height: 1.2;
+    font-weight: bold;
+    color: var(--color-foreground-heading);
+    margin: 0 0 1rem 0;
+  }
+
+  .hero-collection-grid__subheading {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .hero-collection-grid__cards {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 4), 1fr);
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .hero-collection-grid__card {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    border-radius: var(--card-border-radius, 16px);
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    transition: transform 0.3s ease;
+  }
+
+  .hero-collection-grid__card:hover {
+    transform: translateY(-4px);
+  }
+
+  .hero-collection-grid__card-image-wrapper {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-collection-grid__card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-collection-grid__card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-border, #f3f3f3);
+  }
+
+  .hero-collection-grid__placeholder-svg {
+    width: 60%;
+    height: auto;
+    opacity: 0.5;
+  }
+
+  .hero-collection-grid__card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+    pointer-events: none;
+  }
+
+  .hero-collection-grid__card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: #ffffff;
+    z-index: 1;
+  }
+
+  .hero-collection-grid__card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0 0.25rem 0;
+    color: #ffffff;
+  }
+
+  .hero-collection-grid__card-subtitle {
+    font-size: 0.875rem;
+    margin: 0 0 0.75rem 0;
+    opacity: 0.9;
+    color: #ffffff;
+  }
+
+  .hero-collection-grid__card-button {
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 2px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .hero-collection-grid__cards {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .hero-collection-grid__heading {
+      font-size: 2rem;
+    }
+
+    .hero-collection-grid__card {
+      aspect-ratio: 1/1;
+    }
+
+    .hero-collection-grid__card-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media screen and (max-width: 549px) {
+    .hero-collection-grid {
+      padding: 2rem 0;
+    }
+
+    .hero-collection-grid__header {
+      margin-bottom: 2rem;
+    }
+
+    .hero-collection-grid__cards {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      padding: 0 1rem;
+    }
+
+    .hero-collection-grid__card-content {
+      padding: 1rem;
+    }
+
+    .hero-collection-grid__card-title {
+      font-size: 1rem;
+    }
+
+    .hero-collection-grid__card-subtitle {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero Collection Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop Our Collections"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our curated collections, each designed to meet your unique needs."
+    },
+    {
+      "type": "header",
+      "content": "Cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop_button",
+      "label": "Show shop button on cards",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now",
+      "visible_if": "{{ section.settings.show_shop_button }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Collection Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Collection Name"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Collection Grid",
+      "blocks": [
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "New Arrivals",
+            "subtitle": "Fresh styles just in"
+          }
+        },
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "Bestsellers",
+            "subtitle": "Customer favorites"
+          }
+        },
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "On Sale",
+            "subtitle": "Limited time offers"
+          }
+        },
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "Gift Sets",
+            "subtitle": "Perfect for gifting"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

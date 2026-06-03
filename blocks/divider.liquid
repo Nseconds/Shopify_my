@@ -1,0 +1,128 @@
+
+{%- doc -%}
+  A simple divider/separator line block for visual separation between content sections.
+  Uses block.settings to configure the divider appearance and spacing.
+{%- enddoc -%}
+
+<div 
+  class="divider divider--{{ block.id }}"
+  {{ block.shopify_attributes }}
+  style="
+    --divider-style: {{ block.settings.style }};
+    --divider-thickness: {{ block.settings.thickness }}px;
+    --divider-color: {{ block.settings.color }};
+    --divider-width: {{ block.settings.width }}%;
+    --divider-spacing-top: {{ block.settings.spacing_top }}px;
+    --divider-spacing-bottom: {{ block.settings.spacing_bottom }}px;
+  "
+>
+  <hr class="divider__line" />
+</div>
+
+{% stylesheet %}
+  .divider {
+    margin-top: var(--divider-spacing-top);
+    margin-bottom: var(--divider-spacing-bottom);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .divider__line {
+    border: none;
+    border-top: var(--divider-thickness) var(--divider-style) var(--divider-color);
+    width: var(--divider-width);
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Divider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Line style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
+        },
+        {
+          "value": "dotted",
+          "label": "Dotted"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "range",
+      "id": "thickness",
+      "label": "Line thickness",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Line color",
+      "default": "#141414"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "label": "Line width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Width of the divider line"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Divider",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+

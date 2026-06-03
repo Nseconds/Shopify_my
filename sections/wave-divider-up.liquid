@@ -1,0 +1,158 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-wave-divider-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ai-wave-divider-container-{{ ai_gen_id }} {
+    width: {{ section.settings.desktop_width_percent }}%;
+    margin: 0 auto;
+    position: relative;
+    height: {{ section.settings.wave_height }}px;
+  }
+
+  .ai-wave-divider-svg-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .ai-wave-divider-path-{{ ai_gen_id }} {
+    fill: var(--color-primary);
+    opacity: {{ section.settings.wave_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-wave-divider-container-{{ ai_gen_id }} {
+      height: {{ section.settings.wave_height | times: 0.6 }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-wave-divider-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-wave-divider-container-{{ ai_gen_id }}">
+    {% if section.settings.wave_style == 'bold_single' %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,60 C300,20 600,100 900,60 C1050,40 1150,80 1200,60 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'bold_double' %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,40 C300,10 600,70 900,40 C1050,25 1150,55 1200,40 L1200,120 L0,120 Z" opacity="0.5"></path>
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,70 C300,100 600,40 900,70 C1050,85 1150,55 1200,70 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'bold_layered' %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,50 C400,20 800,80 1200,50 L1200,120 L0,120 Z" opacity="0.3"></path>
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,70 C300,100 900,40 1200,70 L1200,120 L0,120 Z" opacity="0.6"></path>
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,90 C600,60 900,100 1200,80 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'subtle_single' %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,60 C200,55 400,65 600,60 C800,55 1000,65 1200,60 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'subtle_flowing' %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,65 C150,60 300,70 450,65 C600,60 750,70 900,65 C1050,60 1150,70 1200,65 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% else %}
+      <svg class="ai-wave-divider-svg-{{ ai_gen_id }}" viewBox="0 0 1200 120" preserveAspectRatio="none" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,70 C200,65 400,75 600,70 C800,65 1000,75 1200,70 L1200,120 L0,120 Z" opacity="0.4"></path>
+        <path class="ai-wave-divider-path-{{ ai_gen_id }}" d="M0,85 C300,80 600,90 900,85 C1050,82 1150,88 1200,85 L1200,120 L0,120 Z"></path>
+      </svg>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Wave divider",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Wave style"
+    },
+    {
+      "type": "select",
+      "id": "wave_style",
+      "label": "Wave pattern",
+      "options": [
+        {
+          "value": "bold_single",
+          "label": "Bold single wave"
+        },
+        {
+          "value": "bold_double",
+          "label": "Bold double wave"
+        },
+        {
+          "value": "bold_layered",
+          "label": "Bold layered waves"
+        },
+        {
+          "value": "subtle_single",
+          "label": "Subtle single wave"
+        },
+        {
+          "value": "subtle_flowing",
+          "label": "Subtle flowing wave"
+        },
+        {
+          "value": "subtle_double",
+          "label": "Subtle double wave"
+        }
+      ],
+      "default": "bold_single"
+    },
+    {
+      "type": "range",
+      "id": "wave_height",
+      "label": "Wave height",
+      "min": 40,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity",
+      "label": "Wave opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wave divider"
+    }
+  ]
+}
+{% endschema %}

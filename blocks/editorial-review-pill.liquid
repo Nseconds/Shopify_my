@@ -1,0 +1,64 @@
+<div
+  class="editorial-review-pill spacing-style"
+  {{ block.shopify_attributes }}
+>
+  <div class="editorial-review-pill__inner">
+    <div class="editorial-review-pill__stars" aria-hidden="true">
+      {% for i in (1..5) %}
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 0L8.57143 4.85714H14L9.71429 7.71429L11.2857 12.5714L7 9.71429L2.71429 12.5714L4.28571 7.71429L0 4.85714H5.42857L7 0Z" fill="currentColor"/>
+        </svg>
+      {% endfor %}
+    </div>
+    <span class="editorial-review-pill__text">
+      {{ block.settings.badge_text | default: "15,000+ HAPPY CUSTOMERS" }}
+    </span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .editorial-review-pill {
+    padding-block: 4px 12px;
+  }
+
+  .editorial-review-pill__inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .editorial-review-pill__stars {
+    display: flex;
+    gap: 2px;
+    color: var(--color-foreground, #000000);
+  }
+
+  .editorial-review-pill__text {
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Review Pill",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "15,000+ HAPPY CUSTOMERS"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Review Pill"
+    }
+  ]
+}
+{% endschema %}

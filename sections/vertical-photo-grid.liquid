@@ -1,0 +1,337 @@
+{% assign section_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign title_c = section.settings.title_color -%}
+  {%- assign text_c  = section.settings.text_color -%}
+  {%- assign btn_bg  = section.settings.button_background -%}
+  {%- assign btn_txt = section.settings.button_text_color -%}
+  {%- assign btn_hov = section.settings.button_hover_background -%}
+{%- else -%}
+  {%- assign title_c = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+  {%- assign btn_bg  = section.settings.color_scheme.settings.primary_button_background -%}
+  {%- assign btn_txt = section.settings.color_scheme.settings.primary_button_text -%}
+  {%- assign btn_hov = btn_bg | color_darken: 10 -%}
+{%- endif -%}
+
+{% style %}
+  #shopify-section-{{ section.id }}.ai-photo-grid-{{ section_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+  }
+
+  .ai-photo-grid__container-{{ section_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-photo-grid__title-{{ section_id }} {
+    text-align: center;
+    margin: 0 0 40px;
+    font-size: 32px;
+    color: {{ title_c }};
+  }
+
+  .ai-photo-grid__items-{{ section_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .ai-photo-grid__item-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-photo-grid__image-wrapper-{{ section_id }} {
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-photo-grid__image-{{ section_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-photo-grid__image-placeholder-{{ section_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-photo-grid__image-placeholder-{{ section_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-photo-grid__text-{{ section_id }} {
+    margin: 0 0 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: {{ text_c }};
+  }
+
+  .ai-photo-grid__button-{{ section_id }} {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: {{ btn_bg }};
+    color: {{ btn_txt }};
+    text-decoration: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .ai-photo-grid__button-{{ section_id }}:hover {
+    background-color: {{ btn_hov }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-photo-grid__items-{{ section_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-photo-grid__items-{{ section_id }} {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .ai-photo-grid__title-{{ section_id }} {
+      font-size: 24px;
+      margin-bottom: 32px;
+    }
+  }
+{% endstyle %}
+
+<section id="shopify-section-{{ section.id }}" class="ai-photo-grid-{{ section_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="ai-photo-grid__container-{{ section_id }}">
+    {% if section.settings.title != blank %}
+      <h2 class="ai-photo-grid__title-{{ section_id }}">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="ai-photo-grid__items-{{ section_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'image_' | append: i
+          assign text_key = 'text_' | append: i
+          assign button_text_key = 'button_text_' | append: i
+          assign button_link_key = 'button_link_' | append: i
+
+          assign image = section.settings[image_key]
+          assign text = section.settings[text_key]
+          assign button_text = section.settings[button_text_key]
+          assign button_link = section.settings[button_link_key]
+        %}
+
+        <div class="ai-photo-grid__item-{{ section_id }}">
+          <div class="ai-photo-grid__image-wrapper-{{ section_id }}" data-forge-slot-id="image_{{ i }}"{% if image == blank %} data-forge-slot-blank="true"{% endif %}>
+            {% if image %}
+              <img
+                src="{{ image | image_url: width: 600 }}"
+                alt="{{ image.alt | escape }}"
+                loading="lazy"
+                width="{{ image.width }}"
+                height="{{ image.height }}"
+                class="ai-photo-grid__image-{{ section_id }}"
+              >
+            {% else %}
+              <div class="ai-photo-grid__image-placeholder-{{ section_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if text != blank %}
+            <p class="ai-photo-grid__text-{{ section_id }}">{{ text }}</p>
+          {% endif %}
+
+          {% if button_text != blank %}
+            <a
+              href="{{ button_link }}"
+              class="ai-photo-grid__button-{{ section_id }}"
+            >
+              {{ button_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Vertical Photo Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Our Collection"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#141414"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Photo 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "textarea",
+      "id": "text_1",
+      "label": "Text",
+      "default": "Discover our latest collection of premium products"
+    },
+    {
+      "type": "text",
+      "id": "button_text_1",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Photo 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "textarea",
+      "id": "text_2",
+      "label": "Text",
+      "default": "Handcrafted with care and attention to detail"
+    },
+    {
+      "type": "text",
+      "id": "button_text_2",
+      "label": "Button text",
+      "default": "Learn more"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Photo 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "textarea",
+      "id": "text_3",
+      "label": "Text",
+      "default": "Sustainable and eco-friendly materials"
+    },
+    {
+      "type": "text",
+      "id": "button_text_3",
+      "label": "Button text",
+      "default": "Explore"
+    },
+    {
+      "type": "url",
+      "id": "button_link_3",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2c2c2c"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#a48a5b"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#8b754d"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Photo grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,134 @@
+
+
+<div class="section-background no-gradient-bg color-{{ section.settings.color_scheme }}"></div>
+<div class="section section--page-width color-{{ section.settings.color_scheme }}">
+  <div
+    class="spacing-style search-page__header"
+    style="
+      --horizontal-alignment: {{ section.settings.alignment }};
+      {% render 'spacing-style', settings: section.settings %}
+    "
+  >
+    {% assign heading_text = 'content.search' | t %}
+
+    {% if search.performed %}
+      {% assign heading_text = 'content.search_results' | t %}
+    {% endif %}
+
+    {% capture heading_text %}
+      <h3>{{ heading_text }}</h3>
+    {% endcapture %}
+
+    {% content_for 'block', id: 'heading', type: '_heading', text: heading_text %}
+    {% content_for 'block', id: 'search', type: '_search-input' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:names.search",
+  "settings": [
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.search",
+      "category": "t:categories.forms",
+      "settings": {
+        "alignment": "flex-start",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 40,
+        "padding-block-end": 0
+      },
+      "blocks": {
+        "heading": {
+          "type": "_heading",
+          "static": true,
+          "settings": {
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "text": "",
+            "read_only": true,
+            "alignment": "left",
+            "show_alignment": true,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "search": {
+          "type": "_search-input",
+          "static": true,
+          "settings": {
+            "width": "fill",
+            "custom_width": 50,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "show_submit_button": true,
+            "submit_button_label": "Search",
+            "submit_button_border_radius": 8
+          },
+          "blocks": {}
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,779 @@
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg         = section.settings.background_color
+    assign sc_text       = section.settings.text_color
+    assign sc_accent     = section.settings.icon_background
+    assign sc_on_accent  = section.settings.icon_color
+    assign sc_divider    = section.settings.divider_color
+    assign sc_x_bg       = section.settings.x_icon_background
+    assign sc_x_icon     = section.settings.x_icon_color
+    assign sc_others     = section.settings.others_text_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg         = 'var(--color-background)'
+    assign sc_text       = 'var(--color-foreground)'
+    assign sc_accent     = 'var(--color-card-gradient)'
+    assign sc_on_accent  = 'var(--color-gradient-text)'
+    assign sc_divider    = 'var(--color-border)'
+    assign sc_x_bg       = '#ef4444'
+    assign sc_x_icon     = '#ffffff'
+    assign sc_others     = 'var(--color-foreground)'
+  else
+    assign sc_bg         = section.settings.color_scheme.settings.background
+    assign sc_text       = section.settings.color_scheme.settings.foreground
+    assign sc_accent     = section.settings.color_scheme.settings.primary
+    assign sc_on_accent  = section.settings.color_scheme.settings.background
+    assign sc_divider    = section.settings.color_scheme.settings.border
+    assign sc_x_bg       = '#ef4444'
+    assign sc_x_icon     = '#ffffff'
+    assign sc_others     = section.settings.color_scheme.settings.foreground | color_modify: 'alpha', 0.5
+  endif
+-%}
+{% style %}
+  .comparison-v2-{{ section.id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+    padding: {{ section.settings.section_padding_desktop }}px 0;
+  }
+
+  .comparison-v2__container-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.horizontal_padding }}px;
+  }
+
+  .comparison-v2__grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--style-gap-cards);
+    align-items: start;
+  }
+
+  .comparison-v2__left-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .comparison-v2__headline-stack-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.headline_spacing }}px;
+  }
+
+  .comparison-v2__headline-{{ section.id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.headline_size_desktop }}px;
+    line-height: {{ section.settings.headline_line_height }};
+    color: {{ sc_text }};
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .comparison-v2__column-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.content_spacing }}px;
+  }
+
+  .comparison-v2__brand-name-{{ section.id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.brand_name_size }}px;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.brand_name_margin }}px 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .comparison-v2__benefits-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .comparison-v2__benefit-item-{{ section.id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: {{ section.settings.icon_text_gap }}px;
+    padding: {{ section.settings.benefit_padding }}px 0;
+    border-bottom: {{ section.settings.divider_width }}px solid {{ sc_divider }};
+  }
+
+  .comparison-v2__benefit-item-{{ section.id }}:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-v2__check-icon-{{ section.id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    border-radius: 50%;
+    background-color: {{ sc_accent }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .comparison-v2__check-icon-{{ section.id }} svg {
+    width: {{ section.settings.icon_size | times: 0.6 }}px;
+    height: {{ section.settings.icon_size | times: 0.6 }}px;
+    stroke: {{ sc_on_accent }};
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .comparison-v2__x-icon-{{ section.id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    border-radius: 50%;
+    background-color: {{ sc_x_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .comparison-v2__x-icon-{{ section.id }} svg {
+    width: {{ section.settings.icon_size | times: 0.6 }}px;
+    height: {{ section.settings.icon_size | times: 0.6 }}px;
+    stroke: {{ sc_x_icon }};
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .comparison-v2__benefit-text-{{ section.id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.benefit_text_size }}px;
+    line-height: {{ section.settings.benefit_line_height }};
+    color: {{ sc_text }};
+    margin: 0;
+  }
+
+  .comparison-v2__others-label-{{ section.id }} {
+    color: {{ sc_others }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .comparison-v2-{{ section.id }} {
+      padding: {{ section.settings.section_padding_mobile }}px 0;
+    }
+
+    .comparison-v2__grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_row_gap }}px;
+    }
+
+    .comparison-v2__headline-{{ section.id }} {
+      font-size: {{ section.settings.headline_size_mobile }}px;
+    }
+
+    .comparison-v2__brand-name-{{ section.id }} {
+      font-size: {{ section.settings.brand_name_size | times: 0.85 }}px;
+    }
+
+    .comparison-v2__benefit-text-{{ section.id }} {
+      font-size: {{ section.settings.benefit_text_size | times: 0.9 }}px;
+    }
+
+    .comparison-v2__column-{{ section.id }}:first-of-type {
+      order: -1;
+    }
+  }
+{% endstyle %}
+
+<comparison-v2-{{ section.id | downcase | replace: '_', '-' }} class="comparison-v2-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="comparison-v2__container-{{ section.id }}">
+    <div class="comparison-v2__grid-{{ section.id }}">
+      <div class="comparison-v2__left-{{ section.id }}">
+        <div class="comparison-v2__headline-stack-{{ section.id }}">
+          {% if section.settings.headline != blank %}
+            {% for i in (1..section.settings.headline_repeat_count) %}
+              <h2 class="comparison-v2__headline-{{ section.id }}">
+                {{ section.settings.headline }}
+              </h2>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="comparison-v2__column-{{ section.id }}">
+        {% if section.settings.brand_name != blank %}
+          <p class="comparison-v2__brand-name-{{ section.id }}">
+            {{ section.settings.brand_name }}
+          </p>
+        {% endif %}
+
+        <div class="comparison-v2__benefits-{{ section.id }}">
+          {% if section.settings.benefit_1 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__check-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }}">
+                {{ section.settings.benefit_1 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_2 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__check-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }}">
+                {{ section.settings.benefit_2 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_3 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__check-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }}">
+                {{ section.settings.benefit_3 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_4 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__check-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }}">
+                {{ section.settings.benefit_4 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_5 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__check-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }}">
+                {{ section.settings.benefit_5 }}
+              </p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="comparison-v2__column-{{ section.id }}">
+        {% if section.settings.others_label != blank %}
+          <p class="comparison-v2__brand-name-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+            {{ section.settings.others_label }}
+          </p>
+        {% endif %}
+
+        <div class="comparison-v2__benefits-{{ section.id }}">
+          {% if section.settings.benefit_1 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__x-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+                {{ section.settings.others_benefit_1 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_2 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__x-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+                {{ section.settings.others_benefit_2 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_3 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__x-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+                {{ section.settings.others_benefit_3 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_4 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__x-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+                {{ section.settings.others_benefit_4 }}
+              </p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_5 != blank %}
+            <div class="comparison-v2__benefit-item-{{ section.id }}">
+              <div class="comparison-v2__x-icon-{{ section.id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <p class="comparison-v2__benefit-text-{{ section.id }} comparison-v2__others-label-{{ section.id }}">
+                {{ section.settings.others_benefit_5 }}
+              </p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</comparison-v2-{{ section.id | downcase | replace: '_', '-' }}>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const tagName = 'comparison-v2-' + sectionId.toLowerCase().replace(/_/g, '-');
+    
+    class ComparisonV2 extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const headlines = this.querySelectorAll('.comparison-v2__headline-' + sectionId);
+        headlines.forEach((headline, index) => {
+          if (index > 0) {
+            headline.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+    }
+
+    customElements.define(tagName, ComparisonV2);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand comparison v2",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Desktop padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Mobile padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "Horizontal padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_row_gap",
+      "label": "Mobile row gap",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Left column"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline text",
+      "default": "Why choose us"
+    },
+    {
+      "type": "range",
+      "id": "headline_repeat_count",
+      "label": "Headline repeat count",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "headline_size_desktop",
+      "label": "Desktop headline size",
+      "min": 30,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "headline_size_mobile",
+      "label": "Mobile headline size",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "headline_line_height",
+      "label": "Headline line height",
+      "min": 0.8,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 0.9
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "label": "Headline spacing",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#2c2c2c"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Your brand column"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand or product name",
+      "default": "Your Brand"
+    },
+    {
+      "type": "range",
+      "id": "brand_name_size",
+      "label": "Brand name size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "brand_name_margin",
+      "label": "Brand name margin",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Content spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Your benefits"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Clinically tested formula"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Clean ingredients"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Visible results in 2-4 weeks"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Suitable for all skin types"
+    },
+    {
+      "type": "text",
+      "id": "benefit_5",
+      "label": "Benefit 5"
+    },
+    {
+      "type": "range",
+      "id": "benefit_text_size",
+      "label": "Benefit text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "benefit_line_height",
+      "label": "Benefit line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "benefit_padding",
+      "label": "Benefit padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Other brands column"
+    },
+    {
+      "type": "text",
+      "id": "others_label",
+      "label": "Others label",
+      "default": "Other Brands"
+    },
+    {
+      "type": "text",
+      "id": "others_benefit_1",
+      "label": "Others benefit 1",
+      "default": "Untested formulas"
+    },
+    {
+      "type": "text",
+      "id": "others_benefit_2",
+      "label": "Others benefit 2",
+      "default": "Harsh chemicals"
+    },
+    {
+      "type": "text",
+      "id": "others_benefit_3",
+      "label": "Others benefit 3",
+      "default": "Slow or no results"
+    },
+    {
+      "type": "text",
+      "id": "others_benefit_4",
+      "label": "Others benefit 4",
+      "default": "May irritate skin"
+    },
+    {
+      "type": "text",
+      "id": "others_benefit_5",
+      "label": "Others benefit 5"
+    },
+    {
+      "type": "header",
+      "content": "Check icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "label": "Icon to text gap",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Check icon background",
+      "default": "#a8a89d"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Check icon color",
+      "default": "#ffffff"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "x_icon_background",
+      "label": "X icon background",
+      "default": "#d4d4d0"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "x_icon_color",
+      "label": "X icon color",
+      "default": "#6b6b68"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Dividers"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e0dfd8"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f5f4ed",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#4a4a42",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "others_text_color",
+      "label": "Others text",
+      "default": "#6b6b68",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand comparison v2"
+    }
+  ]
+}
+{% endschema %}

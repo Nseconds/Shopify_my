@@ -1,0 +1,1198 @@
+{%- liquid
+  assign title = section.settings.title
+  assign subtitle = section.settings.subtitle
+  assign show_usernames = section.settings.show_usernames
+
+  comment
+    Function to extract YouTube video ID from various URL formats
+  endcomment
+-%}
+
+{% if settings.style_mode == 'gradient' %}
+  {% style %}
+    .ugc-gallery__control {
+      background: var(--color-primary-button-background) !important;
+      border-color: transparent !important;
+      color: var(--color-primary-button-text) !important;
+    }
+    .ugc-gallery__control:hover {
+      background: var(--color-primary-button-background) !important;
+      opacity: 0.85;
+      transform: scale(1.1);
+    }
+    .ugc-gallery__control svg {
+      stroke: var(--color-primary-button-text) !important;
+    }
+  {% endstyle %}
+{% endif %}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --ugc-card-gap: var(--style-gap-cards);
+    --ugc-border-radius: var(--style-border-radius-cards);
+    --ugc-overlay-color: {{ section.settings.overlay_color }};
+    --ugc-aspect-ratio: {{ section.settings.aspect_ratio }};
+    --ugc-max-width: {{ section.settings.max_width }}px;
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="ugc-gallery section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; --ugc-max-width: {{ section.settings.max_width }}px;">
+  <div class="ugc-gallery__container container">
+    
+    {%- if title != blank or subtitle != blank -%}
+      <div class="ugc-gallery__header">
+        {%- if title != blank -%}
+          <div class="ugc-gallery__title rte">{{ title }}</div>
+        {%- endif -%}
+        {%- if subtitle != blank -%}
+          <div class="ugc-gallery__subtitle rte">{{ subtitle }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ugc-carousel class="ugc-gallery__carousel">
+        <div class="ugc-gallery__track-wrapper">
+          <div class="ugc-gallery__track">
+            {%- for block in section.blocks -%}
+              <div class="ugc-gallery__item" {{ block.shopify_attributes }}>
+                <div class="ugc-gallery__media-wrapper">
+                  {%- if block.settings.video_url != blank -%}
+                    {%- liquid
+                      assign video_url = block.settings.video_url
+                      assign is_youtube = false
+                      assign youtube_id = ''
+                      
+                      if video_url contains 'youtube.com/watch?v='
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'v=' | last | split: '&' | first
+                      elsif video_url contains 'youtu.be/'
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'youtu.be/' | last | split: '?' | first
+                      elsif video_url contains 'youtube.com/embed/'
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'embed/' | last | split: '?' | first
+                      endif
+                    -%}
+                    <div class="ugc-gallery__video-container{% if is_youtube %} ugc-gallery__video-container--youtube{% endif %}">
+                      {%- if is_youtube -%}
+                        <iframe 
+                          class="ugc-gallery__video ugc-gallery__video--youtube"
+                          src="https://www.youtube.com/embed/{{ youtube_id }}?autoplay=1&mute=1&loop=1&playlist={{ youtube_id }}&controls=1&playsinline=1&modestbranding=1&rel=0"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                          loading="lazy"
+                        ></iframe>
+                      {%- else -%}
+                        <video 
+                          class="ugc-gallery__video"
+                          src="{{ video_url }}"
+                          {% if block.settings.video_thumbnail != blank %}
+                            poster="{{ block.settings.video_thumbnail | image_url: width: 800 }}"
+                          {% endif %}
+                          playsinline
+                          muted
+                          loop
+                          autoplay
+                        ></video>
+                        <button class="ugc-gallery__play-button" aria-label="Play video">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                          </svg>
+                        </button>
+                      {%- endif -%}
+                    </div>
+                  {%- elsif block.settings.image != blank -%}
+                    <div class="ugc-gallery__image-wrapper">
+                      {%- render 'image',
+                        image: block.settings.image,
+                        class: 'ugc-gallery__image'
+                      -%}
+                    </div>
+                  {%- else -%}
+                    <div class="ugc-gallery__placeholder">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+
+                  {%- if block.settings.caption != blank or block.settings.username != blank -%}
+                    <div class="ugc-gallery__overlay">
+                      {%- if show_usernames and block.settings.username != blank -%}
+                        <p class="ugc-gallery__username">{{ block.settings.username }}</p>
+                      {%- endif -%}
+                      {%- if block.settings.caption != blank -%}
+                        <p class="ugc-gallery__caption">{{ block.settings.caption }}</p>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="ugc-gallery__link" target="_blank" rel="noopener" aria-label="View on social media"></a>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+            {%- comment -%} Duplicate items for infinite loop {%- endcomment -%}
+            {%- for block in section.blocks -%}
+              <div class="ugc-gallery__item" aria-hidden="true">
+                <div class="ugc-gallery__media-wrapper">
+                  {%- if block.settings.video_url != blank -%}
+                    {%- liquid
+                      assign video_url = block.settings.video_url
+                      assign is_youtube = false
+                      assign youtube_id = ''
+                      
+                      if video_url contains 'youtube.com/watch?v='
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'v=' | last | split: '&' | first
+                      elsif video_url contains 'youtu.be/'
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'youtu.be/' | last | split: '?' | first
+                      elsif video_url contains 'youtube.com/embed/'
+                        assign is_youtube = true
+                        assign youtube_id = video_url | split: 'embed/' | last | split: '?' | first
+                      endif
+                    -%}
+                    <div class="ugc-gallery__video-container{% if is_youtube %} ugc-gallery__video-container--youtube{% endif %}">
+                      {%- if is_youtube -%}
+                        <iframe 
+                          class="ugc-gallery__video ugc-gallery__video--youtube"
+                          src="https://www.youtube.com/embed/{{ youtube_id }}?autoplay=1&mute=1&loop=1&playlist={{ youtube_id }}&controls=1&playsinline=1&modestbranding=1&rel=0"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                          loading="lazy"
+                        ></iframe>
+                      {%- else -%}
+                        <video 
+                          class="ugc-gallery__video"
+                          src="{{ video_url }}"
+                          {% if block.settings.video_thumbnail != blank %}
+                            poster="{{ block.settings.video_thumbnail | image_url: width: 800 }}"
+                          {% endif %}
+                          playsinline
+                          muted
+                          loop
+                          autoplay
+                        ></video>
+                        <button class="ugc-gallery__play-button" aria-label="Play video">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                          </svg>
+                        </button>
+                      {%- endif -%}
+                    </div>
+                  {%- elsif block.settings.image != blank -%}
+                    <div class="ugc-gallery__image-wrapper">
+                      {%- render 'image',
+                        image: block.settings.image,
+                        class: 'ugc-gallery__image'
+                      -%}
+                    </div>
+                  {%- else -%}
+                    <div class="ugc-gallery__placeholder">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+
+                  {%- if block.settings.caption != blank or block.settings.username != blank -%}
+                    <div class="ugc-gallery__overlay">
+                      {%- if show_usernames and block.settings.username != blank -%}
+                        <p class="ugc-gallery__username">{{ block.settings.username }}</p>
+                      {%- endif -%}
+                      {%- if block.settings.caption != blank -%}
+                        <p class="ugc-gallery__caption">{{ block.settings.caption }}</p>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="ugc-gallery__link" target="_blank" rel="noopener" aria-label="View on social media"></a>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="ugc-gallery__controls">
+          <button class="ugc-gallery__control ugc-gallery__control--prev" aria-label="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button class="ugc-gallery__control ugc-gallery__control--next" aria-label="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div class="ugc-gallery__dots"></div>
+      </ugc-carousel>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .ugc-gallery {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ugc-gallery__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .ugc-gallery__header {
+    text-align: center;
+    margin-block-end: 48px;
+  }
+
+  .ugc-gallery__title {
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+
+  .ugc-gallery__title.rte p {
+    margin: 0;
+  }
+
+  .ugc-gallery__title.rte h1,
+  .ugc-gallery__title.rte h2,
+  .ugc-gallery__title.rte h3,
+  .ugc-gallery__title.rte h4,
+  .ugc-gallery__title.rte h5,
+  .ugc-gallery__title.rte h6 {
+    margin: 0 0 0.5em 0;
+    font-weight: 700;
+    line-height: inherit;
+  }
+
+  .ugc-gallery__title.rte h1:last-child,
+  .ugc-gallery__title.rte h2:last-child,
+  .ugc-gallery__title.rte h3:last-child,
+  .ugc-gallery__title.rte h4:last-child,
+  .ugc-gallery__title.rte h5:last-child,
+  .ugc-gallery__title.rte h6:last-child {
+    margin-bottom: 0;
+  }
+
+  .ugc-gallery__subtitle {
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .ugc-gallery__subtitle.rte p {
+    margin: 0;
+  }
+
+  .ugc-gallery__subtitle.rte h1,
+  .ugc-gallery__subtitle.rte h2,
+  .ugc-gallery__subtitle.rte h3,
+  .ugc-gallery__subtitle.rte h4,
+  .ugc-gallery__subtitle.rte h5,
+  .ugc-gallery__subtitle.rte h6 {
+    margin: 0 0 0.5em 0;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  .ugc-gallery__subtitle.rte h1:last-child,
+  .ugc-gallery__subtitle.rte h2:last-child,
+  .ugc-gallery__subtitle.rte h3:last-child,
+  .ugc-gallery__subtitle.rte h4:last-child,
+  .ugc-gallery__subtitle.rte h5:last-child,
+  .ugc-gallery__subtitle.rte h6:last-child {
+    margin-bottom: 0;
+  }
+
+  .ugc-gallery__carousel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ugc-gallery__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 0;
+    position: static;
+    transform: none;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .ugc-gallery__control {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 1;
+    left: auto;
+    right: auto;
+  }
+
+  .ugc-gallery__control:hover {
+    background: var(--color-foreground);
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .ugc-gallery__control:hover svg {
+    stroke: var(--color-background);
+  }
+
+  .ugc-gallery__control:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: auto;
+  }
+
+  .ugc-gallery__control--prev {
+    order: 1;
+  }
+
+  .ugc-gallery__control--next {
+    order: 2;
+  }
+
+  .ugc-gallery__control svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-foreground);
+  }
+
+  .ugc-gallery__track-wrapper {
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ugc-gallery__track {
+    display: flex;
+    gap: var(--ugc-card-gap);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ugc-gallery__item {
+    flex: 0 0 var(--ugc-max-width);
+    width: var(--ugc-max-width);
+    max-width: var(--ugc-max-width);
+    min-width: var(--ugc-max-width);
+    position: relative;
+  }
+  
+  .ugc-gallery__track {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .ugc-gallery__media-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--ugc-aspect-ratio);
+    border-radius: var(--ugc-border-radius);
+    overflow: hidden;
+    background: rgba(var(--color-foreground-rgb), 0.03);
+  }
+
+  .ugc-gallery__image-wrapper,
+  .ugc-gallery__video-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ugc-gallery__image,
+  .ugc-gallery__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ugc-gallery__video--youtube {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .ugc-gallery__video-container--youtube .ugc-gallery__play-button {
+    display: none;
+  }
+
+  .ugc-gallery__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ugc-gallery__placeholder svg {
+    width: 64px;
+    height: 64px;
+    opacity: 0.2;
+    stroke: currentColor;
+  }
+
+  .ugc-gallery__video-container {
+    position: relative;
+  }
+
+  .ugc-gallery__play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .ugc-gallery__play-button:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: rgba(255, 255, 255, 1);
+  }
+
+  .ugc-gallery__play-button svg {
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+    fill: #000000;
+  }
+
+  .ugc-gallery__video-container.is-playing .ugc-gallery__play-button {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ugc-gallery__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, var(--ugc-overlay-color), transparent);
+    color: #FFFFFF;
+  }
+
+  .ugc-gallery__username {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+  }
+
+  .ugc-gallery__caption {
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ugc-gallery__link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+    .ugc-gallery__dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+      order: 3;
+    }
+
+  .ugc-gallery__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(var(--color-foreground-rgb), 0.2);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+  }
+
+  .ugc-gallery__dot.is-active {
+    background: rgba(var(--color-foreground-rgb), 0.8);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 989px) {
+    .ugc-gallery__container {
+      padding: 0 50px;
+    }
+
+    .ugc-gallery__item {
+      flex: 0 0 auto;
+      width: var(--ugc-max-width);
+      max-width: var(--ugc-max-width);
+      min-width: 200px;
+    }
+
+    .ugc-gallery__control {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ugc-gallery__control svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ugc-gallery__control--prev {
+      left: -50px;
+    }
+
+    .ugc-gallery__control--next {
+      right: -50px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .ugc-gallery__container {
+      padding: 0;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .ugc-gallery__header {
+      margin-block-end: 32px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+
+    .ugc-gallery__carousel {
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ugc-gallery__track-wrapper {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow: hidden;
+      order: 1;
+    }
+
+    .ugc-gallery__item {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding: 0;
+      width: 100%;
+    }
+
+    .ugc-gallery__controls {
+      display: flex !important;
+      position: static !important;
+      top: auto;
+      left: auto;
+      right: auto;
+      transform: none;
+      pointer-events: auto;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 20px 0 20px;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 1;
+      gap: 16px;
+      order: 2;
+      margin-top: 0;
+    }
+
+    .ugc-gallery__control {
+      width: 44px !important;
+      height: 44px !important;
+      background: var(--color-background) !important;
+      border: 1px solid var(--color-border) !important;
+      position: relative !important;
+      flex-shrink: 0;
+      pointer-events: auto;
+      margin: 0 !important;
+      left: auto !important;
+      right: auto !important;
+      opacity: 1 !important;
+      display: flex !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .ugc-gallery__control svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ugc-gallery__control--prev {
+      order: 1;
+    }
+
+    .ugc-gallery__control--next {
+      order: 2;
+    }
+
+    .ugc-gallery__control:hover {
+      transform: scale(1.05) !important;
+      background: var(--color-foreground) !important;
+    }
+
+    .ugc-gallery__control:disabled {
+      opacity: 0.5 !important;
+      pointer-events: auto;
+    }
+
+    .ugc-gallery__overlay {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    }
+
+    .ugc-gallery__play-button {
+      width: 56px;
+      height: 56px;
+    }
+
+    .ugc-gallery__play-button svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class UgcCarousel extends HTMLElement {
+    constructor() {
+      super();
+      this.currentIndex = 0;
+      this.trackWrapper = this.querySelector('.ugc-gallery__track-wrapper');
+      this.track = this.querySelector('.ugc-gallery__track');
+      this.items = Array.from(this.querySelectorAll('.ugc-gallery__item'));
+      this.originalItemCount = Math.floor(this.items.length / 2); // Half are duplicates
+      this.prevButton = this.querySelector('.ugc-gallery__control--prev');
+      this.nextButton = this.querySelector('.ugc-gallery__control--next');
+      this.dotsContainer = this.querySelector('.ugc-gallery__dots');
+      this.isTransitioning = false;
+      
+      this.init();
+    }
+
+    init() {
+      if (this.items.length === 0) return;
+
+      this.setupEventListeners();
+      this.setupDots();
+      this.updateCarousel();
+      this.setupVideos();
+      
+      // Handle resize
+      this.resizeObserver = new ResizeObserver(() => this.updateCarousel());
+      this.resizeObserver.observe(this.trackWrapper);
+    }
+
+    setupEventListeners() {
+      this.prevButton?.addEventListener('click', () => this.prev());
+      this.nextButton?.addEventListener('click', () => this.next());
+
+      // Touch events for mobile swipe
+      let startX = 0;
+      let currentX = 0;
+      
+      this.track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      this.track.addEventListener('touchmove', (e) => {
+        currentX = e.touches[0].clientX;
+      });
+
+      this.track.addEventListener('touchend', () => {
+        const diff = startX - currentX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) this.next();
+          else this.prev();
+        }
+      });
+    }
+
+    setupDots() {
+      if (!this.dotsContainer) return;
+      
+      const totalDots = this.originalItemCount;
+      
+      for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'ugc-gallery__dot';
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        
+        dot.addEventListener('click', () => {
+          this.currentIndex = i;
+          this.updateCarousel();
+        });
+        
+        this.dotsContainer.appendChild(dot);
+      }
+    }
+
+    setupVideos() {
+      const videoContainers = this.querySelectorAll('.ugc-gallery__video-container');
+      
+      videoContainers.forEach(container => {
+        const video = container.querySelector('video');
+        const youtubeIframe = container.querySelector('.ugc-gallery__video--youtube');
+        const playButton = container.querySelector('.ugc-gallery__play-button');
+        
+        // Skip YouTube videos - they handle their own playback
+        if (youtubeIframe) {
+          container.classList.add('is-playing');
+          return;
+        }
+        
+        // Handle regular video elements
+        if (!video || !playButton) return;
+
+        playButton.addEventListener('click', () => {
+          if (video.paused) {
+            video.play();
+            container.classList.add('is-playing');
+          } else {
+            video.pause();
+            container.classList.remove('is-playing');
+          }
+        });
+
+        video.addEventListener('click', () => {
+          if (!video.paused) {
+            video.pause();
+            container.classList.remove('is-playing');
+          }
+        });
+
+        video.addEventListener('ended', () => {
+          // Video will loop, so keep playing state
+          container.classList.add('is-playing');
+        });
+      });
+      
+      // Update videos when carousel changes - this will autoplay visible videos
+      this.updateVideosVisibility();
+    }
+
+    updateVideosVisibility() {
+      const visibleItems = this.getVisibleItems();
+      const startIndex = this.currentIndex;
+      const endIndex = Math.min(this.items.length, startIndex + visibleItems);
+      
+      this.items.forEach((item, index) => {
+        const videoContainer = item.querySelector('.ugc-gallery__video-container');
+        if (!videoContainer) return;
+        
+        const video = videoContainer.querySelector('video');
+        const youtubeIframe = videoContainer.querySelector('.ugc-gallery__video--youtube');
+        
+        const isVisible = index >= startIndex && index < endIndex;
+        
+        // Handle YouTube videos (iframe)
+        if (youtubeIframe) {
+          if (isVisible) {
+            videoContainer.classList.add('is-playing');
+            // YouTube videos autoplay via URL parameters, no JS needed
+          } else {
+            // Pause YouTube video by reloading iframe without autoplay
+            const currentSrc = youtubeIframe.src;
+            if (currentSrc.includes('autoplay=1')) {
+              youtubeIframe.src = currentSrc.replace('autoplay=1', 'autoplay=0');
+            }
+            videoContainer.classList.remove('is-playing');
+          }
+          return;
+        }
+        
+        // Handle regular video elements
+        if (!video) return;
+        
+        if (isVisible) {
+          // Video is visible, try to play
+          if (video.paused) {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                videoContainer.classList.add('is-playing');
+              }).catch(() => {
+                // Autoplay prevented
+                videoContainer.classList.remove('is-playing');
+              });
+            }
+          }
+        } else {
+          // Video is not visible, pause it
+          if (!video.paused) {
+            video.pause();
+            videoContainer.classList.remove('is-playing');
+          }
+        }
+      });
+    }
+
+    getVisibleItems() {
+      const width = this.trackWrapper.offsetWidth;
+      if (width < 750) return 1;
+      if (width < 990) return 2;
+      return 3;
+    }
+
+    prev() {
+      if (this.isTransitioning) return;
+      this.currentIndex -= 1;
+      
+      // Handle infinite loop - if going before start, jump to end of duplicates
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.originalItemCount + this.currentIndex;
+      }
+      
+      this.updateCarousel();
+    }
+
+    next() {
+      if (this.isTransitioning) return;
+      this.currentIndex += 1;
+      
+      // Handle infinite loop - if going past end of originals, continue through duplicates
+      // Reset will happen after transition completes
+      this.updateCarousel();
+    }
+
+    updateCarousel() {
+      if (this.isTransitioning) return;
+      
+      const itemWidth = this.items[0]?.offsetWidth || 0;
+      const gap = parseInt(getComputedStyle(this.track).gap) || 0;
+      const itemStep = itemWidth + gap;
+      
+      // Check if we need to reset (scrolled into duplicates)
+      const needsReset = this.currentIndex >= this.originalItemCount;
+      
+      const offset = -(this.currentIndex * itemStep);
+      
+      this.isTransitioning = true;
+      this.track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+      this.track.style.transform = `translateX(${offset}px)`;
+
+      this.updateUI();
+      
+      setTimeout(() => {
+        this.isTransitioning = false;
+        
+        // Reset seamlessly after animation completes
+        if (needsReset) {
+          // Calculate the equivalent position in originals
+          const targetIndex = this.currentIndex - this.originalItemCount;
+          const targetOffset = -(targetIndex * itemStep);
+          
+          // Reset to original position (visually identical, so no jump)
+          this.currentIndex = targetIndex;
+          this.track.style.transition = 'none';
+          this.track.style.transform = `translateX(${targetOffset}px)`;
+          // Force reflow
+          this.track.offsetHeight;
+          // Restore transition for next animation
+          this.track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, 500);
+    }
+
+    updateUI() {
+      // Buttons are always enabled for infinite scroll
+      if (this.prevButton) this.prevButton.disabled = false;
+      if (this.nextButton) this.nextButton.disabled = false;
+
+      // Update dots based on original item count
+      const dots = this.dotsContainer?.querySelectorAll('.ugc-gallery__dot');
+      if (dots) {
+        const normalizedIndex = ((this.currentIndex % this.originalItemCount) + this.originalItemCount) % this.originalItemCount;
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('is-active', i === normalizedIndex);
+        });
+      }
+      
+      // Update video visibility/playback
+      this.updateVideosVisibility();
+    }
+
+    disconnectedCallback() {
+      this.resizeObserver?.disconnect();
+    }
+  }
+
+  customElements.define('ugc-carousel', UgcCarousel);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "UGC Gallery",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "<h2>Shop The Look</h2>"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>See how our customers are styling their favorites</p>"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_usernames",
+      "label": "Show usernames",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "1 / 1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4 / 5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "9 / 16",
+          "label": "Portrait (9:16)"
+        },
+        {
+          "value": "5 / 4",
+          "label": "Landscape (5:4)"
+        },
+        {
+          "value": "4 / 3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "16 / 9",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "4 / 5",
+      "info": "Control the proportions of photos and videos"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum item width",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 400,
+      "info": "Control the maximum width of each photo/video item"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "rgba(0, 0, 0, 0.7)",
+      "info": "Background for caption overlay"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ugc_item",
+      "name": "UGC Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Use for photos. Leave empty if using video."
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "Video URL",
+          "info": "Direct link to video file (.mp4) or YouTube URL (youtube.com/watch?v=... or youtu.be/...). Takes priority over image."
+        },
+        {
+          "type": "image_picker",
+          "id": "video_thumbnail",
+          "label": "Video thumbnail",
+          "info": "Optional poster image for video"
+        },
+        {
+          "type": "text",
+          "id": "username",
+          "label": "Username",
+          "default": "@username",
+          "info": "Social media handle"
+        },
+        {
+          "type": "textarea",
+          "id": "caption",
+          "label": "Caption",
+          "info": "Short caption or quote (2 lines max shown)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Link to original social media post"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "UGC Gallery",
+      "category": "t:categories.product",
+      "blocks": [
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@sarah_style",
+            "caption": "Obsessed with this! Perfect for everyday 💕"
+          }
+        },
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@lifestyle_emma",
+            "caption": "Can't stop wearing it! Quality is amazing ✨"
+          }
+        },
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@daily_inspo",
+            "caption": "My new favorite! Highly recommend 🔥"
+          }
+        },
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@fashion_lover",
+            "caption": "Love the fit and style! 10/10 👌"
+          }
+        },
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@trendy_picks",
+            "caption": "So happy with my purchase! 💯"
+          }
+        },
+        {
+          "type": "ugc_item",
+          "settings": {
+            "username": "@style_diary",
+            "caption": "This is everything! Worth every penny 🌟"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

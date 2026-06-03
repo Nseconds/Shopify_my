@@ -1,0 +1,290 @@
+{%- doc -%}
+  A simple full-width announcement banner for displaying promotional text.
+  Intended for use in header sections.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign plain_text = block_settings.text | strip_newlines | strip_html | strip
+%}
+
+{%- unless plain_text == blank -%}
+  <div
+    class="
+      simple-header-banner
+      text-block
+      text-block--align-center
+      text-block--full-width
+      custom-typography
+      {% if block_settings.font_size != '' %}custom-font-size{% endif %}
+      {% if block_settings.weight != '' %}custom-font-weight{% endif %}
+    "
+    style="
+      {% render 'typography-style', settings: block_settings, preset: 'custom' %}
+      --simple-header-bg: {{ block_settings.background_color }};
+      --simple-header-text-color: {{ block_settings.text_color }};
+      --simple-header-border-color: {{ block_settings.border_color }};
+      --simple-header-border-width: {{ block_settings.border_width }}px;
+      --simple-header-padding-block: {{ block_settings.padding_vertical }}px;
+      --simple-header-padding-inline: {{ block_settings.padding_horizontal }}px;
+      --text-align: center;
+      --line-height: 1;
+    "
+    {{ block.shopify_attributes }}
+  >
+    <p class="simple-header-banner__text">
+      {{ block_settings.text }}
+    </p>
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .simple-header-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--simple-header-padding-block) var(--simple-header-padding-inline);
+    background-color: var(--simple-header-bg);
+    border-bottom: var(--simple-header-border-width) solid var(--simple-header-border-color);
+  }
+
+  .simple-header-banner__text {
+    margin: 0;
+    color: var(--simple-header-text-color, var(--color-foreground));
+    text-align: var(--text-align);
+  }
+
+  .text-block {
+    width: var(--width);
+    max-width: 100%;
+  }
+
+  .text-block > * {
+    width: var(--width);
+    max-width: var(--max-width, 100%);
+    text-align: var(--text-align);
+  }
+
+  .text-block--align-center,
+  .text-block--align-center > * {
+    margin-inline: auto;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Simple header banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "Welcome Back"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "font",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "var(--font-body--family)",
+          "label": "t:options.body"
+        },
+        {
+          "value": "var(--font-subheading--family)",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "var(--font-heading--family)",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "var(--font-accent--family)",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "var(--font-accent--family)"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        }
+      ],
+      "default": "0.875rem"
+    },
+    {
+      "type": "select",
+      "id": "weight",
+      "label": "t:settings.weight",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "100",
+          "label": "t:options.thin"
+        },
+        {
+          "value": "300",
+          "label": "t:options.light"
+        },
+        {
+          "value": "400",
+          "label": "t:options.regular"
+        },
+        {
+          "value": "500",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "600",
+          "label": "t:options.semibold"
+        },
+        {
+          "value": "700",
+          "label": "t:options.bold"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "letter_spacing",
+      "label": "t:settings.letter_spacing",
+      "options": [
+        {
+          "value": "tight",
+          "label": "t:options.tight"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "loose",
+          "label": "t:options.loose"
+        }
+      ],
+      "default": "loose"
+    },
+    {
+      "type": "select",
+      "id": "case",
+      "label": "t:settings.case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background",
+      "default": "#e9e4e0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text",
+      "default": "#433625"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.border",
+      "default": "#43362526"
+    },
+    {
+      "type": "header",
+      "content": "t:content.spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "t:settings.padding_vertical",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "t:settings.padding_horizontal",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.border_width",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple header banner"
+    }
+  ]
+}
+{% endschema %}
+

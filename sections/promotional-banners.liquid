@@ -1,0 +1,706 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c     = section.settings.banner1_bg_color -%}
+  {%- assign title_c  = section.settings.banner1_heading_color -%}
+  {%- assign text_c   = section.settings.banner1_subheading_color -%}
+  {%- assign accent_c = section.settings.banner1_accent_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c     = 'var(--color-background)' -%}
+  {%- assign title_c  = 'var(--color-foreground)' -%}
+  {%- assign text_c   = 'var(--color-foreground)' -%}
+  {%- assign accent_c = 'var(--color-gradient-1)' -%}
+{%- else -%}
+  {%- assign bg_c     = section.settings.color_scheme.settings.background -%}
+  {%- assign title_c  = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c   = section.settings.color_scheme.settings.foreground -%}
+  {%- assign accent_c = section.settings.color_scheme.settings.primary -%}
+{%- endif -%}
+
+{% style %}
+  .ai-promo-banners-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 20px {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .ai-promo-banners-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.gap }}px;
+  }
+
+  .ai-promo-banner-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: {{ section.settings.banner_padding }}px;
+    border-radius: var(--style-border-radius-cards);
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: {{ section.settings.banner_min_height }}px;
+  }
+
+  .ai-promo-banner-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-promo-banner-light-{{ ai_gen_id }} {
+    background: {{ bg_c }};
+  }
+
+  .ai-promo-banner-gradient-{{ ai_gen_id }} {
+    {% if section.settings.banner2_use_gradient %}
+      background: linear-gradient(135deg, {{ section.settings.banner2_gradient_start }} 0%, {{ section.settings.banner2_gradient_end }} 100%);
+    {% else %}
+      background-color: {{ section.settings.banner2_bg_color }};
+    {% endif %}
+    position: relative;
+  }
+
+  .ai-promo-banner-bg-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: {{ section.settings.banner2_bg_image_opacity | divided_by: 100.0 }};
+    z-index: 0;
+  }
+
+  .ai-promo-banner-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: {{ section.settings.content_gap }}px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-promo-banner-image-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.banner1_image_width }}px;
+    height: {{ section.settings.banner1_image_width }}px;
+  }
+
+  .ai-promo-banner-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-promo-banner-logo-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.banner2_logo_width }}px;
+    height: auto;
+  }
+
+  .ai-promo-banner-logo-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .ai-promo-banner-text-{{ ai_gen_id }} {
+    flex-grow: 1;
+    text-align: {{ section.settings.text_alignment }};
+  }
+
+  .ai-promo-banner-heading-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.heading_size }}px;
+    text-transform: uppercase;
+    letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+    line-height: 1.2;
+    margin: 0 0 {{ section.settings.heading_margin_bottom }}px 0;
+  }
+
+  .ai-promo-banner-light-{{ ai_gen_id }} .ai-promo-banner-heading-{{ ai_gen_id }} {
+    color: {{ title_c }};
+  }
+
+  .ai-promo-banner-gradient-{{ ai_gen_id }} .ai-promo-banner-heading-{{ ai_gen_id }} {
+    color: {{ title_c }};
+  }
+
+  .ai-promo-banner-heading-accent-{{ ai_gen_id }} {
+    color: {{ accent_c }};
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-promo-banner-heading-accent-{{ ai_gen_id }} {
+    background: var(--color-card-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  {% endif %}
+
+  .ai-promo-banner-subheading-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.subheading_size }}px;
+    line-height: 1.4;
+    margin: 0;
+    color: {{ text_c }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-promo-banners-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.gap_mobile }}px;
+    }
+
+    .ai-promo-banner-{{ ai_gen_id }} {
+      min-height: {{ section.settings.banner_min_height_mobile }}px;
+      padding: {{ section.settings.banner_padding_mobile }}px;
+    }
+
+    .ai-promo-banner-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .ai-promo-banner-subheading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+    }
+
+    .ai-promo-banner-image-{{ ai_gen_id }} {
+      width: {{ section.settings.banner1_image_width_mobile }}px;
+      height: {{ section.settings.banner1_image_width_mobile }}px;
+    }
+
+    .ai-promo-banner-logo-{{ ai_gen_id }} {
+      width: {{ section.settings.banner2_logo_width_mobile }}px;
+    }
+
+    .ai-promo-banner-content-{{ ai_gen_id }} {
+      gap: {{ section.settings.content_gap_mobile }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-promo-banner-content-{{ ai_gen_id }} {
+      {% if section.settings.mobile_stack %}
+        flex-direction: column;
+        text-align: center;
+      {% endif %}
+    }
+
+    .ai-promo-banner-text-{{ ai_gen_id }} {
+      {% if section.settings.mobile_stack %}
+        text-align: center;
+      {% endif %}
+    }
+  }
+{% endstyle %}
+
+<promotional-banners class="ai-promo-banners-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="ai-promo-banners-container-{{ ai_gen_id }}">
+    <a
+      href="{{ section.settings.banner1_link }}"
+      class="ai-promo-banner-{{ ai_gen_id }} ai-promo-banner-light-{{ ai_gen_id }}"
+      {% if section.settings.banner1_link == blank %}aria-disabled="true"{% endif %}
+    >
+      <div class="ai-promo-banner-content-{{ ai_gen_id }}">
+        <div data-forge-slot-id="banner1_image"{% if section.settings.banner1_image == blank %} data-forge-slot-blank="true"{% endif %} style="display:contents">
+          {% if section.settings.banner1_image %}
+            <div class="ai-promo-banner-image-{{ ai_gen_id }}">
+              <img
+                src="{{ section.settings.banner1_image | image_url: width: 400 }}"
+                alt="{{ section.settings.banner1_image.alt | escape }}"
+                loading="lazy"
+                width="{{ section.settings.banner1_image_width }}"
+                height="{{ section.settings.banner1_image_width }}"
+              >
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="ai-promo-banner-text-{{ ai_gen_id }}">
+          {% if section.settings.banner1_heading != blank %}
+            <h2 class="ai-promo-banner-heading-{{ ai_gen_id }}">
+              {% if section.settings.banner1_accent_word != blank %}
+                {% assign heading_parts = section.settings.banner1_heading | split: section.settings.banner1_accent_word %}
+                {{ heading_parts[0] }}<span class="ai-promo-banner-heading-accent-{{ ai_gen_id }}">{{ section.settings.banner1_accent_word }}</span>{{ heading_parts[1] }}
+              {% else %}
+                {{ section.settings.banner1_heading }}
+              {% endif %}
+            </h2>
+          {% endif %}
+
+          {% if section.settings.banner1_subheading != blank %}
+            <p class="ai-promo-banner-subheading-{{ ai_gen_id }}">
+              {{ section.settings.banner1_subheading }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+
+    <a
+      href="{{ section.settings.banner2_link }}"
+      class="ai-promo-banner-{{ ai_gen_id }} ai-promo-banner-gradient-{{ ai_gen_id }}"
+      {% if section.settings.banner2_link == blank %}aria-disabled="true"{% endif %}
+    >
+      <div data-forge-slot-id="banner2_bg_image"{% if section.settings.banner2_bg_image == blank %} data-forge-slot-blank="true"{% endif %} style="display:contents">
+        {% if section.settings.banner2_bg_image %}
+          <img
+            src="{{ section.settings.banner2_bg_image | image_url: width: 1200 }}"
+            alt=""
+            class="ai-promo-banner-bg-image-{{ ai_gen_id }}"
+            loading="lazy"
+            width="1200"
+            height="800"
+          >
+        {% endif %}
+      </div>
+
+      <div class="ai-promo-banner-content-{{ ai_gen_id }}">
+        {% if section.settings.banner2_logo %}
+          <div class="ai-promo-banner-logo-{{ ai_gen_id }}">
+            <img
+              src="{{ section.settings.banner2_logo | image_url: width: 400 }}"
+              alt="{{ section.settings.banner2_logo.alt | escape }}"
+              loading="lazy"
+              width="{{ section.settings.banner2_logo_width }}"
+              height="{{ section.settings.banner2_logo_width }}"
+            >
+          </div>
+        {% endif %}
+
+        <div class="ai-promo-banner-text-{{ ai_gen_id }}">
+          {% if section.settings.banner2_heading != blank %}
+            <h2 class="ai-promo-banner-heading-{{ ai_gen_id }}">
+              {{ section.settings.banner2_heading }}
+            </h2>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+  </div>
+</promotional-banners>
+
+<script>
+  (function() {
+    if (customElements.get('promotional-banners')) return;
+
+    class PromotionalBanners extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.banners = this.querySelectorAll('a[class*="ai-promo-banner-"]');
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        this.banners.forEach((banner) => {
+          if (banner.getAttribute('aria-disabled') === 'true') {
+            banner.style.cursor = 'default';
+            banner.addEventListener('click', (e) => {
+              e.preventDefault();
+            });
+          }
+        });
+      }
+    }
+
+    customElements.define('promotional-banners', PromotionalBanners);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Promotional banners",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1300
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between banners",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Gap on mobile",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Banner sizing"
+    },
+    {
+      "type": "range",
+      "id": "banner_min_height",
+      "label": "Min height desktop",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "banner_min_height_mobile",
+      "label": "Min height mobile",
+      "min": 120,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "banner_padding",
+      "label": "Banner padding desktop",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "banner_padding_mobile",
+      "label": "Banner padding mobile",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Content gap desktop",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_gap_mobile",
+      "label": "Content gap mobile",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_stack",
+      "label": "Stack content on mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size desktop",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 14,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Heading letter spacing",
+      "min": 0,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Heading margin bottom",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size desktop",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size mobile",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Banner 1 - Light style"
+    },
+    {
+      "type": "url",
+      "id": "banner1_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "banner1_bg_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner1_image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "banner1_image_width",
+      "label": "Image width desktop",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "banner1_image_width_mobile",
+      "label": "Image width mobile",
+      "min": 50,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "text",
+      "id": "banner1_heading",
+      "label": "Heading",
+      "default": "SUMMER SALE"
+    },
+    {
+      "type": "color",
+      "id": "banner1_heading_color",
+      "label": "Heading color",
+      "default": "#141414"
+    },
+    {
+      "type": "text",
+      "id": "banner1_accent_word",
+      "label": "Accent word"
+    },
+    {
+      "type": "color",
+      "id": "banner1_accent_color",
+      "label": "Accent color",
+      "default": "#ff9a0e"
+    },
+    {
+      "type": "text",
+      "id": "banner1_subheading",
+      "label": "Subheading",
+      "default": "Up to 50% off selected items"
+    },
+    {
+      "type": "color",
+      "id": "banner1_subheading_color",
+      "label": "Subheading color",
+      "default": "#2c2c2c"
+    },
+    {
+      "type": "header",
+      "content": "Banner 2 - Gradient style"
+    },
+    {
+      "type": "url",
+      "id": "banner2_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "banner2_use_gradient",
+      "label": "Use gradient background",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "banner2_bg_color",
+      "label": "Background color",
+      "default": "#ff9a0e"
+    },
+    {
+      "type": "color",
+      "id": "banner2_gradient_start",
+      "label": "Gradient start color",
+      "default": "#ff9a0e"
+    },
+    {
+      "type": "color",
+      "id": "banner2_gradient_end",
+      "label": "Gradient end color",
+      "default": "#ff6b00"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner2_bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "banner2_bg_image_opacity",
+      "label": "Background image opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "image_picker",
+      "id": "banner2_logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "banner2_logo_width",
+      "label": "Logo width desktop",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "banner2_logo_width_mobile",
+      "label": "Logo width mobile",
+      "min": 50,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 70
+    },
+    {
+      "type": "text",
+      "id": "banner2_heading",
+      "label": "Heading",
+      "default": "NEW COLLECTION"
+    },
+    {
+      "type": "color",
+      "id": "banner2_heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional banners"
+    }
+  ]
+}
+{% endschema %}

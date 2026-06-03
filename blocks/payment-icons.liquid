@@ -1,0 +1,351 @@
+
+{%- doc -%}
+  Displays payment method icons with an optional security icon and heading.
+  Perfect for showing supported payment methods and building trust.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  
+  case block_settings.alignment
+    when 'left'
+      assign justify_content = 'flex-start'
+    when 'center'
+      assign justify_content = 'center'
+    when 'right'
+      assign justify_content = 'flex-end'
+    else
+      assign justify_content = 'center'
+  endcase
+%}
+
+<div
+  class="payment-icons spacing-style"
+  style="
+    {% render 'spacing-padding', settings: block_settings %}
+    --justify-content: {{ justify_content }};
+    --icon-size: {{ block_settings.icon_size }}px;
+    --icon-gap: {{ block_settings.icon_gap }}px;
+    --text-size: {{ block_settings.text_size }}px;
+    --text-color: var(--color-foreground, {{ block_settings.text_color }});
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="payment-icons__wrapper">
+    {% if block_settings.show_security_icon %}
+      <div class="payment-icons__security-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+        </svg>
+      </div>
+    {% endif %}
+    
+    {% if block_settings.heading != blank %}
+      <span class="payment-icons__heading">{{ block_settings.heading }}</span>
+    {% endif %}
+
+    {% case block.settings.display_mode %}
+      {% when 'shopify' %}
+        <div class="payment-icons__list">
+          {% for type in shop.enabled_payment_types %}
+            {{ type | payment_type_svg_tag: class: 'payment-icons__icon' }}
+          {% endfor %}
+        </div>
+      {% when 'custom_selection' %}
+        <div class="payment-icons__list">
+          {% if block.settings.show_visa %}{{ 'visa' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_mastercard %}{{ 'master' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_amex %}{{ 'american_express' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_discover %}{{ 'discover' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_paypal %}{{ 'paypal' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_apple_pay %}{{ 'apple_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_google_pay %}{{ 'google_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_shop_pay %}{{ 'shopify_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_amazon_pay %}{{ 'amazon_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_klarna %}{{ 'klarna' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+          {% if block.settings.show_afterpay %}{{ 'afterpay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
+        </div>
+      {% when 'custom_html' %}
+        {% if block_settings.custom_icons != blank %}
+          <div class="payment-icons__list">
+            {{ block_settings.custom_icons }}
+          </div>
+        {% endif %}
+    {% endcase %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .payment-icons {
+    display: flex;
+    align-items: center;
+    justify-content: var(--justify-content);
+    width: 100%;
+  }
+
+  .payment-icons__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: var(--justify-content);
+  }
+
+  .payment-icons__security-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--text-color);
+    flex-shrink: 0;
+  }
+
+  .payment-icons__security-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .payment-icons__heading {
+    font-size: var(--text-size);
+    color: var(--text-color);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .payment-icons__list {
+    display: flex;
+    align-items: center;
+    gap: var(--icon-gap);
+    flex-wrap: wrap;
+  }
+
+  .payment-icons__icon {
+    height: var(--icon-size);
+    width: auto;
+    max-width: 60px;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 749px) {
+    .payment-icons__wrapper {
+      gap: 8px;
+    }
+    
+    .payment-icons__list {
+      gap: calc(var(--icon-gap) * 0.75);
+    }
+    
+    .payment-icons__icon {
+      max-width: 50px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Payment Icons",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "display_mode",
+      "label": "Payment icon display mode",
+      "options": [
+        {
+          "value": "shopify",
+          "label": "Shopify payment methods"
+        },
+        {
+          "value": "custom_selection",
+          "label": "Custom payment selection"
+        },
+        {
+          "value": "custom_html",
+          "label": "Custom HTML/SVG"
+        }
+      ],
+      "default": "custom_selection"
+    },
+    {
+      "type": "header",
+      "content": "Payment Methods (Custom Selection Mode)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_visa",
+      "label": "Visa",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mastercard",
+      "label": "Mastercard",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_amex",
+      "label": "American Express",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discover",
+      "label": "Discover",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_paypal",
+      "label": "PayPal",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_apple_pay",
+      "label": "Apple Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_google_pay",
+      "label": "Google Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop_pay",
+      "label": "Shop Pay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_amazon_pay",
+      "label": "Amazon Pay",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_klarna",
+      "label": "Klarna",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_afterpay",
+      "label": "Afterpay/Clearpay",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "custom_icons",
+      "label": "Custom payment icons",
+      "info": "Paste SVG or HTML code for custom payment icons. Only used in 'Custom HTML/SVG' mode."
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading text",
+    },
+    {
+      "type": "checkbox",
+      "id": "show_security_icon",
+      "label": "Show security icon",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Payment icon height",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "label": "Gap between icons",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text and icon color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Payment Icons",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,597 @@
+{% assign ai_gen_id = section.id | replace: '_', '-' | downcase %}
+{% assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{% style %}
+  .ai-newsletter-signup-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ section.settings.section_padding }}px 20px;
+    background-color: var(--color-background, {{ section.settings.background_color }});
+  }
+
+  .ai-newsletter-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--style-gap-cards);
+    align-items: center;
+  }
+
+  .ai-newsletter-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+  }
+
+  .ai-newsletter-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-newsletter-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--style-border-radius-images);
+    position: relative;
+  }
+
+  .ai-newsletter-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-newsletter-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-newsletter-form-wrapper-{{ ai_gen_id }} {
+    padding: {{ section.settings.form_padding }}px;
+  }
+
+  .ai-newsletter-heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    color: var(--color-foreground-heading, {{ section.settings.heading_color }});
+    margin: 0 0 {{ section.settings.heading_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-newsletter-subtext-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subtext_size }}px;
+    color: var(--color-foreground, {{ section.settings.subtext_color }});
+    margin: 0 0 {{ section.settings.form_spacing }}px 0;
+    line-height: 1.5;
+  }
+
+  .ai-newsletter-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.input_button_gap }}px;
+  }
+
+  .ai-newsletter-input-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ section.settings.input_padding }}px;
+    border: {{ section.settings.input_border_width }}px solid {{ section.settings.input_border_color }};
+    border-radius: var(--style-border-radius-global);
+    font-size: {{ section.settings.input_font_size }}px;
+    background-color: {{ section.settings.input_background }};
+    color: {{ section.settings.input_text_color }};
+  }
+
+  .ai-newsletter-input-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: var(--color-primary, {{ section.settings.input_focus_border_color }});
+  }
+
+  .ai-newsletter-input-{{ ai_gen_id }}::placeholder {
+    color: {{ section.settings.input_placeholder_color }};
+    opacity: 0.5;
+  }
+
+  .ai-newsletter-button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ section.settings.button_padding }}px;
+    background-color: var(--color-primary, {{ section.settings.button_background }});
+    color: var(--color-primary-button-text, {{ section.settings.button_text_color }});
+    border: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ section.settings.button_font_size }}px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-newsletter-button-{{ ai_gen_id }}:hover {
+    background-color: var(--color-primary, {{ section.settings.button_hover_background }});
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-newsletter-button-{{ ai_gen_id }} {
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+  .ai-newsletter-button-{{ ai_gen_id }}:hover {
+    background: var(--color-primary-button-background);
+    opacity: 0.9;
+  }
+  {% endif %}
+
+  .ai-newsletter-success-{{ ai_gen_id }} {
+    color: {{ section.settings.success_color }};
+    margin-top: 12px;
+    font-size: 14px;
+  }
+
+  .ai-newsletter-error-{{ ai_gen_id }} {
+    color: {{ section.settings.error_color }};
+    margin-top: 12px;
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-newsletter-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_gap }}px;
+    }
+
+    .ai-newsletter-image-wrapper-{{ ai_gen_id }} {
+      min-height: 300px;
+    }
+
+    .ai-newsletter-image-placeholder-{{ ai_gen_id }} {
+      min-height: 300px;
+    }
+
+    .ai-newsletter-form-wrapper-{{ ai_gen_id }} {
+      text-align: center;
+    }
+
+    .ai-newsletter-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-newsletter-subtext-{{ ai_gen_id }} {
+      font-size: {{ section.settings.subtext_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<newsletter-signup-{{ ai_gen_id }}
+  class="ai-newsletter-signup-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-newsletter-container-{{ ai_gen_id }}">
+    <div class="ai-newsletter-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+      {% if section.settings.image %}
+        <img
+          src="{{ section.settings.image | image_url: width: 1200 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="ai-newsletter-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-newsletter-image-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-newsletter-empty-state-{{ ai_gen_id }}">
+            Add an elegant lifestyle or product image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-newsletter-form-wrapper-{{ ai_gen_id }}">
+      {%- form 'contact' -%}
+        <input
+          type="hidden"
+          name="contact[tags]"
+          value="newsletter"
+        >
+
+        {% if section.settings.heading != blank %}
+          <h2 class="ai-newsletter-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if section.settings.subtext != blank %}
+          <p class="ai-newsletter-subtext-{{ ai_gen_id }}">{{ section.settings.subtext }}</p>
+        {% endif %}
+
+        <div class="ai-newsletter-form-{{ ai_gen_id }}">
+          <input
+            type="email"
+            name="contact[email]"
+            class="ai-newsletter-input-{{ ai_gen_id }}"
+            value="{{ form.email }}"
+            aria-required="true"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            {% if form.errors %}
+              aria-invalid="true"
+              aria-describedby="ai-newsletter-error-{{ ai_gen_id }}"
+            {% endif %}
+            {% if form.posted_successfully? %}
+              aria-describedby="ai-newsletter-success-{{ ai_gen_id }}"
+            {% endif %}
+            placeholder="{{ section.settings.email_placeholder }}"
+            required
+          >
+
+          <button
+            type="submit"
+            class="ai-newsletter-button-{{ ai_gen_id }}"
+          >
+            {{ section.settings.button_text }}
+          </button>
+
+          {% if form.errors %}
+            <div
+              id="ai-newsletter-error-{{ ai_gen_id }}"
+              class="ai-newsletter-error-{{ ai_gen_id }}"
+            >
+              <span>{{ form.errors.messages.email }}</span>
+            </div>
+          {% endif %}
+
+          {% if form.posted_successfully? %}
+            <div
+              id="ai-newsletter-success-{{ ai_gen_id }}"
+              class="ai-newsletter-success-{{ ai_gen_id }}"
+            >
+              <span>{{ section.settings.success_message }}</span>
+            </div>
+          {% endif %}
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</newsletter-signup-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class NewsletterSignup{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.form = this.querySelector('form');
+        if (this.form) {
+          this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        }
+      }
+
+      handleSubmit(event) {
+        const emailInput = this.form.querySelector('input[type="email"]');
+        if (emailInput && !emailInput.value) {
+          event.preventDefault();
+        }
+      }
+    }
+
+    customElements.define('newsletter-signup-{{ ai_gen_id }}', NewsletterSignup{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Newsletter signup",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Join Our Newsletter</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#141414"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Stay updated on new collections, exclusive offers, and brand news."
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "label": "Subtext size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext color",
+      "default": "#212529"
+    },
+    {
+      "type": "header",
+      "content": "Form"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Subscribe to Our Newsletter"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for subscribing!"
+    },
+    {
+      "type": "range",
+      "id": "form_spacing",
+      "label": "Form spacing",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "input_button_gap",
+      "label": "Input button gap",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Input style"
+    },
+    {
+      "type": "range",
+      "id": "input_padding",
+      "label": "Input padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "input_font_size",
+      "label": "Input font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Input border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#212529"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border color",
+      "default": "#dee2e6"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_border_color",
+      "label": "Input focus border color",
+      "default": "#6c757d"
+    },
+    {
+      "type": "color",
+      "id": "input_placeholder_color",
+      "label": "Input placeholder color",
+      "default": "#6c757d"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "label": "Button padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#6d8dae"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#5c7a9a"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "form_padding",
+      "label": "Form padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success color",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error color",
+      "default": "#D82C0D"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter signup"
+    }
+  ]
+}
+{% endschema %}

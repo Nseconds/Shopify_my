@@ -1,0 +1,635 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.headline_color
+    assign sc_body   = section.settings.paragraph_color
+    assign sc_accent = section.settings.accent_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_body   = 'var(--color-foreground)'
+    assign sc_accent = 'var(--color-gradient-1)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_body   = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+  endif
+-%}
+{% style %}
+  .ai-split-layout-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+  }
+
+  .ai-split-layout__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ section.settings.padding_vertical }}px {{ section.settings.padding_horizontal }}px;
+    align-items: center;
+  }
+
+  .ai-split-layout__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: {{ section.settings.min_height }}px;
+  }
+
+  .ai-split-layout__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-split-layout__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    min-height: {{ section.settings.min_height }}px;
+    background-color: var(--color-border, #f4f4f4);
+    border-radius: var(--style-border-radius-images);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-split-layout__image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-split-layout__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-split-layout__content-{{ ai_gen_id }} {
+    position: relative;
+    padding: {{ section.settings.content_padding }}px;
+  }
+
+  .ai-split-layout__decorative-line-top-{{ ai_gen_id }} {
+    width: {{ section.settings.decorative_line_width }}px;
+    height: {{ section.settings.decorative_line_thickness }}px;
+    background-color: {{ sc_accent }};
+    margin-bottom: {{ section.settings.decorative_spacing }}px;
+    opacity: {{ section.settings.decorative_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-split-layout__overline-{{ ai_gen_id }} {
+    font-size: {{ section.settings.overline_size }}px;
+    letter-spacing: {{ section.settings.overline_spacing }}px;
+    text-transform: uppercase;
+    color: {{ sc_text }};
+    margin-bottom: {{ section.settings.overline_margin }}px;
+    font-weight: 500;
+  }
+
+  .ai-split-layout__headline-{{ ai_gen_id }} {
+    font-size: {{ section.settings.headline_size }}px;
+    line-height: 1.2;
+    color: {{ sc_text }};
+    margin-bottom: {{ section.settings.headline_margin }}px;
+    font-weight: {{ section.settings.headline_weight }};
+    position: relative;
+    display: inline-block;
+  }
+
+  .ai-split-layout__headline-wrapper-{{ ai_gen_id }} {
+    margin-bottom: {{ section.settings.headline_margin }}px;
+  }
+
+  .ai-split-layout__headline-accent-{{ ai_gen_id }} {
+    position: relative;
+    display: inline;
+  }
+
+  .ai-split-layout__headline-accent-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: {{ section.settings.underline_offset }}px;
+    left: 0;
+    width: 100%;
+    height: {{ section.settings.underline_height }}px;
+    background-color: {{ sc_accent }};
+    opacity: {{ section.settings.accent_opacity | divided_by: 100.0 }};
+    z-index: -1;
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-split-layout__headline-accent-{{ ai_gen_id }} {
+    background: var(--color-card-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .ai-split-layout__headline-accent-{{ ai_gen_id }}::after {
+    background: var(--color-card-gradient);
+    background-color: unset;
+    opacity: {{ section.settings.accent_opacity | divided_by: 100.0 }};
+  }
+  {% endif %}
+
+  .ai-split-layout__paragraph-{{ ai_gen_id }} {
+    font-size: {{ section.settings.paragraph_size }}px;
+    line-height: {{ section.settings.paragraph_line_height }};
+    color: {{ sc_body }};
+    margin-bottom: {{ section.settings.paragraph_margin }}px;
+  }
+
+  .ai-split-layout__decorative-line-bottom-{{ ai_gen_id }} {
+    width: {{ section.settings.decorative_line_width }}px;
+    height: {{ section.settings.decorative_line_thickness }}px;
+    background-color: {{ sc_accent }};
+    margin-top: {{ section.settings.decorative_spacing }}px;
+    opacity: {{ section.settings.decorative_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-split-layout__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_gap }}px;
+    }
+
+    .ai-split-layout__image-wrapper-{{ ai_gen_id }} {
+      min-height: {{ section.settings.mobile_min_height }}px;
+    }
+
+    .ai-split-layout__image-placeholder-{{ ai_gen_id }} {
+      min-height: {{ section.settings.mobile_min_height }}px;
+    }
+
+    .ai-split-layout__headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-split-layout__paragraph-{{ ai_gen_id }} {
+      font-size: {{ section.settings.paragraph_size | times: 0.9 }}px;
+    }
+
+    .ai-split-layout__content-{{ ai_gen_id }} {
+      padding: {{ section.settings.content_padding | times: 0.6 }}px;
+    }
+  }
+{% endstyle %}
+
+<split-layout-{{ ai_gen_id }} class="ai-split-layout-{{ ai_gen_id }}">
+  <div class="ai-split-layout__container-{{ ai_gen_id }}">
+    <div class="ai-split-layout__image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+      {% if section.settings.image %}
+        <img
+          src="{{ section.settings.image | image_url: width: 1200 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="ai-split-layout__image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-split-layout__image-placeholder-{{ ai_gen_id }}">
+          {{ 'lifestyle-1' | placeholder_svg_tag }}
+          <div class="ai-split-layout__empty-state-{{ ai_gen_id }}">
+            Add a lifestyle image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-split-layout__content-{{ ai_gen_id }}">
+      {% if section.settings.show_top_line %}
+        <div class="ai-split-layout__decorative-line-top-{{ ai_gen_id }}"></div>
+      {% endif %}
+
+      {% if section.settings.overline != blank %}
+        <div class="ai-split-layout__overline-{{ ai_gen_id }}">
+          {{ section.settings.overline }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.headline != blank %}
+        <div class="ai-split-layout__headline-wrapper-{{ ai_gen_id }}">
+          {% if section.settings.accent_word != blank %}
+            {% assign headline_parts = section.settings.headline | split: section.settings.accent_word %}
+            {% if headline_parts.size > 1 %}
+              <h2 class="ai-split-layout__headline-{{ ai_gen_id }}">
+                {{ headline_parts[0] }}<span class="ai-split-layout__headline-accent-{{ ai_gen_id }}">{{ section.settings.accent_word }}</span>{{ headline_parts[1] }}
+              </h2>
+            {% else %}
+              <h2 class="ai-split-layout__headline-{{ ai_gen_id }}">
+                {{ section.settings.headline }}
+              </h2>
+            {% endif %}
+          {% else %}
+            <h2 class="ai-split-layout__headline-{{ ai_gen_id }}">
+              {{ section.settings.headline }}
+            </h2>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.paragraph != blank %}
+        <div class="ai-split-layout__paragraph-{{ ai_gen_id }}">
+          {{ section.settings.paragraph }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_bottom_line %}
+        <div class="ai-split-layout__decorative-line-bottom-{{ ai_gen_id }}"></div>
+      {% endif %}
+    </div>
+  </div>
+</split-layout-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Image split",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height (desktop)",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "mobile_min_height",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height (mobile)",
+      "default": 350
+    },
+    {
+      "type": "header",
+      "content": "Text content"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline text",
+      "default": "New Collection"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Move with comfort and grace"
+    },
+    {
+      "type": "text",
+      "id": "accent_word",
+      "label": "Accented word in headline",
+      "default": "comfort",
+      "info": "Enter a word from the headline to add a decorative underline"
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph",
+      "label": "Paragraph",
+      "default": "Designed for the modern woman who values both style and functionality. Our activewear moves with you, from studio to street, offering unparalleled comfort for every moment of your day."
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "overline_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Overline size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "overline_spacing",
+      "min": 0,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Overline letter spacing",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "overline_margin",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Overline bottom margin",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 42
+    },
+    {
+      "type": "select",
+      "id": "headline_weight",
+      "label": "Headline weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "headline_margin",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline bottom margin",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "paragraph_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Paragraph size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "paragraph_line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Paragraph line height",
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "paragraph_margin",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Paragraph bottom margin",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Decorative accents"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_line",
+      "label": "Show top decorative line",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_line",
+      "label": "Show bottom decorative line",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "decorative_line_width",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Decorative line width",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "decorative_line_thickness",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Decorative line thickness",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "decorative_spacing",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Decorative line spacing",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "decorative_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Decorative line opacity",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "underline_height",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Accent underline height",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "underline_offset",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Accent underline offset",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "accent_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Accent underline opacity",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "overline_color",
+      "label": "Overline",
+      "default": "#6B6B6B",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "paragraph_color",
+      "label": "Paragraph",
+      "default": "#1A1A1A",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#0A0A0A",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap on mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Content area padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image split"
+    }
+  ]
+}
+{% endschema %}

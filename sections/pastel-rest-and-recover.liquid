@@ -1,0 +1,191 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign heading = section.settings.heading
+  assign text = section.settings.text
+  assign icon_blocks = section.blocks | where: 'type', 'icon_item'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-rest-and-recover section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-rest-and-recover__inner">
+    {% if heading != blank %}
+      <h2 class="pastel-rest-and-recover__heading">{{ heading }}</h2>
+    {% endif %}
+    {% if text != blank %}
+      <div class="pastel-rest-and-recover__text rte">{{ text }}</div>
+    {% endif %}
+    {% if icon_blocks.size > 0 %}
+      <div class="pastel-rest-and-recover__grid">
+        {% for block in icon_blocks %}
+          <div class="pastel-rest-and-recover__item" {{ block.shopify_attributes }}>
+            <span class="pastel-rest-and-recover__icon" aria-hidden="true">
+              {% case block.settings.icon %}
+                {% when 'moon' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                {% when 'bed' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4v16M2 8h20a2 2 0 0 1 2 2v10M2 8a2 2 0 1 1 4 0v8"/><path d="M6 8V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/></svg>
+                {% when 'sun' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                {% when 'leaf' %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 18 2c1 2.5 1.5 4.5 2 7 2 6-2 12-9 11z"/></svg>
+                {% else %}
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/></svg>
+              {% endcase %}
+            </span>
+            <span class="pastel-rest-and-recover__label">{{ block.settings.label }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-rest-and-recover {
+    padding: 64px 24px;
+    background: var(--color-background);
+  }
+
+  .pastel-rest-and-recover__inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .pastel-rest-and-recover__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+
+  .pastel-rest-and-recover__text {
+    font-family: var(--font-body--family);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    margin: 0 0 40px;
+  }
+
+  .pastel-rest-and-recover__text p {
+    margin: 0 0 12px;
+  }
+
+  .pastel-rest-and-recover__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .pastel-rest-and-recover__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pastel-rest-and-recover__icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+  }
+
+  .pastel-rest-and-recover__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .pastel-rest-and-recover__label {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-foreground);
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pastel-rest-and-recover__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-rest-and-recover {
+      padding: 48px 16px;
+    }
+
+    .pastel-rest-and-recover__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rest and Recover",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "REST AND RECOVER BETTER WITH THC GUMMIES FOR SLEEP."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Body text",
+      "default": "<p>Our gummies are formulated to help you drift off naturally and wake up refreshed.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "icon_item",
+      "name": "Icon item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "moon", "label": "Moon" },
+            { "value": "bed", "label": "Bed" },
+            { "value": "sun", "label": "Sun" },
+            { "value": "leaf", "label": "Leaf" }
+          ],
+          "default": "moon"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Better Sleep"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rest and Recover",
+      "blocks": [
+        { "type": "icon_item", "settings": { "icon": "moon", "label": "Better Sleep" } },
+        { "type": "icon_item", "settings": { "icon": "bed", "label": "Deep Rest" } },
+        { "type": "icon_item", "settings": { "icon": "sun", "label": "Wake Up Refreshed" } },
+        { "type": "icon_item", "settings": { "icon": "leaf", "label": "Natural Ingredients" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,310 @@
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  assign heading = section.settings.heading
+  assign text = section.settings.text
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign hero_image = section.settings.hero_image
+%}
+
+<section
+  class="general-store-hero color-{{ section.settings.color_scheme }}"
+  style="--gsh-eyebrow-radius: {{ section.settings.eyebrow_border_radius }}px; --gsh-button-radius: {{ section.settings.button_border_radius }}px; --gsh-image-radius: {{ section.settings.image_border_radius }}px; --gsh-visual-card-radius: {{ section.settings.visual_card_border_radius }}px; --gsh-placeholder-radius: {{ section.settings.placeholder_border_radius }}px;"
+  {{ section.shopify_attributes }}
+>
+  <div class="general-store-hero__inner">
+    <div class="general-store-hero__content">
+      {% if eyebrow != blank %}
+        <p class="general-store-hero__eyebrow">{{ eyebrow }}</p>
+      {% endif %}
+
+      {% if heading != blank %}
+        <h1 class="general-store-hero__heading">{{ heading }}</h1>
+      {% endif %}
+
+      {% if text != blank %}
+        <p class="general-store-hero__text">{{ text }}</p>
+      {% endif %}
+
+      {% if button_label != blank %}
+        <a href="{{ button_link | default: '#' }}" class="general-store-hero__button">
+          {{ button_label }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="general-store-hero__visual">
+      {% if hero_image != blank %}
+        {{
+          hero_image
+          | image_url: width: 1200
+          | image_tag:
+            loading: 'eager',
+            class: 'general-store-hero__image',
+            alt: heading
+        }}
+      {% else %}
+        <div class="general-store-hero__placeholder">
+          {{ 'collection-1' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .general-store-hero {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef4ff 55%, #fff7ed 100%);
+    padding: 72px 24px;
+    overflow: hidden;
+  }
+
+  .general-store-hero__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    align-items: center;
+    gap: 56px;
+  }
+
+  .general-store-hero__content {
+    max-width: 580px;
+  }
+
+  .general-store-hero__eyebrow {
+    display: inline-block;
+    margin: 0 0 16px;
+    padding: 8px 14px;
+    border-radius: var(--gsh-eyebrow-radius, 100px);
+    background: rgba(255, 255, 255, 0.75);
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  .general-store-hero__heading {
+    margin: 0;
+    color: #0f172a;
+    font-size: clamp(42px, 6vw, 76px);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    font-weight: 800;
+  }
+
+  .general-store-hero__text {
+    margin: 24px 0 0;
+    color: #475569;
+    font-size: clamp(17px, 2vw, 21px);
+    line-height: 1.6;
+    max-width: 520px;
+  }
+
+  .general-store-hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 34px;
+    padding: 16px 26px;
+    border-radius: var(--gsh-button-radius, 100px);
+    background: #111827;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .general-store-hero__button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.22);
+  }
+
+  .general-store-hero__visual {
+    position: relative;
+  }
+
+  .general-store-hero__visual::before {
+    content: "";
+    position: absolute;
+    inset: 8% 4% 2% 8%;
+    border-radius: var(--gsh-visual-card-radius, 48px);
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
+    transform: rotate(-3deg);
+  }
+
+  .general-store-hero__image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--gsh-image-radius, 36px);
+    filter: drop-shadow(0 28px 45px rgba(15, 23, 42, 0.14));
+  }
+
+  .general-store-hero__placeholder {
+    position: relative;
+    z-index: 1;
+    border-radius: var(--gsh-placeholder-radius, 36px);
+    overflow: hidden;
+    background: #ffffff;
+    padding: 48px;
+  }
+
+  .general-store-hero__placeholder svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media screen and (max-width: 900px) {
+    .general-store-hero {
+      padding: 56px 18px;
+    }
+
+    .general-store-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .general-store-hero__content {
+      max-width: 100%;
+    }
+
+    .general-store-hero__text {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .general-store-hero__button {
+      margin-top: 28px;
+    }
+  }
+
+  @media screen and (max-width: 520px) {
+    .general-store-hero {
+      padding: 44px 16px;
+    }
+
+    .general-store-hero__heading {
+      font-size: 42px;
+    }
+
+    .general-store-hero__text {
+      font-size: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "General store hero",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Everything you need, all in one place"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop everyday essentials with ease"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover home goods, electronics, beauty, kitchen accessories, clothing, toys, and more — carefully selected for modern everyday living."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "header",
+      "content": "Border radius controls"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_border_radius",
+      "label": "Eyebrow border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "visual_card_border_radius",
+      "label": "Image background card border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "placeholder_border_radius",
+      "label": "Placeholder border radius",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "General store hero"
+    }
+  ]
+}
+{% endschema %}

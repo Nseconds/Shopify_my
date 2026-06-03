@@ -1,0 +1,672 @@
+{% assign section_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign rq_bg    = section.settings.background_color
+    assign rq_quote = section.settings.quote_color
+    assign rq_name  = section.settings.name_color
+    assign rq_desc  = section.settings.description_color
+  elsif settings.style_mode == 'gradient'
+    assign rq_bg    = 'var(--color-background)'
+    assign rq_quote = 'var(--color-foreground)'
+    assign rq_name  = 'var(--color-gradient-1)'
+    assign rq_desc  = 'var(--color-foreground-muted)'
+  else
+    assign rq_bg    = section.settings.color_scheme.settings.background
+    assign rq_quote = section.settings.color_scheme.settings.foreground
+    assign rq_name  = section.settings.color_scheme.settings.foreground
+    assign rq_desc  = section.settings.color_scheme.settings.foreground | color_modify: 'alpha', 0.65
+  endif
+-%}
+
+{% comment %} Count enabled quotes {% endcomment %}
+{% assign enabled_quotes = 0 %}
+{% for i in (1..5) %}
+  {% assign quote_enabled_key = 'quote_' | append: i | append: '_enabled' %}
+  {% if section.settings[quote_enabled_key] %}
+    {% assign enabled_quotes = enabled_quotes | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
+{% if enabled_quotes > 0 %}
+  {% assign animation_duration = section.settings.autoplay_speed | times: enabled_quotes %}
+{% else %}
+  {% assign animation_duration = 5000 %}
+{% endif %}
+
+{% style %}
+  .rotating-quotes-{{ section_id }} {
+    padding: {{ section.settings.section_padding }}px 20px;
+    background: {{ rq_bg }};
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rotating-quotes-container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .rotating-quotes-wrapper-{{ section_id }} {
+    position: relative;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rotating-quote-item-{{ section_id }} {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    opacity: 0;
+    animation: rotate-{{ section_id }} {{ animation_duration }}ms infinite;
+  }
+
+  {% comment %} Calculate animation delay for each quote {% endcomment %}
+  {% assign quote_index = 0 %}
+  {% for i in (1..5) %}
+    {% assign quote_enabled_key = 'quote_' | append: i | append: '_enabled' %}
+    {% if section.settings[quote_enabled_key] %}
+      .rotating-quote-item-{{ section_id }}:nth-of-type({{ quote_index | plus: 1 }}) {
+        animation-delay: {{ quote_index | times: section.settings.autoplay_speed }}ms;
+      }
+      {% assign quote_index = quote_index | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+
+  @keyframes rotate-{{ section_id }} {
+    {% assign show_percentage = 100.0 | divided_by: enabled_quotes %}
+    {% assign fade_percentage = 2 %}
+    
+    0% { opacity: 0; }
+    {{ fade_percentage }}% { opacity: 1; }
+    {{ show_percentage | minus: fade_percentage }}% { opacity: 1; }
+    {{ show_percentage }}% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .rotating-quote-text-{{ section_id }} {
+    font-size: {{ section.settings.quote_font_size }}px;
+    line-height: 1.5;
+    color: {{ rq_quote }};
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+
+  .rotating-quote-text-{{ section_id }} p {
+    margin: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .rotating-quote-attribution-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .rotating-quote-image-{{ section_id }} {
+    max-width: {{ section.settings.image_width }}px;
+    height: auto !important;
+    width: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .rotating-quote-person-photo-{{ section_id }} {
+    width: {{ section.settings.person_photo_size }}px;
+    height: {{ section.settings.person_photo_size }}px;
+    border-radius: {{ section.settings.photo_border_radius }}%;
+    object-fit: cover;
+  }
+
+  .rotating-quote-person-name-{{ section_id }} {
+    font-size: {{ section.settings.name_font_size }}px;
+    color: {{ rq_name }};
+    font-weight: 600;
+  }
+
+  .rotating-quote-description-{{ section_id }} {
+    font-size: {{ section.settings.description_font_size }}px;
+    color: {{ rq_desc }};
+    margin-top: 8px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .rotating-quotes-{{ section_id }} {
+      padding: {{ section.settings.section_padding | times: 0.6 }}px 20px;
+    }
+
+    .rotating-quote-text-{{ section_id }} {
+      font-size: {{ section.settings.quote_font_size | times: 0.85 }}px;
+    }
+
+    .rotating-quote-image-{{ section_id }} {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .rotating-quote-person-photo-{{ section_id }} {
+      width: {{ section.settings.person_photo_size | times: 0.8 }}px;
+      height: {{ section.settings.person_photo_size | times: 0.8 }}px;
+    }
+
+    .rotating-quote-person-name-{{ section_id }} {
+      font-size: {{ section.settings.name_font_size | times: 0.9 }}px;
+    }
+
+    .rotating-quote-description-{{ section_id }} {
+      font-size: {{ section.settings.description_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="rotating-quotes-{{ section_id }}" {{ section.shopify_attributes }}>
+  <div class="rotating-quotes-container-{{ section_id }}">
+    <div class="rotating-quotes-wrapper-{{ section_id }}">
+      {% for i in (1..5) %}
+        {% liquid
+          assign quote_enabled_key = 'quote_' | append: i | append: '_enabled'
+          assign quote_text_key = 'quote_' | append: i | append: '_text'
+          assign quote_type_key = 'quote_' | append: i | append: '_type'
+          assign quote_logo_key = 'quote_' | append: i | append: '_logo'
+          assign quote_person_photo_key = 'quote_' | append: i | append: '_person_photo'
+          assign quote_person_name_key = 'quote_' | append: i | append: '_person_name'
+          assign quote_description_key = 'quote_' | append: i | append: '_description'
+
+          assign quote_enabled = section.settings[quote_enabled_key]
+          assign quote_text = section.settings[quote_text_key]
+          assign quote_type = section.settings[quote_type_key]
+          assign quote_logo = section.settings[quote_logo_key]
+          assign quote_person_photo = section.settings[quote_person_photo_key]
+          assign quote_person_name = section.settings[quote_person_name_key]
+          assign quote_description = section.settings[quote_description_key]
+        %}
+
+        {% if quote_enabled %}
+          <div class="rotating-quote-item-{{ section_id }}">
+            {% if quote_text != blank %}
+              <div class="rotating-quote-text-{{ section_id }}">{{ quote_text }}</div>
+            {% endif %}
+
+            <div class="rotating-quote-attribution-{{ section_id }}">
+              {% if quote_type == 'logo' and quote_logo != blank %}
+                <img 
+                  src="{{ quote_logo | image_url }}" 
+                  alt="Attribution logo"
+                  width="{{ quote_logo.width }}"
+                  height="{{ quote_logo.height }}"
+                  class="rotating-quote-image-{{ section_id }}"
+                  loading="lazy"
+                >
+              {% elsif quote_type == 'person' %}
+                <span data-forge-slot-id="quote_{{ i }}_person_photo"{% if quote_person_photo == blank %} data-forge-slot-blank="true"{% endif %} style="display:contents">
+                {% if quote_person_photo != blank %}
+                  <img
+                    src="{{ quote_person_photo | image_url: width: section.settings.person_photo_size }}"
+                    alt="{{ quote_person_name }}"
+                    width="{{ section.settings.person_photo_size }}"
+                    height="{{ section.settings.person_photo_size }}"
+                    class="rotating-quote-person-photo-{{ section_id }}"
+                    loading="lazy"
+                  >
+                {% endif %}
+                </span>
+                {% if quote_person_name != blank %}
+                  <div class="rotating-quote-person-name-{{ section_id }}">{{ quote_person_name }}</div>
+                {% endif %}
+              {% endif %}
+
+              {% if quote_description != blank %}
+                <div class="rotating-quote-description-{{ section_id }}">{{ quote_description }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rotating quotes",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section settings"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1400,
+      "step": 100,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1000
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Quote styling"
+    },
+    {
+      "type": "range",
+      "id": "quote_font_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Quote font size",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Quote color",
+      "default": "#000000"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Attribution styling"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 80,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo max width",
+      "default": 200,
+      "info": "Logo will maintain aspect ratio"
+    },
+    {
+      "type": "range",
+      "id": "person_photo_size",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Person photo size",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "photo_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Photo border radius (0=square, 50=circle)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "name_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Name font size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#000000"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description font size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#666666"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Animation settings"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2000,
+      "max": 9500,
+      "step": 500,
+      "unit": "ms",
+      "label": "Time per quote",
+      "default": 5000,
+      "info": "How long each quote is displayed"
+    },
+    {
+      "type": "header",
+      "content": "Quote 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "quote_1_enabled",
+      "label": "Enable quote 1",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "quote_1_text",
+      "label": "Quote text",
+      "default": "<p>\"These have changed my life.\"</p>"
+    },
+    {
+      "type": "select",
+      "id": "quote_1_type",
+      "label": "Attribution type",
+      "options": [
+        {
+          "value": "logo",
+          "label": "Logo/Brand"
+        },
+        {
+          "value": "person",
+          "label": "Person"
+        }
+      ],
+      "default": "logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_1_logo",
+      "label": "Logo (for logo type)",
+      "info": "Upload a brand logo or publication logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_1_person_photo",
+      "label": "Person photo (for person type)"
+    },
+    {
+      "type": "text",
+      "id": "quote_1_person_name",
+      "label": "Person name (for person type)",
+      "default": "John Doe"
+    },
+    {
+      "type": "text",
+      "id": "quote_1_description",
+      "label": "Optional description",
+      "info": "E.g., job title, publication date, etc."
+    },
+    {
+      "type": "header",
+      "content": "Quote 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "quote_2_enabled",
+      "label": "Enable quote 2",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "quote_2_text",
+      "label": "Quote text",
+      "default": "<p>\"Absolutely amazing product!\"</p>"
+    },
+    {
+      "type": "select",
+      "id": "quote_2_type",
+      "label": "Attribution type",
+      "options": [
+        {
+          "value": "logo",
+          "label": "Logo/Brand"
+        },
+        {
+          "value": "person",
+          "label": "Person"
+        }
+      ],
+      "default": "person"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_2_logo",
+      "label": "Logo (for logo type)"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_2_person_photo",
+      "label": "Person photo (for person type)"
+    },
+    {
+      "type": "text",
+      "id": "quote_2_person_name",
+      "label": "Person name (for person type)",
+      "default": "Jane Smith"
+    },
+    {
+      "type": "text",
+      "id": "quote_2_description",
+      "label": "Optional description"
+    },
+    {
+      "type": "header",
+      "content": "Quote 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "quote_3_enabled",
+      "label": "Enable quote 3",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "quote_3_text",
+      "label": "Quote text",
+      "default": "<p>\"Best purchase I've ever made!\"</p>"
+    },
+    {
+      "type": "select",
+      "id": "quote_3_type",
+      "label": "Attribution type",
+      "options": [
+        {
+          "value": "logo",
+          "label": "Logo/Brand"
+        },
+        {
+          "value": "person",
+          "label": "Person"
+        }
+      ],
+      "default": "logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_3_logo",
+      "label": "Logo (for logo type)"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_3_person_photo",
+      "label": "Person photo (for person type)"
+    },
+    {
+      "type": "text",
+      "id": "quote_3_person_name",
+      "label": "Person name (for person type)",
+      "default": "Alex Johnson"
+    },
+    {
+      "type": "text",
+      "id": "quote_3_description",
+      "label": "Optional description"
+    },
+    {
+      "type": "header",
+      "content": "Quote 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "quote_4_enabled",
+      "label": "Enable quote 4",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "quote_4_text",
+      "label": "Quote text",
+      "default": "<p>\"Simply incredible!\"</p>"
+    },
+    {
+      "type": "select",
+      "id": "quote_4_type",
+      "label": "Attribution type",
+      "options": [
+        {
+          "value": "logo",
+          "label": "Logo/Brand"
+        },
+        {
+          "value": "person",
+          "label": "Person"
+        }
+      ],
+      "default": "person"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_4_logo",
+      "label": "Logo (for logo type)"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_4_person_photo",
+      "label": "Person photo (for person type)"
+    },
+    {
+      "type": "text",
+      "id": "quote_4_person_name",
+      "label": "Person name (for person type)",
+      "default": "Sarah Williams"
+    },
+    {
+      "type": "text",
+      "id": "quote_4_description",
+      "label": "Optional description"
+    },
+    {
+      "type": "header",
+      "content": "Quote 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "quote_5_enabled",
+      "label": "Enable quote 5",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "quote_5_text",
+      "label": "Quote text",
+      "default": "<p>\"Worth every penny!\"</p>"
+    },
+    {
+      "type": "select",
+      "id": "quote_5_type",
+      "label": "Attribution type",
+      "options": [
+        {
+          "value": "logo",
+          "label": "Logo/Brand"
+        },
+        {
+          "value": "person",
+          "label": "Person"
+        }
+      ],
+      "default": "logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_5_logo",
+      "label": "Logo (for logo type)"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_5_person_photo",
+      "label": "Person photo (for person type)"
+    },
+    {
+      "type": "text",
+      "id": "quote_5_person_name",
+      "label": "Person name (for person type)",
+      "default": "Michael Brown"
+    },
+    {
+      "type": "text",
+      "id": "quote_5_description",
+      "label": "Optional description"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rotating quotes"
+    }
+  ]
+}
+{% endschema %}

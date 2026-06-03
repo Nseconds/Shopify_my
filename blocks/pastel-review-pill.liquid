@@ -1,0 +1,80 @@
+{% liquid
+  assign badge_text = block.settings.badge_text
+  assign note_text = block.settings.note_text
+%}
+
+<div class="pastel-review-pill spacing-style" {{ block.shopify_attributes }}>
+  <div class="pastel-review-pill__stars" aria-hidden="true">
+    {% for i in (1..5) %}
+      <span class="pastel-review-pill__star">★</span>
+    {% endfor %}
+  </div>
+  {% if badge_text != blank %}
+    <span class="pastel-review-pill__badge">{{ badge_text }}</span>
+  {% endif %}
+  {% if note_text != blank %}
+    <span class="pastel-review-pill__note">{{ note_text }}</span>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .pastel-review-pill {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-block: 2px 4px;
+    color: var(--color-foreground);
+  }
+
+  .pastel-review-pill__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    color: #c29c35;
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  .pastel-review-pill__badge {
+    font-family: var(--font-heading--family);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .pastel-review-pill__note {
+    font-family: var(--font-body--family);
+    font-size: 13px;
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--color-foreground) 72%, var(--color-background));
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Review pill",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "15,000+ happy customers"
+    },
+    {
+      "type": "text",
+      "id": "note_text",
+      "label": "Supporting note",
+      "default": "Real sleepers, real results"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Review pill"
+    }
+  ]
+}
+{% endschema %}

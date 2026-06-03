@@ -1,0 +1,9 @@
+{%- if request.page_type == 'index' -%}
+{%- capture org_search_tpl -%}{{ shop.url }}/search?q={search_term_string}{%- endcapture -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":{{ shop.name | json }},"url":{{ shop.url | json }}{%- if settings.logo != blank -%},"logo":{"@type":"ImageObject","url":{{ settings.logo | image_url: width: 300 | prepend: 'https:' | json }}}{%- endif -%}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":{{ shop.name | json }},"url":{{ shop.url | json }},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":{{ org_search_tpl | json }}},"query-input":"required name=search_term_string"}}
+</script>
+{%- endif -%}

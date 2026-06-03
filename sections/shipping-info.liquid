@@ -1,0 +1,529 @@
+{%- liquid
+  assign title = section.settings.title
+  assign show_map = section.settings.show_map
+  if settings.style_mode == 'gradient'
+    assign shi_card_bg = 'var(--color-card-gradient)'
+    assign shi_icon    = 'var(--color-gradient-text)'
+    assign shi_accent  = 'var(--color-gradient-1)'
+    assign shi_text    = 'var(--color-gradient-text)'
+  else
+    assign shi_card_bg = section.settings.card_bg_color
+    assign shi_icon    = section.settings.icon_color
+    assign shi_accent  = section.settings.accent_color
+    assign shi_text    = 'var(--color-foreground)'
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --shipping-icon-color: {{ shi_icon }};
+    --shipping-card-bg: {{ shi_card_bg }};
+    --shipping-card-text: {{ shi_text }};
+    --shipping-border-radius: var(--style-border-radius-cards);
+    --shipping-accent-color: {{ shi_accent }};
+    --shipping-highlight-bg: {{ section.settings.highlight_bg_color }};
+  }
+  #shopify-section-{{ section.id }} .shipping-info__card-inner {
+    color: var(--shipping-card-text);
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="shipping-info section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="shipping-info__container container">
+    
+    {%- if title != blank -%}
+      <div class="shipping-info__title rte">{{ title }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="shipping-info__grid">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'shipping_option' -%}
+              <div class="shipping-info__card" {{ block.shopify_attributes }}>
+                <div class="shipping-info__card-inner">
+                  {%- if block.settings.icon != blank -%}
+                    <div class="shipping-info__icon">
+                      {{ block.settings.icon }}
+                    </div>
+                  {%- endif -%}
+                  
+                  <div class="shipping-info__content">
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="shipping-info__card-title">{{ block.settings.title }}</h3>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.delivery_time != blank -%}
+                      <p class="shipping-info__delivery-time">{{ block.settings.delivery_time }}</p>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.description != blank -%}
+                      <div class="shipping-info__description rte">{{ block.settings.description }}</div>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.price != blank -%}
+                      <p class="shipping-info__price">{{ block.settings.price }}</p>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+
+            {%- when 'tracking_info' -%}
+              <div class="shipping-info__tracking" {{ block.shopify_attributes }}>
+                <div class="shipping-info__tracking-inner">
+                  {%- if block.settings.icon != blank -%}
+                    <div class="shipping-info__tracking-icon">
+                      {{ block.settings.icon }}
+                    </div>
+                  {%- else -%}
+                    <div class="shipping-info__tracking-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+                  <div class="shipping-info__tracking-content">
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="shipping-info__tracking-title">{{ block.settings.title }}</h3>
+                    {%- endif -%}
+                    {%- if block.settings.description != blank -%}
+                      <div class="shipping-info__tracking-description rte">{{ block.settings.description }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if show_map and section.settings.map_image != blank -%}
+      <div class="shipping-info__map">
+        {%- render 'image', 
+          image: section.settings.map_image
+        -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .shipping-info {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .shipping-info__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .shipping-info__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 48px 0;
+    line-height: 1.2;
+  }
+
+  .shipping-info__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .shipping-info__card {
+    position: relative;
+  }
+
+  .shipping-info__card-inner {
+    height: 100%;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 32px;
+    background: var(--shipping-card-bg);
+    border-radius: var(--shipping-border-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shipping-info__card:hover .shipping-info__card-inner {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .shipping-info__icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .shipping-info__icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: var(--shipping-icon-color);
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .shipping-info__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .shipping-info__card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+  }
+
+  .shipping-info__delivery-time {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--shipping-accent-color);
+    margin: 0 0 8px 0;
+  }
+
+  .shipping-info__description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+
+  .shipping-info__description p {
+    margin: 0;
+  }
+
+  .shipping-info__price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 8px 0 0 0;
+  }
+
+  .shipping-info__tracking {
+    grid-column: 1 / -1;
+  }
+
+  .shipping-info__tracking-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 32px;
+    background: var(--shipping-highlight-bg);
+    border-radius: var(--shipping-border-radius);
+  }
+
+  .shipping-info__tracking-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .shipping-info__tracking-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: var(--shipping-accent-color);
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .shipping-info__tracking-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .shipping-info__tracking-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+
+  .shipping-info__tracking-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  .shipping-info__tracking-description p {
+    margin: 0;
+  }
+
+  .shipping-info__map {
+    margin-top: 40px;
+    border-radius: var(--shipping-border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .shipping-info__map img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 989px) {
+    .shipping-info__grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .shipping-info__title {
+      font-size: 2rem;
+      margin-bottom: 32px;
+    }
+
+    .shipping-info__card-inner {
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .shipping-info__icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .shipping-info__card-title {
+      font-size: 1.125rem;
+    }
+
+    .shipping-info__delivery-time {
+      font-size: 0.9375rem;
+    }
+
+    .shipping-info__description {
+      font-size: 0.875rem;
+    }
+
+    .shipping-info__price {
+      font-size: 1rem;
+    }
+
+    .shipping-info__tracking-inner {
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .shipping-info__tracking-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .shipping-info__tracking-title {
+      font-size: 1.125rem;
+    }
+
+    .shipping-info__tracking-description {
+      font-size: 0.875rem;
+    }
+
+    .shipping-info__map {
+      margin-top: 32px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shipping Information",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "<h2>Shipping & Delivery</h2>"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#c4a69d",
+      "info": "Used for delivery time and tracking icon"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "rgba(0, 0, 0, 0.03)",
+      "info": "Use rgba for transparency"
+    },
+    {
+      "type": "color",
+      "id": "highlight_bg_color",
+      "label": "Highlight background",
+      "default": "rgba(196, 166, 157, 0.08)",
+      "info": "Background for tracking info card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "Show shipping map",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "map_image",
+      "label": "Shipping coverage map",
+      "info": "Optional world map showing shipping coverage"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "shipping_option",
+      "name": "Shipping Option",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon SVG",
+          "default": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='1' y='3' width='15' height='13'></rect><polygon points='16 8 20 8 23 11 23 16 16 16 16 8'></polygon><circle cx='5.5' cy='18.5' r='2.5'></circle><circle cx='18.5' cy='18.5' r='2.5'></circle></svg>"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings.title",
+          "default": "Standard Shipping"
+        },
+        {
+          "type": "text",
+          "id": "delivery_time",
+          "label": "Delivery time",
+          "default": "5-7 Business Days"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Reliable delivery with tracking included.</p>"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "FREE"
+        }
+      ]
+    },
+    {
+      "type": "tracking_info",
+      "name": "Tracking Info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon SVG (optional)",
+          "info": "Leave empty to use default clock icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings.title",
+          "default": "📦 Track Your Order In Real-Time"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Once shipped, you'll receive a tracking number via email to monitor your delivery every step of the way.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shipping Information",
+      "category": "t:categories.product",
+      "blocks": [
+        {
+          "type": "shipping_option",
+          "settings": {
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='1' y='3' width='15' height='13'></rect><polygon points='16 8 20 8 23 11 23 16 16 16 16 8'></polygon><circle cx='5.5' cy='18.5' r='2.5'></circle><circle cx='18.5' cy='18.5' r='2.5'></circle></svg>",
+            "title": "Standard Shipping",
+            "delivery_time": "5-7 Business Days",
+            "description": "<p>Free on all orders. Reliable delivery with tracking included.</p>",
+            "price": "FREE"
+          }
+        },
+        {
+          "type": "shipping_option",
+          "settings": {
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'></polygon></svg>",
+            "title": "Express Shipping",
+            "delivery_time": "2-3 Business Days",
+            "description": "<p>Get your order fast with priority handling and expedited shipping.</p>",
+            "price": "$9.99"
+          }
+        },
+        {
+          "type": "tracking_info",
+          "settings": {
+            "title": "📦 Track Your Order In Real-Time",
+            "description": "<p>Once your order ships, you'll receive a tracking number via email. Monitor your delivery every step of the way!</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

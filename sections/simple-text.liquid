@@ -1,0 +1,247 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  #section-{{ section.id }} .simple-text-container {
+    text-align: {{ section.settings.alignment }};
+    {% if section.settings.max_width != blank and section.settings.max_width > 0 %}
+      max-width: {{ section.settings.max_width }}px;
+      {% if section.settings.alignment == 'center' %}
+        margin-left: auto;
+        margin-right: auto;
+      {% elsif section.settings.alignment == 'right' %}
+        margin-left: auto;
+      {% endif %}
+    {% endif %}
+  }
+
+  #section-{{ section.id }} .simple-text-content {
+    {% if section.settings.text_color != blank %}
+      color: {{ section.settings.text_color }};
+    {% endif %}
+    {% if section.settings.font_size != blank and section.settings.font_size > 0 %}
+      font-size: {{ section.settings.font_size }}px;
+    {% endif %}
+    line-height: {{ section.settings.line_height }};
+  }
+
+  #section-{{ section.id }} .simple-text-content h1,
+  #section-{{ section.id }} .simple-text-content h2,
+  #section-{{ section.id }} .simple-text-content h3,
+  #section-{{ section.id }} .simple-text-content h4,
+  #section-{{ section.id }} .simple-text-content h5,
+  #section-{{ section.id }} .simple-text-content h6 {
+    {% if section.settings.heading_color != blank %}
+      color: {{ section.settings.heading_color }};
+    {% endif %}
+  }
+
+  #section-{{ section.id }} .simple-text-content a {
+    {% if section.settings.link_color != blank %}
+      color: {{ section.settings.link_color }};
+    {% endif %}
+  }
+
+  #section-{{ section.id }} .simple-text-content p {
+    margin-bottom: 1em;
+  }
+
+  #section-{{ section.id }} .simple-text-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    #section-{{ section.id }} .simple-text-content {
+      {% if section.settings.mobile_font_size != blank and section.settings.mobile_font_size > 0 %}
+        font-size: {{ section.settings.mobile_font_size }}px;
+      {% endif %}
+    }
+
+    #section-{{ section.id }} .simple-text-container {
+      {% if section.settings.mobile_alignment != 'same' %}
+        text-align: {{ section.settings.mobile_alignment }};
+      {% endif %}
+    }
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  id="section-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
+>
+  <div class="simple-text-container">
+    <div class="simple-text-content rte">
+      {{ section.settings.text }}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Simple Text",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text content",
+      "default": "<p>Add your text here. You can use <strong>bold</strong>, <em>italic</em>, and add links.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "number",
+      "id": "font_size",
+      "label": "Font size (px)",
+      "info": "Leave empty for default"
+    },
+    {
+      "type": "number",
+      "id": "mobile_font_size",
+      "label": "Mobile font size (px)",
+      "info": "Leave empty to use desktop size"
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line height",
+      "min": 1,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "info": "Leave empty for scheme default"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "info": "Leave empty for scheme default"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "info": "Leave empty for scheme default"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_alignment",
+      "label": "Mobile alignment",
+      "options": [
+        {
+          "value": "same",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "same"
+    },
+    {
+      "type": "number",
+      "id": "max_width",
+      "label": "Max width (px)",
+      "info": "Leave empty for full width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple Text",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}
+

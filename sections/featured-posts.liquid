@@ -1,0 +1,1024 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c    = section.settings.background_color -%}
+  {%- assign title_c = section.settings.title_color -%}
+  {%- assign text_c  = section.settings.view_all_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c    = 'var(--color-background)' -%}
+  {%- assign title_c = 'var(--color-foreground)' -%}
+  {%- assign text_c  = 'var(--color-foreground)' -%}
+{%- else -%}
+  {%- assign bg_c    = section.settings.color_scheme.settings.background -%}
+  {%- assign title_c = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+{%- endif -%}
+
+{% style %}
+  .featured-posts-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ bg_c }};
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .featured-posts-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.container_max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.container_padding }}px;
+  }
+
+  .featured-posts-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: {{ section.settings.header_spacing }}px;
+  }
+
+  .featured-posts-title-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ section.settings.title_size }}px;
+    color: {{ title_c }};
+    font-weight: 600;
+  }
+
+  .featured-posts-view-all-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: {{ text_c }};
+    text-decoration: none;
+    font-size: {{ section.settings.view_all_size }}px;
+    transition: opacity 0.3s ease;
+  }
+
+  .featured-posts-view-all-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  .featured-posts-view-all-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .featured-posts-wrapper-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .featured-posts-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: var(--style-gap-cards);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .featured-posts-track-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .featured-posts-track-{{ ai_gen_id }}.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+  }
+
+  .featured-posts-card-{{ ai_gen_id }} {
+    flex: 0 0 calc((100% - ({{ section.settings.cards_desktop }} - 1) * {{ section.settings.card_gap }}px) / {{ section.settings.cards_desktop }});
+    min-width: 0;
+  }
+
+  .featured-posts-card-link-{{ ai_gen_id }} {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .featured-posts-card-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+    margin-bottom: 16px;
+    {% if section.settings.card_shadow %}
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    {% endif %}
+  }
+
+  .featured-posts-card-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .featured-posts-card-link-{{ ai_gen_id }}:hover .featured-posts-card-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .featured-posts-card-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .featured-posts-card-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .featured-posts-card-content-{{ ai_gen_id }} {
+    text-align: left;
+  }
+
+  .featured-posts-card-headline-{{ ai_gen_id }} {
+    margin: 0 0 8px;
+    font-size: {{ section.settings.headline_size }}px;
+    font-weight: 700;
+    color: {{ title_c }};
+    line-height: 1.3;
+  }
+
+  .featured-posts-card-cta-{{ ai_gen_id }} {
+    display: inline-block;
+    font-size: {{ section.settings.cta_size }}px;
+    color: {{ text_c }};
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+  }
+
+  .featured-posts-card-cta-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  .featured-posts-nav-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .featured-posts-nav-{{ ai_gen_id }}.prev {
+    left: -20px;
+  }
+
+  .featured-posts-nav-{{ ai_gen_id }}.next {
+    right: -20px;
+  }
+
+  .featured-posts-nav-button-{{ ai_gen_id }} {
+    width: {{ section.settings.arrow_size }}px;
+    height: {{ section.settings.arrow_size }}px;
+    border-radius: 50%;
+    background-color: {{ section.settings.arrow_bg_color }};
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .featured-posts-nav-button-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.arrow_hover_bg_color }};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .featured-posts-nav-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    color: {{ section.settings.arrow_icon_color }};
+  }
+
+  .featured-posts-nav-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 989px) {
+    .featured-posts-card-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - ({{ section.settings.cards_tablet }} - 1) * {{ section.settings.card_gap }}px) / {{ section.settings.cards_tablet }});
+    }
+
+    .featured-posts-nav-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .featured-posts-container-{{ ai_gen_id }} {
+      padding: 0 {{ section.settings.container_padding | times: 0.7 }}px;
+    }
+
+    .featured-posts-card-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - ({{ section.settings.cards_mobile }} - 1) * {{ section.settings.card_gap }}px) / {{ section.settings.cards_mobile }});
+    }
+
+    .featured-posts-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.title_size | times: 0.8 }}px;
+    }
+
+    .featured-posts-card-headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.headline_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<featured-posts class="featured-posts-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="featured-posts-container-{{ ai_gen_id }}">
+    {% if section.settings.section_title != blank or section.settings.view_all_url != blank %}
+      <div class="featured-posts-header-{{ ai_gen_id }}">
+        {% if section.settings.section_title != blank %}
+          <h2 class="featured-posts-title-{{ ai_gen_id }}">{{ section.settings.section_title }}</h2>
+        {% endif %}
+
+        {% if section.settings.view_all_url != blank %}
+          <a href="{{ section.settings.view_all_url }}" class="featured-posts-view-all-{{ ai_gen_id }}">
+            {{ section.settings.view_all_text }}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="featured-posts-wrapper-{{ ai_gen_id }}">
+      {% if section.settings.show_arrows %}
+        <div class="featured-posts-nav-{{ ai_gen_id }} prev">
+          <button class="featured-posts-nav-button-{{ ai_gen_id }}" data-direction="prev" aria-label="Previous slide">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+
+      <div class="featured-posts-track-{{ ai_gen_id }}" data-slider-track data-card-gap="{{ section.settings.card_gap }}">
+        {% liquid
+          assign post_1_enabled = section.settings.post_1_enabled
+          assign post_2_enabled = section.settings.post_2_enabled
+          assign post_3_enabled = section.settings.post_3_enabled
+          assign post_4_enabled = section.settings.post_4_enabled
+        %}
+
+        {% if post_1_enabled %}
+          <div class="featured-posts-card-{{ ai_gen_id }}">
+            {% if section.settings.entire_card_clickable and section.settings.post_1_url != blank %}
+              <a href="{{ section.settings.post_1_url }}" class="featured-posts-card-link-{{ ai_gen_id }}">
+            {% endif %}
+
+            <div class="featured-posts-card-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="post_1_image_desktop"{% if section.settings.post_1_image_desktop == blank %} data-forge-slot-blank="true"{% endif %}>
+              {% if section.settings.post_1_image_desktop != blank %}
+                <picture>
+                  {% if section.settings.post_1_image_mobile != blank %}
+                    <source media="(max-width: 749px)" srcset="{{ section.settings.post_1_image_mobile | image_url: width: 800 }}">
+                  {% endif %}
+                  <img
+                    src="{{ section.settings.post_1_image_desktop | image_url: width: 1200 }}"
+                    alt="{{ section.settings.post_1_image_desktop.alt | escape }}"
+                    loading="lazy"
+                    width="{{ section.settings.post_1_image_desktop.width }}"
+                    height="{{ section.settings.post_1_image_desktop.height }}"
+                    class="featured-posts-card-image-{{ ai_gen_id }}"
+                  >
+                </picture>
+              {% else %}
+                <div class="featured-posts-card-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="featured-posts-card-content-{{ ai_gen_id }}">
+              {% if section.settings.post_1_headline != blank %}
+                <h3 class="featured-posts-card-headline-{{ ai_gen_id }}">{{ section.settings.post_1_headline }}</h3>
+              {% endif %}
+
+              {% if section.settings.post_1_link_label != blank %}
+                {% if section.settings.entire_card_clickable %}
+                  <span class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_1_link_label }}</span>
+                {% else %}
+                  <a href="{{ section.settings.post_1_url }}" class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_1_link_label }}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            {% if section.settings.entire_card_clickable and section.settings.post_1_url != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if post_2_enabled %}
+          <div class="featured-posts-card-{{ ai_gen_id }}">
+            {% if section.settings.entire_card_clickable and section.settings.post_2_url != blank %}
+              <a href="{{ section.settings.post_2_url }}" class="featured-posts-card-link-{{ ai_gen_id }}">
+            {% endif %}
+
+            <div class="featured-posts-card-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="post_2_image_desktop"{% if section.settings.post_2_image_desktop == blank %} data-forge-slot-blank="true"{% endif %}>
+              {% if section.settings.post_2_image_desktop != blank %}
+                <picture>
+                  {% if section.settings.post_2_image_mobile != blank %}
+                    <source media="(max-width: 749px)" srcset="{{ section.settings.post_2_image_mobile | image_url: width: 800 }}">
+                  {% endif %}
+                  <img
+                    src="{{ section.settings.post_2_image_desktop | image_url: width: 1200 }}"
+                    alt="{{ section.settings.post_2_image_desktop.alt | escape }}"
+                    loading="lazy"
+                    width="{{ section.settings.post_2_image_desktop.width }}"
+                    height="{{ section.settings.post_2_image_desktop.height }}"
+                    class="featured-posts-card-image-{{ ai_gen_id }}"
+                  >
+                </picture>
+              {% else %}
+                <div class="featured-posts-card-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="featured-posts-card-content-{{ ai_gen_id }}">
+              {% if section.settings.post_2_headline != blank %}
+                <h3 class="featured-posts-card-headline-{{ ai_gen_id }}">{{ section.settings.post_2_headline }}</h3>
+              {% endif %}
+
+              {% if section.settings.post_2_link_label != blank %}
+                {% if section.settings.entire_card_clickable %}
+                  <span class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_2_link_label }}</span>
+                {% else %}
+                  <a href="{{ section.settings.post_2_url }}" class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_2_link_label }}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            {% if section.settings.entire_card_clickable and section.settings.post_2_url != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if post_3_enabled %}
+          <div class="featured-posts-card-{{ ai_gen_id }}">
+            {% if section.settings.entire_card_clickable and section.settings.post_3_url != blank %}
+              <a href="{{ section.settings.post_3_url }}" class="featured-posts-card-link-{{ ai_gen_id }}">
+            {% endif %}
+
+            <div class="featured-posts-card-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="post_3_image_desktop"{% if section.settings.post_3_image_desktop == blank %} data-forge-slot-blank="true"{% endif %}>
+              {% if section.settings.post_3_image_desktop != blank %}
+                <picture>
+                  {% if section.settings.post_3_image_mobile != blank %}
+                    <source media="(max-width: 749px)" srcset="{{ section.settings.post_3_image_mobile | image_url: width: 800 }}">
+                  {% endif %}
+                  <img
+                    src="{{ section.settings.post_3_image_desktop | image_url: width: 1200 }}"
+                    alt="{{ section.settings.post_3_image_desktop.alt | escape }}"
+                    loading="lazy"
+                    width="{{ section.settings.post_3_image_desktop.width }}"
+                    height="{{ section.settings.post_3_image_desktop.height }}"
+                    class="featured-posts-card-image-{{ ai_gen_id }}"
+                  >
+                </picture>
+              {% else %}
+                <div class="featured-posts-card-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="featured-posts-card-content-{{ ai_gen_id }}">
+              {% if section.settings.post_3_headline != blank %}
+                <h3 class="featured-posts-card-headline-{{ ai_gen_id }}">{{ section.settings.post_3_headline }}</h3>
+              {% endif %}
+
+              {% if section.settings.post_3_link_label != blank %}
+                {% if section.settings.entire_card_clickable %}
+                  <span class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_3_link_label }}</span>
+                {% else %}
+                  <a href="{{ section.settings.post_3_url }}" class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_3_link_label }}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            {% if section.settings.entire_card_clickable and section.settings.post_3_url != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if post_4_enabled %}
+          <div class="featured-posts-card-{{ ai_gen_id }}">
+            {% if section.settings.entire_card_clickable and section.settings.post_4_url != blank %}
+              <a href="{{ section.settings.post_4_url }}" class="featured-posts-card-link-{{ ai_gen_id }}">
+            {% endif %}
+
+            <div class="featured-posts-card-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="post_4_image_desktop"{% if section.settings.post_4_image_desktop == blank %} data-forge-slot-blank="true"{% endif %}>
+              {% if section.settings.post_4_image_desktop != blank %}
+                <picture>
+                  {% if section.settings.post_4_image_mobile != blank %}
+                    <source media="(max-width: 749px)" srcset="{{ section.settings.post_4_image_mobile | image_url: width: 800 }}">
+                  {% endif %}
+                  <img
+                    src="{{ section.settings.post_4_image_desktop | image_url: width: 1200 }}"
+                    alt="{{ section.settings.post_4_image_desktop.alt | escape }}"
+                    loading="lazy"
+                    width="{{ section.settings.post_4_image_desktop.width }}"
+                    height="{{ section.settings.post_4_image_desktop.height }}"
+                    class="featured-posts-card-image-{{ ai_gen_id }}"
+                  >
+                </picture>
+              {% else %}
+                <div class="featured-posts-card-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="featured-posts-card-content-{{ ai_gen_id }}">
+              {% if section.settings.post_4_headline != blank %}
+                <h3 class="featured-posts-card-headline-{{ ai_gen_id }}">{{ section.settings.post_4_headline }}</h3>
+              {% endif %}
+
+              {% if section.settings.post_4_link_label != blank %}
+                {% if section.settings.entire_card_clickable %}
+                  <span class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_4_link_label }}</span>
+                {% else %}
+                  <a href="{{ section.settings.post_4_url }}" class="featured-posts-card-cta-{{ ai_gen_id }}">{{ section.settings.post_4_link_label }}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            {% if section.settings.entire_card_clickable and section.settings.post_4_url != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_arrows %}
+        <div class="featured-posts-nav-{{ ai_gen_id }} next">
+          <button class="featured-posts-nav-button-{{ ai_gen_id }}" data-direction="next" aria-label="Next slide">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</featured-posts>
+
+<script>
+  (function() {
+    if (customElements.get('featured-posts')) return;
+
+    class FeaturedPosts extends HTMLElement {
+      constructor() {
+        super();
+        this.track = null;
+        this.prevButton = null;
+        this.nextButton = null;
+        this.isDragging = false;
+        this.startX = 0;
+        this.scrollLeft = 0;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('[data-slider-track]');
+        this.prevButton = this.querySelector('[data-direction="prev"]');
+        this.nextButton = this.querySelector('[data-direction="next"]');
+
+        if (!this.track) return;
+
+        this.setupDragScroll();
+        this.setupArrowButtons();
+        this.updateArrowStates();
+
+        this.track.addEventListener('scroll', () => {
+          this.updateArrowStates();
+        });
+      }
+
+      setupDragScroll() {
+        this.track.addEventListener('mousedown', (e) => {
+          this.isDragging = true;
+          this.track.classList.add('dragging');
+          this.startX = e.pageX - this.track.offsetLeft;
+          this.scrollLeft = this.track.scrollLeft;
+        });
+
+        this.track.addEventListener('mouseleave', () => {
+          this.isDragging = false;
+          this.track.classList.remove('dragging');
+        });
+
+        this.track.addEventListener('mouseup', () => {
+          this.isDragging = false;
+          this.track.classList.remove('dragging');
+        });
+
+        this.track.addEventListener('mousemove', (e) => {
+          if (!this.isDragging) return;
+          e.preventDefault();
+          const x = e.pageX - this.track.offsetLeft;
+          const walk = (x - this.startX) * 2;
+          this.track.scrollLeft = this.scrollLeft - walk;
+        });
+
+        this.track.addEventListener('touchstart', (e) => {
+          this.startX = e.touches[0].pageX - this.track.offsetLeft;
+          this.scrollLeft = this.track.scrollLeft;
+        });
+
+        this.track.addEventListener('touchmove', (e) => {
+          const x = e.touches[0].pageX - this.track.offsetLeft;
+          const walk = (x - this.startX) * 2;
+          this.track.scrollLeft = this.scrollLeft - walk;
+        });
+      }
+
+      setupArrowButtons() {
+        const gap = parseInt(this.track.dataset.cardGap, 10) || 24;
+
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => {
+            const card = this.track.querySelector('[class*="featured-posts-card-"]');
+            if (!card) return;
+            const cardWidth = card.offsetWidth;
+            this.track.scrollBy({ left: -(cardWidth + gap), behavior: 'smooth' });
+          });
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => {
+            const card = this.track.querySelector('[class*="featured-posts-card-"]');
+            if (!card) return;
+            const cardWidth = card.offsetWidth;
+            this.track.scrollBy({ left: cardWidth + gap, behavior: 'smooth' });
+          });
+        }
+      }
+
+      updateArrowStates() {
+        if (!this.prevButton || !this.nextButton) return;
+
+        const isAtStart = this.track.scrollLeft <= 0;
+        const isAtEnd = this.track.scrollLeft + this.track.offsetWidth >= this.track.scrollWidth - 1;
+
+        this.prevButton.disabled = isAtStart;
+        this.nextButton.disabled = isAtEnd;
+      }
+    }
+
+    customElements.define('featured-posts', FeaturedPosts);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Featured posts",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Featured posts"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "view_all_url",
+      "label": "View all link"
+    },
+    {
+      "type": "header",
+      "content": "Post 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "post_1_enabled",
+      "label": "Enable post 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "post_1_image_desktop",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "post_1_image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "post_1_headline",
+      "label": "Headline",
+      "default": "Post 1"
+    },
+    {
+      "type": "text",
+      "id": "post_1_link_label",
+      "label": "Link label",
+      "default": "Read more"
+    },
+    {
+      "type": "url",
+      "id": "post_1_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Post 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "post_2_enabled",
+      "label": "Enable post 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "post_2_image_desktop",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "post_2_image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "post_2_headline",
+      "label": "Headline",
+      "default": "Post 2"
+    },
+    {
+      "type": "text",
+      "id": "post_2_link_label",
+      "label": "Link label",
+      "default": "Read more"
+    },
+    {
+      "type": "url",
+      "id": "post_2_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Post 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "post_3_enabled",
+      "label": "Enable post 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "post_3_image_desktop",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "post_3_image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "post_3_headline",
+      "label": "Headline",
+      "default": "Post 3"
+    },
+    {
+      "type": "text",
+      "id": "post_3_link_label",
+      "label": "Link label",
+      "default": "Read more"
+    },
+    {
+      "type": "url",
+      "id": "post_3_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Post 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "post_4_enabled",
+      "label": "Enable post 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "post_4_image_desktop",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "post_4_image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "post_4_headline",
+      "label": "Headline",
+      "default": "Post 4"
+    },
+    {
+      "type": "text",
+      "id": "post_4_link_label",
+      "label": "Link label",
+      "default": "Read more"
+    },
+    {
+      "type": "url",
+      "id": "post_4_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "cards_desktop",
+      "label": "Cards visible on desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "cards_tablet",
+      "label": "Cards visible on tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "cards_mobile",
+      "label": "Cards visible on mobile",
+      "options": [
+        {
+          "value": "1.1",
+          "label": "1.1"
+        },
+        {
+          "value": "1.2",
+          "label": "1.2"
+        },
+        {
+          "value": "1.3",
+          "label": "1.3"
+        },
+        {
+          "value": "1.4",
+          "label": "1.4"
+        }
+      ],
+      "default": "1.2"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "label": "Container max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "label": "Container padding",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_shadow",
+      "label": "Show card shadow",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "entire_card_clickable",
+      "label": "Make entire card clickable",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Navigation arrows"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow button size",
+      "min": 32,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_bg_color",
+      "label": "Arrow hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "view_all_color",
+      "label": "View all link",
+      "default": "#2b3a42"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Card headline",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cta_color",
+      "label": "Card link",
+      "default": "#2b3a42"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Section title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "view_all_size",
+      "label": "View all size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Card headline size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "cta_size",
+      "label": "Card link size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header spacing",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured posts"
+    }
+  ]
+}
+{% endschema %}

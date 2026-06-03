@@ -1,0 +1,135 @@
+{%- doc -%}
+  This snippet is used to render the quantity selector for a product.
+  It is used in the product page and the cart page.
+
+  @param {object} product - the product to render the quantity selector for
+  @param {number} [in_cart_quantity] - the quantity in the cart to set the input value
+  @param {number} [line_index] - the index of the forloop representing the line on which the quantity selector is rendered
+  @param {number} [min] - the minimum quantity the input supports
+  @param {string} [class] - custom class for the quantity selector, optional
+  @param {boolean} [can_update_quantity] - whether the quantity can be updated, defaults to true
+  @param {object} [block] - The block object (optional, used for shopify_attributes when line_index is null).
+  @param {boolean} [show_label] - whether to show a label before the quantity selector
+  @param {string} [label_text] - the text to display as the label
+  @param {number} [label_font_size] - the font size for the label in pixels
+  @param {string} [label_text_align] - text alignment for the label (left, center, right)
+  @param {boolean} [full_width] - whether to make the quantity selector full width
+  @param {string} [color_scheme_class] - a CSS class like 'color-scheme-1' to scope input colors from a scheme
+  @param {string} [border_color] - custom border color for the quantity selector
+  @param {number} [border_thickness] - custom border thickness in pixels
+  @param {number} [border_radius] - custom border radius in pixels
+  @param {string} [block_id] - unique block id to scope override styles
+{%- enddoc -%}
+
+{% liquid
+  assign variant = product.selected_or_first_available_variant
+  assign min = min | default: variant.quantity_rule.min | default: 1
+  assign show_label = show_label | default: false
+  assign label_text = label_text | default: 'Quantity'
+  assign label_font_size = label_font_size | default: 16
+  assign label_text_align = label_text_align | default: 'left'
+  assign full_width = full_width | default: false
+  assign color_scheme_class = color_scheme_class | default: ''
+  assign block_id = block_id | default: ''
+  assign border_color = border_color | default: ''
+  assign border_thickness = border_thickness | default: 1
+  assign border_radius = border_radius | default: 8
+  
+  assign input_id = 'quantity-input-'
+  if line_index
+    assign input_id = input_id | append: line_index
+  elsif block
+    assign input_id = input_id | append: block.id
+  else
+    assign input_id = input_id | append: 'default'
+  endif
+  
+  assign wrapper_style = ''
+  if show_label
+    assign wrapper_style = wrapper_style | append: '--label-font-size: ' | append: label_font_size | append: 'px;'
+    assign wrapper_style = wrapper_style | append: '--label-text-align: ' | append: label_text_align | append: ';'
+  endif
+  if full_width
+    assign wrapper_style = wrapper_style | append: '--quantity-full-width: 100%;'
+  endif
+  
+  assign selector_style = ''
+  if border_color != blank and border_color != 'rgba(0,0,0,0)'
+    assign selector_style = selector_style | append: '--quantity-border-color: ' | append: border_color | append: ';'
+  endif
+  if border_thickness != blank and border_thickness != 1
+    assign selector_style = selector_style | append: '--quantity-border-width: ' | append: border_thickness | append: 'px;'
+  endif
+  if border_radius != blank
+    assign selector_style = selector_style | append: '--quantity-border-radius: ' | append: border_radius | append: 'px;'
+  endif
+%}
+
+<div class="quantity-selector-wrapper{% if show_label %} quantity-selector-wrapper--with-label{% endif %}{% if full_width %} quantity-selector-wrapper--full-width{% endif %}{% if block_id != blank %} quantity-selector-wrapper--{{ block_id }}{% endif %}"{% if wrapper_style != blank %} style="{{ wrapper_style }}"{% endif %}>
+  {% if show_label %}
+    <label class="quantity-selector__label" for="{{ input_id }}">
+      {{ label_text }}
+    </label>
+  {% endif %}
+
+  <quantity-selector-component
+    class="quantity-selector{% if class %} {{ class }}{% endif %}{% if color_scheme_class != blank %} {{ color_scheme_class }}{% endif %}"
+    {% if line_index == null and block %}
+      {{- block.shopify_attributes -}}
+    {% endif %}
+    ref="quantitySelectors[]"
+    {% if selector_style != blank %}style="{{ selector_style }}"{% endif %}
+  >
+  <button
+    class="button quantity-minus button-unstyled"
+    type="button"
+    name="minus"
+    on:click="/decreaseQuantity"
+    ref="quantityButtons[]"
+    {% if can_update_quantity == false %}
+      disabled
+    {% endif %}
+  >
+    <span class="visually-hidden">{{ 'accessibility.decrease_quantity' | t }}</span
+    ><span class="svg-wrapper icon-plus">
+      {{- 'icon-minus.svg' | inline_asset_content -}}
+    </span>
+  </button>
+  <input
+    type="number"
+    id="{{ input_id }}"
+    name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
+    value="{{ in_cart_quantity | default: min }}"
+    min="{{ min | default: 1 }}"
+    on:blur="/setQuantity"
+    on:focus="/selectInputValue"
+    ref="quantityInput"
+    aria-label="{{ 'accessibility.quantity' | t }}"
+    {% if line_index %}
+      data-cart-line="{{ line_index | plus: 1 }}"
+    {% endif %}
+    {% if variant.quantity_rule.max %}
+      max="{{ variant.quantity_rule.max }}"
+    {% endif %}
+    step="{{ variant.quantity_rule.increment | default: 1 }}"
+    {% if can_update_quantity == false or variant.available == false %}
+      disabled
+    {% endif %}
+  >
+  <button
+    class="button quantity-plus button-unstyled"
+    type="button"
+    name="plus"
+    on:click="/increaseQuantity"
+    ref="quantityButtons[]"
+    {% if can_update_quantity == false %}
+      disabled
+    {% endif %}
+  >
+    <span class="visually-hidden">{{ 'accessibility.increase_quantity' | t }}</span
+    ><span class="svg-wrapper icon-plus">
+      {{- 'icon-plus.svg' | inline_asset_content -}}
+    </span>
+  </button>
+</quantity-selector-component>
+</div>

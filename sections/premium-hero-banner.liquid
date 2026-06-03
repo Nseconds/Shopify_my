@@ -1,0 +1,838 @@
+{% assign ai_gen_id = section.id | replace: '_', '-' | downcase %}
+{% assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{%- if settings.style_mode == 'flat' -%}
+  {%- assign grad_1 = section.settings.color_scheme.settings.primary -%}
+  {%- assign grad_2 = section.settings.color_scheme.settings.primary -%}
+  {%- assign grad_3 = section.settings.color_scheme.settings.primary -%}
+  {%- assign grad_text = section.settings.color_scheme.settings.primary_button_text -%}
+{%- elsif section.settings.use_custom_colors -%}
+  {%- assign grad_1 = section.settings.gradient_color_1 -%}
+  {%- assign grad_2 = section.settings.gradient_color_2 -%}
+  {%- assign grad_3 = section.settings.gradient_color_3 -%}
+  {%- assign grad_text = section.settings.heading_color -%}
+{%- else -%}
+  {%- assign grad_1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign grad_2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign grad_3 = section.settings.color_scheme.settings.gradient_3 -%}
+  {%- assign grad_text = section.settings.color_scheme.settings.gradient_text_color -%}
+{%- endif -%}
+
+{% style %}
+  .ai-hero-banner-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.min_height }}px;
+    overflow: hidden;
+    background: linear-gradient(
+      {{ section.settings.gradient_angle }}deg,
+      {{ grad_1 }},
+      {{ grad_2 }},
+      {{ grad_3 }}
+    );
+  }
+
+  .ai-hero-banner__container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: {{ section.settings.padding_top }}px {{ section.settings.padding_horizontal }}px {{ section.settings.padding_bottom }}px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    min-height: {{ section.settings.min_height }}px;
+  }
+
+  .ai-hero-banner__left-{{ ai_gen_id }} {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-banner__product-scene-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .ai-hero-banner__product-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--style-border-radius-images);
+    box-shadow: var(--style-shadow-card);
+  }
+
+  .ai-hero-banner__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: var(--style-border-radius-images);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-hero-banner__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-hero-banner__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-hero-banner__decorative-element-{{ ai_gen_id }} {
+    position: absolute;
+    border-radius: 50%;
+    opacity: {{ section.settings.decorative_opacity }};
+  }
+
+  .ai-hero-banner__decorative-1-{{ ai_gen_id }} {
+    width: {{ section.settings.decorative_size_1 }}px;
+    height: {{ section.settings.decorative_size_1 }}px;
+    background-color: {{ section.settings.decorative_color_1 }};
+    top: {{ section.settings.decorative_1_top }}%;
+    left: {{ section.settings.decorative_1_left }}%;
+    filter: blur({{ section.settings.decorative_blur }}px);
+  }
+
+  .ai-hero-banner__decorative-2-{{ ai_gen_id }} {
+    width: {{ section.settings.decorative_size_2 }}px;
+    height: {{ section.settings.decorative_size_2 }}px;
+    background-color: {{ section.settings.decorative_color_2 }};
+    bottom: {{ section.settings.decorative_2_bottom }}%;
+    right: {{ section.settings.decorative_2_right }}%;
+    filter: blur({{ section.settings.decorative_blur }}px);
+  }
+
+  .ai-hero-banner__decorative-3-{{ ai_gen_id }} {
+    width: {{ section.settings.decorative_size_3 }}px;
+    height: {{ section.settings.decorative_size_3 }}px;
+    background-color: {{ section.settings.decorative_color_3 }};
+    top: {{ section.settings.decorative_3_top }}%;
+    right: {{ section.settings.decorative_3_right }}%;
+    filter: blur({{ section.settings.decorative_blur }}px);
+  }
+
+  .ai-hero-banner__right-{{ ai_gen_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.content_gap }}px;
+    align-items: {{ section.settings.text_alignment }};
+    text-align: {{ section.settings.text_alignment }};
+  }
+
+  .ai-hero-banner__eyebrow-{{ ai_gen_id }} {
+    font-size: {{ section.settings.eyebrow_size }}px;
+    color: {{ grad_text }};
+    letter-spacing: {{ section.settings.eyebrow_letter_spacing }}px;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .ai-hero-banner__heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ grad_text }};
+    line-height: {{ section.settings.heading_line_height }};
+    font-weight: {{ section.settings.heading_weight }};
+    margin: 0;
+    font-family: var(--font-heading--family);
+  }
+
+  .ai-hero-banner__subheading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ grad_text }};
+    line-height: {{ section.settings.subheading_line_height }};
+    font-weight: 300;
+    margin: 0;
+    max-width: 500px;
+  }
+
+  .ai-hero-banner__button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+    background: var(--color-primary-button-background, {{ section.settings.button_bg_color }});
+    color: var(--color-primary-button-text, {{ section.settings.button_text_color }});
+    border: {{ section.settings.button_border_width }}px solid var(--color-primary-button-border, {{ section.settings.button_border_color }});
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ section.settings.button_font_size }}px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: {{ section.settings.button_margin_top }}px;
+  }
+
+  .ai-hero-banner__button-{{ ai_gen_id }}:hover {
+    background: var(--color-primary-button-hover-background, {{ section.settings.button_hover_bg_color }});
+    color: var(--color-primary-button-hover-text, {{ section.settings.button_hover_text_color }});
+    border-color: var(--color-primary-button-hover-border, {{ section.settings.button_hover_border_color }});
+  }
+
+  {% if settings.style_mode == 'flat' %}
+  .ai-hero-banner__button-{{ ai_gen_id }} {
+    background: rgb(var(--color-background-rgb)) !important;
+    color: var(--color-primary) !important;
+    border-color: transparent !important;
+  }
+  .ai-hero-banner__button-{{ ai_gen_id }}:hover {
+    background: rgb(var(--color-background-rgb)) !important;
+    color: var(--color-primary) !important;
+    border-color: transparent !important;
+    opacity: 0.88;
+  }
+  {% endif %}
+
+  {% if settings.style_mode == 'gradient' %}
+  .ai-hero-banner__button-{{ ai_gen_id }} {
+    background: var(--color-gradient-1) !important;
+    color: var(--color-gradient-text) !important;
+    border-color: transparent !important;
+  }
+  .ai-hero-banner__button-{{ ai_gen_id }}:hover {
+    background: var(--color-gradient-2) !important;
+    color: var(--color-gradient-text) !important;
+    border-color: transparent !important;
+  }
+  {% endif %}
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-banner__container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 40px;
+      padding: 60px 30px;
+    }
+
+    .ai-hero-banner__left-{{ ai_gen_id }},
+    .ai-hero-banner__right-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-hero-banner__right-{{ ai_gen_id }} {
+      align-items: center;
+      text-align: center;
+    }
+
+    .ai-hero-banner__heading-{{ ai_gen_id }} {
+      font-size: calc({{ section.settings.heading_size }}px * 0.7);
+    }
+
+    .ai-hero-banner__subheading-{{ ai_gen_id }} {
+      font-size: calc({{ section.settings.subheading_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<premium-hero-banner-{{ ai_gen_id }} class="ai-hero-banner-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="ai-hero-banner__container-{{ ai_gen_id }}">
+    <div class="ai-hero-banner__left-{{ ai_gen_id }}">
+      <div class="ai-hero-banner__product-scene-{{ ai_gen_id }}" data-forge-slot-id="product_image"{% if section.settings.product_image == blank %} data-forge-slot-blank="true"{% endif %}>
+        {% if section.settings.product_image %}
+          <img
+            src="{{ section.settings.product_image | image_url: width: 1000 }}"
+            alt="{{ section.settings.product_image.alt | escape }}"
+            class="ai-hero-banner__product-image-{{ ai_gen_id }}"
+            loading="lazy"
+            width="{{ section.settings.product_image.width }}"
+            height="{{ section.settings.product_image.height }}"
+          >
+        {% else %}
+          <div class="ai-hero-banner__image-placeholder-{{ ai_gen_id }}">
+            {{ 'product-1' | placeholder_svg_tag }}
+            <div class="ai-hero-banner__empty-state-{{ ai_gen_id }}">
+              Add your product image
+            </div>
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_decorative_elements %}
+          <div class="ai-hero-banner__decorative-element-{{ ai_gen_id }} ai-hero-banner__decorative-1-{{ ai_gen_id }}"></div>
+          <div class="ai-hero-banner__decorative-element-{{ ai_gen_id }} ai-hero-banner__decorative-2-{{ ai_gen_id }}"></div>
+          <div class="ai-hero-banner__decorative-element-{{ ai_gen_id }} ai-hero-banner__decorative-3-{{ ai_gen_id }}"></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-hero-banner__right-{{ ai_gen_id }}">
+      {% if section.settings.eyebrow_text != blank %}
+        <p class="ai-hero-banner__eyebrow-{{ ai_gen_id }}">{{ section.settings.eyebrow_text }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="ai-hero-banner__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <div class="ai-hero-banner__subheading-{{ ai_gen_id }}">{{ section.settings.subheading }}</div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="ai-hero-banner__button-{{ ai_gen_id }}">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</premium-hero-banner-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PremiumHeroBanner{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.init();
+      }
+
+      init() {
+        const decorativeElements = this.querySelectorAll('.ai-hero-banner__decorative-element-{{ ai_gen_id }}');
+        decorativeElements.forEach((element, index) => {
+          const delay = index * 0.2;
+          element.style.animation = `ai-hero-float-{{ ai_gen_id }} ${3 + index}s ease-in-out ${delay}s infinite`;
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes ai-hero-float-{{ ai_gen_id }} {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-20px);
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    customElements.define('premium-hero-banner-{{ ai_gen_id }}', PremiumHeroBanner{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Premium hero banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimum height",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Override theme gradient colors",
+      "info": "When off, uses the theme's global gradient colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Color 1",
+      "default": "#FFE5E5",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Color 2",
+      "default": "#F5E6DC",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_3",
+      "label": "Color 3",
+      "default": "#FFD4D4",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient angle",
+      "min": 0,
+      "max": 360,
+      "step": 15,
+      "unit": "deg",
+      "default": 135
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Decorative elements"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_elements",
+      "label": "Show decorative elements",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "decorative_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "decorative_blur",
+      "label": "Blur",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "decorative_size_1",
+      "label": "Element 1 size",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "color",
+      "id": "decorative_color_1",
+      "label": "Element 1 color",
+      "default": "#FFB6C1"
+    },
+    {
+      "type": "range",
+      "id": "decorative_1_top",
+      "label": "Element 1 top position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "decorative_1_left",
+      "label": "Element 1 left position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "decorative_size_2",
+      "label": "Element 2 size",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "decorative_color_2",
+      "label": "Element 2 color",
+      "default": "#FFDAB9"
+    },
+    {
+      "type": "range",
+      "id": "decorative_2_bottom",
+      "label": "Element 2 bottom position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "decorative_2_right",
+      "label": "Element 2 right position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "decorative_size_3",
+      "label": "Element 3 size",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "decorative_color_3",
+      "label": "Element 3 color",
+      "default": "#E6E6FA"
+    },
+    {
+      "type": "range",
+      "id": "decorative_3_top",
+      "label": "Element 3 top position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "decorative_3_right",
+      "label": "Element 3 right position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "New Collection"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#8B7355",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_letter_spacing",
+      "label": "Eyebrow letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Radiant Beauty, Naturally Yours</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2C2C2C",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Heading line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "min": 300,
+      "max": 700,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Discover our premium collection of wellness essentials, crafted with care for your natural glow.</p>"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#6B6B6B",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "subheading_line_height",
+      "label": "Subheading line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Content spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Padding vertical",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Top margin",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#2C2C2C"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#2C2C2C"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#1A1A1A"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium hero banner"
+    }
+  ]
+}
+{% endschema %}

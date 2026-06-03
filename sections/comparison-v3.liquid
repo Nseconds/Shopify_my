@@ -1,0 +1,621 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg      = section.settings.background_color
+    assign sc_text    = section.settings.heading_color
+    assign sc_accent  = section.settings.checkmark_color
+    assign sc_col_bg  = section.settings.column_background
+    assign sc_col_brd = section.settings.column_border_color
+    assign sc_cross   = section.settings.cross_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg      = 'var(--color-background)'
+    assign sc_text    = 'var(--color-foreground)'
+    assign sc_accent  = 'var(--color-primary)'
+    assign sc_col_bg  = 'var(--color-card-background)'
+    assign sc_col_brd = 'var(--color-border)'
+    assign sc_cross   = 'var(--color-foreground)'
+  else
+    assign sc_bg      = 'var(--color-background)'
+    assign sc_text    = 'var(--color-foreground)'
+    assign sc_accent  = 'var(--color-primary)'
+    assign sc_col_bg  = 'var(--color-card-background)'
+    assign sc_col_brd = 'var(--color-border)'
+    assign sc_cross   = 'var(--color-foreground)'
+  endif
+-%}
+{% style %}
+  .ai-comparison-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ section.settings.section_padding }}px 40px;
+    background: {{ sc_bg }};
+  }
+
+  .ai-comparison-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-comparison-heading-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ sc_text }};
+    text-align: center;
+    margin: 0 0 {{ section.settings.heading_spacing }}px 0;
+    letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+  }
+
+  .ai-comparison-table-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--style-gap-cards);
+    margin-top: {{ section.settings.table_top_spacing }}px;
+  }
+
+  .ai-comparison-column-{{ ai_gen_id }} {
+    background-color: {{ sc_col_bg }};
+    border: {{ section.settings.column_border_width }}px solid {{ sc_col_brd }};
+    border-radius: var(--style-border-radius-cards);
+    padding: {{ section.settings.column_padding }}px;
+  }
+
+  .ai-comparison-column-header-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.column_header_size }}px;
+    color: {{ sc_text }};
+    text-align: center;
+    margin: 0 0 {{ section.settings.column_header_spacing }}px 0;
+    letter-spacing: {{ section.settings.column_header_letter_spacing }}px;
+  }
+
+  .ai-comparison-items-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.item_spacing }}px;
+  }
+
+  .ai-comparison-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.icon_text_gap }}px;
+  }
+
+  .ai-comparison-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-comparison-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-comparison-text-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.item_size }}px;
+    color: {{ sc_text }};
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-comparison-section-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding | times: 0.7 }}px 20px;
+      width: 100%;
+    }
+
+    .ai-comparison-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.7 }}px;
+      margin-bottom: {{ section.settings.heading_spacing | times: 0.7 }}px;
+    }
+
+    .ai-comparison-table-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: var(--style-gap-cards);
+      margin-top: {{ section.settings.table_top_spacing | times: 0.7 }}px;
+    }
+
+    .ai-comparison-column-{{ ai_gen_id }} {
+      padding: {{ section.settings.column_padding | times: 0.7 }}px;
+    }
+
+    .ai-comparison-column-header-{{ ai_gen_id }} {
+      font-size: {{ section.settings.column_header_size | times: 0.8 }}px;
+      margin-bottom: {{ section.settings.column_header_spacing | times: 0.7 }}px;
+    }
+
+    .ai-comparison-items-{{ ai_gen_id }} {
+      gap: {{ section.settings.item_spacing | times: 0.8 }}px;
+    }
+
+    .ai-comparison-icon-{{ ai_gen_id }} {
+      width: {{ section.settings.icon_size | times: 0.8 }}px;
+      height: {{ section.settings.icon_size | times: 0.8 }}px;
+    }
+
+    .ai-comparison-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.item_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-comparison-section-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-comparison-container-{{ ai_gen_id }}">
+    {% if section.settings.heading != blank %}
+      <h2 class="ai-comparison-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-comparison-table-{{ ai_gen_id }}">
+      <div class="ai-comparison-column-{{ ai_gen_id }}">
+        {% if section.settings.phero_header != blank %}
+          <h3 class="ai-comparison-column-header-{{ ai_gen_id }}">{{ section.settings.phero_header }}</h3>
+        {% endif %}
+        <div class="ai-comparison-items-{{ ai_gen_id }}">
+          {% if section.settings.item_1 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_accent }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_1 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_2 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_accent }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_2 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_3 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_accent }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_3 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_4 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_accent }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_4 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_5 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_accent }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_5 }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-comparison-column-{{ ai_gen_id }}">
+        {% if section.settings.others_header != blank %}
+          <h3 class="ai-comparison-column-header-{{ ai_gen_id }}">{{ section.settings.others_header }}</h3>
+        {% endif %}
+        <div class="ai-comparison-items-{{ ai_gen_id }}">
+          {% if section.settings.item_1 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_cross }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_1 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_2 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_cross }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_2 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_3 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_cross }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_3 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_4 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_cross }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_4 }}</div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.item_5 != blank %}
+            <div class="ai-comparison-item-{{ ai_gen_id }}">
+              <div class="ai-comparison-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="{{ sc_cross }}" stroke-width="{{ section.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+              <div class="ai-comparison-text-{{ ai_gen_id }}">{{ section.settings.item_5 }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "PHERO comparison",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>WHY CHOOSE PHERO?</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Bottom spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Column headers"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "phero_header",
+      "label": "PHERO header",
+      "default": "PHERO"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "others_header",
+      "label": "Others header",
+      "default": "OTHERS"
+    },
+    {
+      "type": "range",
+      "id": "column_header_size",
+      "label": "Size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "column_header_color",
+      "label": "Color",
+      "default": "#141414"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "column_header_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "column_header_spacing",
+      "label": "Bottom spacing",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Comparison items"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "item_1",
+      "label": "Item 1",
+      "default": "Gentle on skin"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "item_2",
+      "label": "Item 2",
+      "default": "Boosts natural attraction"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "item_3",
+      "label": "Item 3",
+      "default": "Lasts 8–12 hours on skin"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "item_4",
+      "label": "Item 4",
+      "default": "No endocrine disruptors or toxins"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "item_5",
+      "label": "Item 5",
+      "default": "Designed for all genders"
+    },
+    {
+      "type": "range",
+      "id": "item_size",
+      "label": "Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "item_color",
+      "label": "Color",
+      "default": "#2c3e50"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Spacing between items",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "icon_stroke_width",
+      "label": "Stroke width",
+      "min": 1,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "checkmark_color",
+      "label": "Checkmark color",
+      "default": "#ca90de",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Cross color",
+      "default": "#bdc3c7"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "label": "Gap between icon and text",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max content width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "table_top_spacing",
+      "label": "Table top spacing",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "column_padding",
+      "label": "Column padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f5f9",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "column_background",
+      "label": "Column background",
+      "default": "#ffffff"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "column_border_color",
+      "label": "Column border",
+      "default": "#d5dde4"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "column_border_width",
+      "label": "Column border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "column_border_radius",
+      "label": "Column border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "PHERO comparison"
+    }
+  ]
+}
+{% endschema %}

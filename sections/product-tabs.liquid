@@ -1,0 +1,538 @@
+{% style %}
+  .product-tabs-{{ section.id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ section.settings.section_padding }}px 20px;
+    background: var(--color-background, {{ section.settings.background_color }});
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-tabs-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(135deg, {{ section.settings.accent_color }} 0%, transparent 70%);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .product-tabs-container-{{ section.id }} {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .product-tabs-nav-{{ section.id }} {
+    display: flex;
+    gap: 40px;
+    border-bottom: 1px solid {{ section.settings.border_color }};
+    margin-bottom: 32px;
+  }
+
+  .product-tab-button-{{ section.id }} {
+    background: none;
+    border: none;
+    padding: 16px 0;
+    font-size: {{ section.settings.tab_font_size }}px;
+    font-weight: 400;
+    color: var(--color-foreground, {{ section.settings.tab_inactive_color }});
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .product-tab-button-{{ section.id }}:hover {
+    color: var(--color-foreground-heading, {{ section.settings.tab_active_color }});
+  }
+
+  .product-tab-button-{{ section.id }}.active {
+    color: var(--color-foreground-heading, {{ section.settings.tab_active_color }});
+    font-weight: 600;
+  }
+
+  .product-tab-button-{{ section.id }}.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: {{ section.settings.tab_underline_color }};
+  }
+
+  .product-tabs-content-{{ section.id }} {
+    position: relative;
+  }
+
+  .product-tab-panel-{{ section.id }} {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .product-tab-panel-{{ section.id }}.active {
+    display: block;
+    animation: product-fade-in-{{ section.id }} 0.4s ease forwards;
+  }
+
+  @keyframes product-fade-in-{{ section.id }} {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .product-content-card-{{ section.id }} {
+    background: {{ section.settings.card_background }};
+    border: {{ section.settings.card_border_width }}px solid {{ section.settings.card_border_color }};
+    border-radius: var(--style-border-radius-cards);
+    padding: {{ section.settings.card_padding }}px;
+    position: relative;
+    min-height: 200px;
+  }
+
+  .product-badge-overlay-{{ section.id }} {
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_text_color }};
+    padding: 8px 16px;
+    border-radius: var(--style-border-radius-global);
+    font-size: {{ section.settings.badge_font_size }}px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-badge-icon-{{ section.id }} {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-badge-icon-{{ section.id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  .product-content-text-{{ section.id }} {
+    font-size: {{ section.settings.content_font_size }}px;
+    line-height: 1.8;
+    color: var(--color-foreground, {{ section.settings.content_text_color }});
+    margin: 0;
+  }
+
+  .product-content-text-{{ section.id }} p {
+    margin-bottom: 16px;
+  }
+
+  .product-content-text-{{ section.id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-tabs-{{ section.id }} {
+      padding: {{ section.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .product-tabs-nav-{{ section.id }} {
+      gap: 24px;
+    }
+
+    .product-tab-button-{{ section.id }} {
+      font-size: {{ section.settings.tab_font_size | times: 0.9 }}px;
+      padding: 12px 0;
+    }
+
+    .product-content-card-{{ section.id }} {
+      padding: {{ section.settings.card_padding | times: 0.7 }}px;
+    }
+
+    .product-badge-overlay-{{ section.id }} {
+      font-size: {{ section.settings.badge_font_size | times: 0.85 }}px;
+      padding: 6px 12px;
+      left: 16px;
+    }
+
+    .product-content-text-{{ section.id }} {
+      font-size: {{ section.settings.content_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<product-tabs-{{ section.id | downcase | replace: '_', '-' }} class="product-tabs-{{ section.id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="product-tabs-container-{{ section.id }}">
+    <div class="product-tabs-nav-{{ section.id }}" role="tablist">
+      <button
+        class="product-tab-button-{{ section.id }} active"
+        role="tab"
+        aria-selected="true"
+        aria-controls="product-tab-benefits-{{ section.id }}"
+        data-tab="benefits"
+      >
+        {{ section.settings.tab_1_label }}
+      </button>
+      <button
+        class="product-tab-button-{{ section.id }}"
+        role="tab"
+        aria-selected="false"
+        aria-controls="product-tab-ingredients-{{ section.id }}"
+        data-tab="ingredients"
+      >
+        {{ section.settings.tab_2_label }}
+      </button>
+    </div>
+
+    <div class="product-tabs-content-{{ section.id }}">
+      <div
+        id="product-tab-benefits-{{ section.id }}"
+        class="product-tab-panel-{{ section.id }} active"
+        role="tabpanel"
+        data-panel="benefits"
+      >
+        <div class="product-content-card-{{ section.id }}">
+          <div class="product-badge-overlay-{{ section.id }}">
+            <span class="product-badge-icon-{{ section.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <span>{{ section.settings.tab_1_badge }}</span>
+          </div>
+          <div class="product-content-text-{{ section.id }}">
+            {{ section.settings.tab_1_content }}
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="product-tab-ingredients-{{ section.id }}"
+        class="product-tab-panel-{{ section.id }}"
+        role="tabpanel"
+        data-panel="ingredients"
+      >
+        <div class="product-content-card-{{ section.id }}">
+          <div class="product-badge-overlay-{{ section.id }}">
+            <span class="product-badge-icon-{{ section.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <span>{{ section.settings.tab_2_badge }}</span>
+          </div>
+          <div class="product-content-text-{{ section.id }}">
+            {{ section.settings.tab_2_content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</product-tabs-{{ section.id | downcase | replace: '_', '-' }}>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const tagName = 'product-tabs-' + sectionId.toLowerCase().replace(/_/g, '-');
+    
+    class ProductTabs extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.tabButtons = this.querySelectorAll('.product-tab-button-' + sectionId);
+        this.tabPanels = this.querySelectorAll('.product-tab-panel-' + sectionId);
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.tabButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            this.switchTab(targetTab);
+          });
+        });
+      }
+
+      switchTab(targetTab) {
+        this.tabButtons.forEach((btn) => {
+          const isActive = btn.getAttribute('data-tab') === targetTab;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive);
+        });
+
+        this.tabPanels.forEach((panel) => {
+          const isActive = panel.getAttribute('data-panel') === targetTab;
+          if (isActive) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define(tagName, ProductTabs);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Tab 1 - Benefits"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_label",
+      "label": "Tab label",
+      "default": "Benefits"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_badge",
+      "label": "Badge text",
+      "default": "Instant Intense Hydration"
+    },
+    {
+      "type": "richtext",
+      "id": "tab_1_content",
+      "label": "Content",
+      "default": "<p>Experience transformative hydration with our advanced formula. Deeply nourishes and revitalizes your skin, leaving it soft, smooth, and radiant.</p><p>Clinically proven to improve skin texture and elasticity within 7 days. Perfect for all skin types, including sensitive skin.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Tab 2 - Ingredients"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_label",
+      "label": "Tab label",
+      "default": "Ingredients"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_badge",
+      "label": "Badge text",
+      "default": "Clean & Natural"
+    },
+    {
+      "type": "richtext",
+      "id": "tab_2_content",
+      "label": "Content",
+      "default": "<p>Hyaluronic Acid: Provides deep hydration and plumps the skin. Vitamin E: Powerful antioxidant that protects and nourishes.</p><p>Aloe Vera: Soothes and calms irritated skin. Jojoba Oil: Balances moisture and improves skin barrier function.</p><p>Free from parabens, sulfates, and artificial fragrances. Cruelty-free and vegan certified.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f7f7f3"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent gradient",
+      "default": "#f9d77e"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Tabs style"
+    },
+    {
+      "type": "range",
+      "id": "tab_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "tab_active_color",
+      "label": "Active text color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "tab_inactive_color",
+      "label": "Inactive text color",
+      "default": "#999999"
+    },
+    {
+      "type": "color",
+      "id": "tab_underline_color",
+      "label": "Active underline",
+      "default": "#f9d77e"
+    },
+    {
+      "type": "header",
+      "content": "Content card"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_font_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "content_text_color",
+      "label": "Text color",
+      "default": "#555555"
+    },
+    {
+      "type": "header",
+      "content": "Badge overlay"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Background",
+      "default": "#f9d77e"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text color",
+      "default": "#141414"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product tabs"
+    }
+  ]
+}
+{% endschema %}

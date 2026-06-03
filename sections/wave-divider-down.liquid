@@ -1,0 +1,158 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-wave-divider-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--color-background);
+  }
+
+  .ai-wave-divider-container-{{ ai_gen_id }} {
+    width: {{ section.settings.desktop_width_percent }}%;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-wave-divider__svg-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    height: {{ section.settings.wave_height }}px;
+    transform: scaleY(-1);
+  }
+
+  .ai-wave-divider__path-{{ ai_gen_id }} {
+    fill: var(--color-primary);
+    opacity: {{ section.settings.wave_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-wave-divider__svg-{{ ai_gen_id }} {
+      height: {{ section.settings.wave_height_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-wave-divider-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-wave-divider-container-{{ ai_gen_id }}">
+    {% if section.settings.wave_style == 'single' %}
+      <svg class="ai-wave-divider__svg-{{ ai_gen_id }}" viewBox="0 0 1200 {{ section.settings.wave_height }}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | divided_by: 2 }} Q300,{{ section.settings.wave_height | times: 0.2 }} 600,{{ section.settings.wave_height | divided_by: 2 }} T1200,{{ section.settings.wave_height | divided_by: 2 }} L1200,{{ section.settings.wave_height }} L0,{{ section.settings.wave_height }} Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'double' %}
+      <svg class="ai-wave-divider__svg-{{ ai_gen_id }}" viewBox="0 0 1200 {{ section.settings.wave_height }}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | times: 0.6 }} Q300,{{ section.settings.wave_height | times: 0.3 }} 600,{{ section.settings.wave_height | times: 0.6 }} T1200,{{ section.settings.wave_height | times: 0.6 }} L1200,{{ section.settings.wave_height }} L0,{{ section.settings.wave_height }} Z"></path>
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | times: 0.4 }} Q300,{{ section.settings.wave_height | times: 0.1 }} 600,{{ section.settings.wave_height | times: 0.4 }} T1200,{{ section.settings.wave_height | times: 0.4 }} L1200,0 L0,0 Z" style="opacity: {{ section.settings.wave_opacity | divided_by: 100.0 | times: 0.5 }};"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'flowing' %}
+      <svg class="ai-wave-divider__svg-{{ ai_gen_id }}" viewBox="0 0 1200 {{ section.settings.wave_height }}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | times: 0.5 }} C200,{{ section.settings.wave_height | times: 0.2 }} 400,{{ section.settings.wave_height | times: 0.8 }} 600,{{ section.settings.wave_height | times: 0.5 }} C800,{{ section.settings.wave_height | times: 0.2 }} 1000,{{ section.settings.wave_height | times: 0.8 }} 1200,{{ section.settings.wave_height | times: 0.5 }} L1200,{{ section.settings.wave_height }} L0,{{ section.settings.wave_height }} Z"></path>
+      </svg>
+    {% elsif section.settings.wave_style == 'gentle' %}
+      <svg class="ai-wave-divider__svg-{{ ai_gen_id }}" viewBox="0 0 1200 {{ section.settings.wave_height }}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | times: 0.5 }} Q400,{{ section.settings.wave_height | times: 0.3 }} 800,{{ section.settings.wave_height | times: 0.5 }} T1600,{{ section.settings.wave_height | times: 0.5 }} L1200,{{ section.settings.wave_height }} L0,{{ section.settings.wave_height }} Z"></path>
+      </svg>
+    {% else %}
+      <svg class="ai-wave-divider__svg-{{ ai_gen_id }}" viewBox="0 0 1200 {{ section.settings.wave_height }}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+        <path class="ai-wave-divider__path-{{ ai_gen_id }}" d="M0,{{ section.settings.wave_height | times: 0.7 }} C150,{{ section.settings.wave_height | times: 0.4 }} 350,{{ section.settings.wave_height | times: 0.9 }} 600,{{ section.settings.wave_height | times: 0.6 }} C850,{{ section.settings.wave_height | times: 0.3 }} 1050,{{ section.settings.wave_height | times: 0.8 }} 1200,{{ section.settings.wave_height | times: 0.5 }} L1200,{{ section.settings.wave_height }} L0,{{ section.settings.wave_height }} Z"></path>
+      </svg>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Wave divider",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Wave style"
+    },
+    {
+      "type": "select",
+      "id": "wave_style",
+      "label": "Wave pattern",
+      "options": [
+        {
+          "value": "single",
+          "label": "Single wave"
+        },
+        {
+          "value": "double",
+          "label": "Double wave"
+        },
+        {
+          "value": "flowing",
+          "label": "Flowing curves"
+        },
+        {
+          "value": "gentle",
+          "label": "Gentle wave"
+        },
+        {
+          "value": "organic",
+          "label": "Organic flow"
+        }
+      ],
+      "default": "flowing"
+    },
+    {
+      "type": "range",
+      "id": "wave_height",
+      "label": "Desktop height",
+      "min": 40,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "wave_height_mobile",
+      "label": "Mobile height",
+      "min": 30,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity",
+      "label": "Wave opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wave divider"
+    }
+  ]
+}
+{% endschema %}

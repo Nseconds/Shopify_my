@@ -1,0 +1,445 @@
+
+{%- assign block_settings = block.settings -%}
+{%- liquid
+  assign submit_label = block_settings.submit_button_label | strip
+  if submit_label == blank
+    assign submit_label = 'content.search' | t
+  endif
+  assign search_input_id = 'SearchPageInput--' | append: block.id
+-%}
+
+<script
+  src="{{ 'predictive-search.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% if block_settings.inherit_color_scheme == false %}
+  {% assign color_scheme = block_settings.color_scheme | prepend: ' color-' %}
+{% endif %}
+
+<predictive-search-component
+  class="predictive-search search-page-predictive search-page-predictive--panel-closed"
+  style="--product-corner-radius: {{ settings.product_corner_radius | default: 8 | append: 'px' }}; --card-corner-radius: {{ settings.card_corner_radius | default: 8 | append: 'px' }};{% if settings.card_title_case == 'uppercase' %} --title-case: uppercase;{% endif %}"
+  data-section-id="predictive-search"
+  data-skip-initial-reset="true"
+  data-testid="search-page-predictive"
+>
+  <form
+    action="{{ routes.search_url }}"
+    method="get"
+    role="search"
+    class="predictive-search-form search-page-input__parent"
+    ref="form"
+    on:keydown="/onSearchKeyDown"
+  >
+    <input
+      type="hidden"
+      name="type"
+      value="product"
+    >
+    <input
+      name="options[prefix]"
+      type="hidden"
+      value="last"
+    >
+
+    <div
+      class="search-page-input__combo"
+      style="{% render 'size-style', settings: block_settings %}"
+    >
+      <div
+        class="search-page-input__row{% if block_settings.show_submit_button %} search-page-input__row--with-submit{% endif %}"
+      >
+        <div
+          class="search-page-input__field"
+          style="{% render 'spacing-style', settings: block_settings %}"
+          {{ block.shopify_attributes }}
+        >
+          <label
+            for="{{ search_input_id }}"
+            class="visually-hidden"
+          >
+            {{ 'content.search_input_label' | t }}
+          </label>
+          <span class="svg-wrapper search__icon{{ color_scheme }}">
+            {{ 'icon-search.svg' | inline_asset_content }}
+          </span>
+          <input
+            class="search-page-input{{ color_scheme }}"
+            id="{{ search_input_id }}"
+            type="search"
+            name="q"
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="predictive-search-results"
+            aria-controls="predictive-search-results"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            autocomplete="off"
+            ref="searchInput"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'content.search_input_placeholder' | t }}"
+            on:input="/search"
+            on:keydown="/onSearchKeyDown"
+          >
+          <button
+            type="button"
+            name="reset"
+            class="button-unstyled search__reset-button{{ color_scheme }}"
+            aria-label="{{ 'accessibility.reset_search' | t }}"
+            ref="resetButton"
+            {% if search.terms == blank %}
+              hidden
+            {% endif %}
+            on:click="/resetSearch"
+          >
+            <span class="svg-wrapper search__reset-button-icon">
+              {{ 'icon-reset.svg' | inline_asset_content }}
+            </span>
+            <span class="search__reset-button-text">
+              {{ 'actions.clear' | t }}
+            </span>
+          </button>
+        </div>
+
+        {% if block_settings.show_submit_button %}
+          <button
+            type="submit"
+            class="button button--primary search-page-input__submit"
+            style="border-radius: {{ block_settings.submit_button_border_radius }}px;"
+          >
+            {{- submit_label | escape -}}
+          </button>
+        {% endif %}
+      </div>
+
+      <div class="predictive-search-form__content-wrapper search-page-input__suggestions">
+        <div
+          class="predictive-search-form__content"
+          tabindex="-1"
+          ref="predictiveSearchResults"
+        >
+          {% render 'predictive-search-empty-state',
+            load_empty_state: false,
+            shadow_opacity: 0.1,
+            products_test_id: 'search-page-predictive'
+          %}
+        </div>
+
+        <div class="predictive-search-form__footer">
+          <button
+            type="submit"
+            class="button button--primary predictive-search__search-button"
+            ref="viewAllButton"
+          >
+            {{ 'content.search_results_view_all' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {% if search.results.size == 0 and search.terms != blank %}
+      <div class="search-results__no-results">
+        <p>
+          {{ 'content.search_results_no_results_check_spelling' | t: terms: search.terms }}
+        </p>
+      </div>
+    {% endif %}
+  </form>
+</predictive-search-component>
+
+{% stylesheet %}
+  predictive-search-component.search-page-predictive {
+    /* Override global predictive-search-component (flex, margin-inline auto, popover-like bg). */
+    display: block;
+    width: 100%;
+    position: relative;
+    z-index: var(--layer-heightened);
+    margin-inline: 0;
+    background: transparent;
+    align-items: unset;
+  }
+
+  .search-page-input__combo {
+    position: relative;
+    width: 100%;
+    max-width: var(--size-style-width);
+  }
+
+  .search-page-predictive .predictive-search-form {
+    position: relative;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .search-page-predictive .predictive-search-form__content-wrapper {
+    width: 100%;
+  }
+
+  .search-page-predictive.search-page-predictive--panel-closed .predictive-search-form__content-wrapper {
+    display: none;
+  }
+
+  .search-page-predictive input[type='search']::-webkit-search-decoration {
+    -webkit-appearance: none; /* stylelint-disable-line */
+  }
+
+  .search-page-predictive .search-page-input {
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+    font-family: var(--font-paragraph--family);
+    font-size: var(--font-paragraph--size);
+    font-style: var(--font-paragraph--style);
+    line-height: var(--font-paragraph--line-height);
+    color: var(--color-input-text);
+    background-color: var(--color-input-background);
+    padding-block: var(--padding-lg);
+    padding-inline: calc(var(--icon-size-lg) + var(--margin-xl) * 1.5);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-inputs);
+    border: var(--style-border-width-inputs) solid var(--color-input-border);
+    outline: none;
+    box-shadow: none;
+    appearance: none;
+
+    @media screen and (max-width: 749px) {
+      padding-inline: calc(var(--margin-xs) + var(--icon-size-lg) + var(--padding-md));
+    }
+  }
+
+  .search-page-predictive .search-page-input:focus,
+  .search-page-predictive .search-page-input:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .search-page-predictive .search-page-input::placeholder {
+    color: rgb(var(--color-input-text-rgb) / var(--opacity-subdued-text));
+  }
+
+  .search-page-input__parent {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--horizontal-alignment);
+  }
+
+  .search-results__no-results {
+    opacity: var(--opacity-subdued-text);
+  }
+
+  .search-page-input__field {
+    --color-input-background: rgb(var(--color-foreground-rgb) / var(--opacity-5-15));
+    --color-input-hover-background: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    --color-input-text: var(--color-foreground);
+    position: relative;
+    width: 100%;
+    display: flex;
+    top: 0;
+    align-items: center;
+    background-color: var(--color-background);
+    margin: var(--margin-2xl) 0 var(--margin-md);
+
+    @media screen and (max-width: 749px) {
+      max-width: 100%;
+    }
+  }
+
+  .search-page-input__field .search__icon,
+  .search-page-input__field .search__icon:hover,
+  .search-page-input__field .search__reset-button,
+  .search-page-input__field .search__reset-button:hover {
+    background: transparent;
+    position: absolute;
+    top: auto;
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+  }
+
+  .search-page-input__field .search__icon svg,
+  .search-page-input__field .search__reset-button svg {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  .search-page-input__field .search__icon svg {
+    color: var(--color-input-text);
+  }
+
+  .search-page-input__field .search__icon {
+    left: var(--margin-lg);
+
+    @media screen and (max-width: 749px) {
+      left: var(--margin-md);
+    }
+  }
+
+  .search-page-input__field .search__reset-button {
+    border-radius: 100%;
+    color: var(--color-input-text);
+    right: var(--margin-lg);
+    cursor: pointer;
+    transition: opacity var(--animation-speed) var(--animation-easing),
+      visibility var(--animation-speed) var(--animation-easing);
+
+    @media screen and (max-width: 749px) {
+      right: var(--margin-md);
+    }
+  }
+
+  .search-page-input__field .search__reset-button[hidden] {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .search-page-input__field .search__reset-button:not([hidden]) {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .search-page-input__field .search__reset-button-icon {
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+    transition: transform var(--animation-speed) var(--animation-easing);
+  }
+
+  .search-page-input__field .search__reset-button:active .search__reset-button-icon {
+    transform: scale(0.9);
+  }
+
+  .search-page-input__field .search__reset-button-icon svg {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  .search-page-input__field .search__reset-button-text {
+    display: none;
+  }
+
+  .search-page-input__row {
+    width: 100%;
+  }
+
+  .search-page-input__row--with-submit {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--margin-md);
+  }
+
+  .search-page-input__row--with-submit .search-page-input__field {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    margin-block: 0;
+  }
+
+  .search-page-input__submit {
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .search-page-input__row--with-submit {
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+
+    .search-page-input__row--with-submit .search-page-input__field {
+      width: 100%;
+      max-width: 100%;
+      flex: 1 1 auto;
+    }
+
+    .search-page-input__row--with-submit .search-page-input__submit {
+      width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.search_input",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "t:settings.custom_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50,
+      "visible_if": "{{ block.settings.width == \"custom\" }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "t:settings.inherit_color_scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_submit_button",
+      "label": "t:settings.show_submit_button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "submit_button_label",
+      "label": "t:settings.submit_button_label",
+      "default": "Search",
+      "visible_if": "{{ block.settings.show_submit_button }}"
+    },
+    {
+      "type": "range",
+      "id": "submit_button_border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8,
+      "visible_if": "{{ block.settings.show_submit_button }}"
+    }
+  ],
+  "presets": []
+}
+{% endschema %}

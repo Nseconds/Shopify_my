@@ -1,0 +1,86 @@
+{%- liquid
+  if product == blank
+    assign product = closest.product
+  endif
+  if product == blank and template.name == 'index'
+    assign product = collections.all.products.first
+  endif
+-%}
+{%- capture api_base -%}{%- render 'forge-reviews-api-base' -%}{%- endcapture -%}
+{%- assign show_sample = false -%}
+{%- if section.settings.show_sample_data and request.design_mode -%}
+  {%- assign show_sample = true -%}
+{%- endif -%}
+
+<section class="forge-reviews-section color-{{ section.settings.color_scheme }}">
+  {% if section.settings.heading != blank %}
+    <h2>{{ section.settings.heading }}</h2>
+  {% else %}
+    <h2>{{ 'reviews.section_heading' | t }}</h2>
+  {% endif %}
+
+  {%- if product.featured_image -%}
+    {%- assign forge_review_product_image = product.featured_image | image_url: width: 280 -%}
+  {%- endif -%}
+
+  <forge-reviews
+    data-mode="box"
+    data-api-base="{{ api_base }}"
+    data-shop="{{ shop.permanent_domain }}"
+    data-product="{{ product.id }}"
+    data-product-image="{{ forge_review_product_image }}"
+    data-product-title="{{ product.title | escape }}"
+    data-per-page="{{ section.settings.per_page }}"
+    data-stars-color="{{ section.settings.stars_color }}"
+    data-alignment="{{ section.settings.alignment | default: 'center' }}"
+    data-show-pagination="{% if section.settings.show_pagination == false %}0{% else %}1{% endif %}"
+    {% if show_sample %}data-sample="1"{% endif %}
+  >
+    {% render 'forge-reviews-i18n' %}
+  </forge-reviews>
+</section>
+
+<script src="{{ 'forge-reviews.js' | asset_url }}" defer></script>
+{{ 'forge-reviews.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+{
+  "name": "t:sections.forge_reviews.name",
+  "tag": "section",
+  "class": "forge-reviews-section-wrapper",
+  "enabled_on": { "templates": ["product", "index"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "t:sections.forge_reviews.settings.heading", "default": "Customer reviews" },
+    { "type": "range", "id": "per_page", "label": "Reviews per page", "min": 5, "max": 20, "step": 1, "default": 10 },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show pagination",
+      "info": "Lets shoppers page through older reviews. Hide to only ever show the most recent page.",
+      "default": true
+    },
+    { "type": "color", "id": "stars_color", "label": "Stars color", "default": "#f5a623" },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Header alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:settings.color_scheme", "default": "scheme-1" },
+    { "type": "header", "content": "Preview" },
+    {
+      "type": "checkbox",
+      "id": "show_sample_data",
+      "label": "Show sample data",
+      "info": "Displays example reviews in the theme editor only. Real shoppers never see this.",
+      "default": false
+    }
+  ],
+  "presets": [{ "name": "t:sections.forge_reviews.name" }]
+}
+{% endschema %}

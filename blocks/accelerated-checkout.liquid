@@ -1,0 +1,322 @@
+
+
+{%- doc -%}
+  This block is used to display the accelerated checkout button.
+  Intended for product-form.liquid block.
+
+  @param {string} can_add_to_cart - Whether the product can be added to the cart
+  @param form_obj - The form object
+
+  @example
+  {% content_for 'block', type: 'accelerated-checkout', id: 'accelerated-checkout', can_add_to_cart: can_add_to_cart, form_obj: form %}
+{%- enddoc -%}
+
+{% liquid
+  assign product = closest.product
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+
+  assign needs_color_overrides = false
+  if block.settings.button_background_color != blank or block.settings.button_text_color != blank
+    assign needs_color_overrides = true
+  endif
+
+  assign needs_wiggle_styles = false
+  if block.settings.enable_hover_wiggle or block.settings.auto_wiggle_interval != 'off'
+    assign needs_wiggle_styles = true
+  endif
+
+  assign needs_wiggle_js = false
+  if block.settings.auto_wiggle_interval != 'off'
+    assign needs_wiggle_js = true
+  endif
+
+  assign needs_scoped_wrapper = false
+  if needs_wiggle_styles or needs_color_overrides
+    assign needs_scoped_wrapper = true
+  endif
+
+  assign has_label_override = false
+  if block.settings.button_label != blank
+    assign has_label_override = true
+  endif
+%}
+
+{% if needs_scoped_wrapper %}
+  <style>
+    {% if needs_color_overrides %}
+      [data-block-id="{{ block.id }}"] .shopify-payment-button__button--unbranded {
+        {% if block.settings.button_background_color != blank %}
+          background: {{ block.settings.button_background_color }} !important;
+        {% endif %}
+        {% if block.settings.button_text_color != blank %}
+          color: {{ block.settings.button_text_color }} !important;
+        {% endif %}
+      }
+    {% endif %}
+
+    {% if needs_wiggle_styles %}
+      {% assign wiggle_intensity = block.settings.wiggle_intensity | default: 'normal' %}
+
+      {% if wiggle_intensity == 'subtle' %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-0.25deg) translateY(-1.5px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(0.25deg) translateY(-1.5px); }
+        }
+      {% elsif wiggle_intensity == 'pronounced' %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-1.5deg) translateY(-3px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(1.5deg) translateY(-3px); }
+        }
+      {% else %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-0.5deg) translateY(-2px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(0.5deg) translateY(-2px); }
+        }
+      {% endif %}
+
+      {% if block.settings.enable_hover_wiggle %}
+        [data-block-id="{{ block.id }}"].accelerated-checkout-block-wrapper--wiggle .shopify-payment-button__button:hover:not(:disabled) {
+          animation: gentle-wiggle-atc-{{ block.id }} 0.6s ease-in-out;
+        }
+      {% endif %}
+
+      [data-block-id="{{ block.id }}"] .shopify-payment-button__button.auto-wiggle:not(:disabled) {
+        animation: gentle-wiggle-atc-{{ block.id }} 0.6s ease-in-out;
+      }
+    {% endif %}
+  </style>
+{% endif %}
+
+<div
+  class="accelerated-checkout-block"
+  ref="acceleratedCheckoutButtonContainer"
+  {{ block.shopify_attributes }}
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
+  {% endif %}
+  {% unless can_add_to_cart %}
+    hidden
+  {% endunless %}
+>
+  {% if needs_scoped_wrapper %}
+    <div
+      class="accelerated-checkout-block-wrapper{% if block.settings.enable_hover_wiggle %} accelerated-checkout-block-wrapper--wiggle{% endif %}"
+      data-block-id="{{ block.id }}"
+    >
+      {% if needs_wiggle_js %}
+        <accelerated-checkout-block-wiggle data-auto-wiggle-interval="{{ block.settings.auto_wiggle_interval }}">
+          {% if product != blank and form_obj != blank %}
+            {% if has_label_override %}
+              <accelerated-checkout-block-label data-button-label="{{ block.settings.button_label }}">
+                {{ form_obj | payment_button }}
+              </accelerated-checkout-block-label>
+            {% else %}
+              {{ form_obj | payment_button }}
+            {% endif %}
+          {% endif %}
+        </accelerated-checkout-block-wiggle>
+      {% else %}
+        {% if product != blank and form_obj != blank %}
+          {% if has_label_override %}
+            <accelerated-checkout-block-label data-button-label="{{ block.settings.button_label }}">
+              {{ form_obj | payment_button }}
+            </accelerated-checkout-block-label>
+          {% else %}
+            {{ form_obj | payment_button }}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
+  {% else %}
+    {% if product != blank and form_obj != blank %}
+      {% if has_label_override %}
+        <accelerated-checkout-block-label data-button-label="{{ block.settings.button_label }}">
+          {{ form_obj | payment_button }}
+        </accelerated-checkout-block-label>
+      {% else %}
+        {{ form_obj | payment_button }}
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .accelerated-checkout-block[data-shopify-visual-preview] {
+    width: 300px;
+  }
+
+  more-payment-options-link {
+    font-size: smaller;
+  }
+
+  more-payment-options-link a {
+    --button-color: var(--color-primary);
+  }
+
+  more-payment-options-link a:hover {
+    --button-color: var(--color-primary-hover);
+  }
+
+  .shopify-payment-button__more-options[aria-hidden='true'] {
+    display: none;
+  }
+
+  .accelerated-checkout-block-wrapper,
+  accelerated-checkout-block-wiggle,
+  accelerated-checkout-block-label {
+    display: block;
+    width: 100%;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class AcceleratedCheckoutBlockWiggle extends HTMLElement {
+    connectedCallback() {
+      setTimeout(() => {
+        this.setupAutoWiggle();
+      }, 0);
+    }
+
+    disconnectedCallback() {
+      if (this.wiggleInterval) {
+        clearInterval(this.wiggleInterval);
+      }
+    }
+
+    setupAutoWiggle() {
+      const autoWiggleInterval = this.getAttribute('data-auto-wiggle-interval');
+
+      if (!autoWiggleInterval || autoWiggleInterval === 'off') return;
+
+      const intervalSeconds = parseInt(autoWiggleInterval, 10);
+      if (Number.isNaN(intervalSeconds)) return;
+
+      this.wiggleInterval = setInterval(() => {
+        const button = this.querySelector('.shopify-payment-button__button');
+        if (!button || button.hasAttribute('disabled') || button.disabled) return;
+
+        // Force reflow to ensure animation triggers reliably
+        button.classList.remove('auto-wiggle');
+        void button.offsetWidth;
+        button.classList.add('auto-wiggle');
+
+        setTimeout(() => {
+          if (button) button.classList.remove('auto-wiggle');
+        }, 600);
+      }, intervalSeconds * 1000);
+    }
+  }
+
+  if (!customElements.get('accelerated-checkout-block-wiggle')) {
+    customElements.define('accelerated-checkout-block-wiggle', AcceleratedCheckoutBlockWiggle);
+  }
+
+  class AcceleratedCheckoutBlockLabel extends HTMLElement {
+    connectedCallback() {
+      const label = this.getAttribute('data-button-label');
+      if (!label) return;
+
+      const applyLabel = () => {
+        const button = this.querySelector('.shopify-payment-button__button--unbranded');
+        if (!button) return false;
+        button.textContent = label;
+        return true;
+      };
+
+      if (!applyLabel()) {
+        const observer = new MutationObserver(() => {
+          if (applyLabel()) observer.disconnect();
+        });
+        observer.observe(this, { childList: true, subtree: true });
+      }
+    }
+  }
+
+  if (!customElements.get('accelerated-checkout-block-label')) {
+    customElements.define('accelerated-checkout-block-label', AcceleratedCheckoutBlockLabel);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:names.accelerated_checkout",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button text",
+      "info": "Override the default button text. Only applies to the unbranded 'Buy it now' button - branded buttons (Apple Pay, etc.) cannot be relabelled. Leave blank to use the default."
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Background color",
+      "info": "Only applies to unbranded payment buttons. Branded buttons (Apple Pay, etc.) cannot be restyled."
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "info": "Only applies to unbranded payment buttons. Branded buttons (Apple Pay, etc.) cannot be restyled."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_wiggle",
+      "label": "Enable hover wiggle animation",
+      "default": false,
+      "info": "Adds a gentle wiggle effect when hovering over the button"
+    },
+    {
+      "type": "select",
+      "id": "auto_wiggle_interval",
+      "label": "Auto wiggle interval",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "5",
+          "label": "Every 5 seconds"
+        },
+        {
+          "value": "10",
+          "label": "Every 10 seconds"
+        }
+      ],
+      "default": "off",
+      "info": "Automatically wiggle the button at regular intervals to grab attention"
+    },
+    {
+      "type": "select",
+      "id": "wiggle_intensity",
+      "label": "Wiggle intensity",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle (Less movement)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "pronounced",
+          "label": "Pronounced (More movement)"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how much the button moves during wiggle animation"
+    }
+  ]
+}
+{% endschema %}

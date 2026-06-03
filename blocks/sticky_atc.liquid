@@ -1,0 +1,386 @@
+{%- render 'sticky-atc', block: block, product: closest.product, section: section -%}
+
+<link rel="stylesheet" href="{{ 'component-sticky-atc.css' | asset_url }}" media="print" onload="this.media='all'" defer>
+
+{% schema %}
+{
+  "name": "Sticky Add to Cart",
+  "settings": [
+    {
+      "type": "select",
+      "id": "button_action",
+      "label": "Button action",
+      "options": [
+        {
+          "value": "add_to_cart",
+          "label": "Add to Cart"
+        },
+        {
+          "value": "buy_now",
+          "label": "BUY NOW"
+        }
+      ],
+      "default": "add_to_cart"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_label",
+      "label": "Button text",
+      "info": "Only used if button action is 'Add to Cart'. Leave blank to use the theme's translated default."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "buy_now_label",
+      "label": "Buy Now button text",
+      "info": "Only used if button action is 'Buy Now'. Leave blank to use the theme's translated default."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_badge",
+      "default": true,
+      "label": "Show discount badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_selector",
+      "default": true,
+      "label": "Show variant selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "default": true,
+      "label": "Show price"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_at_price",
+      "default": true,
+      "label": "Show compare at price"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_badge",
+      "default": true,
+      "label": "Show quantity badge on sticky image"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "select",
+      "id": "trigger_mode",
+      "label": "When to show sticky bar",
+      "options": [
+        {
+          "value": "button_position",
+          "label": "When button scrolls off screen"
+        },
+        {
+          "value": "scroll_percentage",
+          "label": "After scrolling % of page"
+        }
+      ],
+      "default": "button_position",
+      "info": "Choose how the sticky bar appears"
+    },
+    {
+      "type": "range",
+      "id": "scroll_offset",
+      "label": "Appear before scroll offset",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 300,
+      "info": "Used when trigger mode is 'When button scrolls off screen'. Sticky bar appears this many pixels before the button scrolls off."
+    },
+    {
+      "type": "range",
+      "id": "scroll_percentage",
+      "label": "Page scroll percentage",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "info": "Used when trigger mode is 'After scrolling % of page'. Sticky bar appears after scrolling this percentage of the page height."
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Price font size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color"
+    },
+    {
+      "type": "range",
+      "id": "comp_price_size",
+      "label": "Compare price font size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare price color"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Product title font size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product title color"
+    },
+    {
+      "type": "range",
+      "id": "option_size",
+      "label": "Option label font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "product_option_color",
+      "label": "Option label color"
+    },
+    {
+      "type": "range",
+      "id": "variant_selector_border_radius",
+      "label": "Variant selector border radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Color scheme"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_scheme_colors",
+      "label": "Use theme color scheme",
+      "default": true,
+      "info": "When enabled, colors adapt automatically to the current color scheme."
+    },
+    {
+      "type": "header",
+      "content": "Container"
+    },
+    {
+      "type": "select",
+      "id": "container_alignment",
+      "label": "Position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "container_background_color",
+      "label": "Container background color"
+    },
+    {
+      "type": "range",
+      "id": "container_border_radius",
+      "label": "Container border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "container_shadow",
+      "label": "Show shadow",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "select",
+      "id": "button_size",
+      "label": "Button size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background color"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_wiggle",
+      "label": "Enable hover wiggle animation",
+      "default": false,
+      "info": "Adds a gentle wiggle effect when hovering over the button"
+    },
+    {
+      "type": "select",
+      "id": "auto_wiggle_interval",
+      "label": "Auto wiggle interval",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "5",
+          "label": "Every 5 seconds"
+        },
+        {
+          "value": "10",
+          "label": "Every 10 seconds"
+        }
+      ],
+      "default": "off",
+      "info": "Automatically wiggle the button at regular intervals to grab attention"
+    },
+    {
+      "type": "select",
+      "id": "wiggle_intensity",
+      "label": "Wiggle intensity",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle (Less movement)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "pronounced",
+          "label": "Pronounced (More movement)"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how much the button moves during wiggle animation"
+    },
+    {
+      "type": "header",
+      "content": "Discount Badge"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge background color"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color"
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "label": "Badge border radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Badge font size",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_padding",
+      "label": "Badge padding",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    }
+  ]
+}
+{% endschema %}
+

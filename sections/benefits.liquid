@@ -1,0 +1,386 @@
+{%- liquid
+  assign title = section.settings.title
+  if section.settings.use_custom_colors
+    assign ben_icon    = section.settings.icon_color
+    assign ben_card_bg = section.settings.card_bg_color
+    assign ben_accent  = section.settings.accent_color
+    assign ben_hl_bg   = section.settings.highlight_bg_color
+    assign ben_text    = 'var(--color-foreground)'
+  elsif settings.style_mode == 'gradient'
+    assign ben_card_bg = 'var(--color-card-gradient)'
+    assign ben_icon    = 'var(--color-gradient-text)'
+    assign ben_accent  = 'var(--color-gradient-1)'
+    assign ben_hl_bg   = 'var(--color-card-gradient)'
+    assign ben_text    = 'var(--color-gradient-text)'
+  else
+    assign ben_icon    = section.settings.color_scheme.settings.primary
+    assign ben_card_bg = 'var(--color-card-background)'
+    assign ben_accent  = section.settings.color_scheme.settings.primary
+    assign ben_hl_bg   = 'var(--color-card-background)'
+    assign ben_text    = 'var(--color-foreground)'
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --benefits-icon-color: {{ ben_icon }};
+    --benefits-card-bg: {{ ben_card_bg }};
+    --benefits-card-text: {{ ben_text }};
+    --benefits-border-radius: var(--style-border-radius-cards);
+    --benefits-accent-color: {{ ben_accent }};
+    --benefits-highlight-bg: {{ ben_hl_bg }};
+  }
+  #shopify-section-{{ section.id }} .benefits__card-inner {
+    color: var(--benefits-card-text);
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="benefits section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="benefits__container container" style="{% unless section.settings.full_width %}max-width: {{ section.settings.section_width }}px;{% endunless %}">
+
+    {%- if title != blank -%}
+      <div class="benefits__title rte">{{ title }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="benefits__grid">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'benefit' -%}
+              <div class="benefits__card" {{ block.shopify_attributes }}>
+                <div class="benefits__card-inner">
+                  {%- if block.settings.icon != blank -%}
+                    <div class="benefits__icon">
+                      {{ block.settings.icon }}
+                    </div>
+                  {%- endif -%}
+
+                  <div class="benefits__content">
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="benefits__card-title">{{ block.settings.title }}</h3>
+                    {%- endif -%}
+
+                    {%- if block.settings.description != blank -%}
+                      <div class="benefits__description rte">{{ block.settings.description }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .benefits {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .benefits__container {
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .benefits__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 48px 0;
+    line-height: 1.2;
+  }
+
+  .benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .benefits__card {
+    position: relative;
+  }
+
+  .benefits__card-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 32px;
+    background: var(--benefits-card-bg);
+    border-radius: var(--benefits-border-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .benefits__card:hover .benefits__card-inner {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .benefits__icon {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .benefits__icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: var(--benefits-icon-color);
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .benefits__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .benefits__card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .benefits__description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .benefits__description p {
+    margin: 0;
+  }
+
+  @media (max-width: 989px) {
+    .benefits__grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (min-width: 990px) and (max-width: 1199px) {
+    .benefits__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .benefits__title {
+      font-size: 2rem;
+      margin-bottom: 32px;
+    }
+
+    .benefits__card-inner {
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .benefits__icon {
+      width: 56px;
+      height: 56px;
+    }
+
+    .benefits__card-title {
+      font-size: 1.125rem;
+    }
+
+    .benefits__description {
+      font-size: 0.875rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Benefits",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "t:settings.title"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false,
+      "info": "Stretch section to full browser width"
+    },
+    {
+      "type": "range",
+      "id": "section_width",
+      "label": "Section width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1100,
+      "info": "Maximum width of the section container (ignored when full width is on)"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#000000",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#f6f6f0",
+      "info": "Use rgba for transparency",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "highlight_bg_color",
+      "label": "Highlight background",
+      "default": "#c4a69d14",
+      "info": "Background for highlight cards",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon SVG",
+          "default": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><circle cx='12' cy='12' r='10'></circle></svg>"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings.title",
+          "default": "Benefit Title"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Add your benefit description here.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits",
+      "category": "t:categories.product",
+      "settings": {
+        "title": "",
+        "full_width": false,
+        "section_width": 1100,
+        "icon_color": "#000000",
+        "accent_color": "#ffffff",
+        "card_bg_color": "#f6f6f0",
+        "highlight_bg_color": "#c4a69d14",
+        "color_scheme": "scheme-1",
+        "padding_top": 52,
+        "padding_bottom": 52
+      },
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewbox=\"0 0 64 64\" fill=\"none\">\n  <circle cx=\"32\" cy=\"32\" r=\"22\" stroke=\"currentColor\" stroke-width=\"2\"></circle>\n  <!-- center leaf -->\n  <path d=\"M32 44\n           C32 39 32 28 32 22\n           C26 24 22 29 22 35\n           C22 40 26 44 32 44Z\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  <!-- left leaf -->\n  <path d=\"M30 44\n           C25 44 18 41 18 34\n           C18 28 22 24 28 24\n           C30 28 31 36 30 44Z\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  <!-- right leaf -->\n  <path d=\"M34 44\n           C39 44 46 41 46 34\n           C46 28 42 24 36 24\n           C34 28 33 36 34 44Z\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n</svg>",
+            "title": "NATURES BEST",
+            "description": "<p>Each product is thoughtfully crafted with organic botanicals, vitamins, and minerals that work with your skin.</p>"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewbox=\"0 0 64 64\" fill=\"none\">\n  <circle cx=\"32\" cy=\"32\" r=\"22\" stroke=\"currentColor\" stroke-width=\"2\"></circle>\n  <!-- middle divider -->\n  <path d=\"M14 32H50\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"></path>\n  <!-- outer arc -->\n  <path d=\"M18 32\n           A14 14 0 0 1 46 32\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  <!-- inner arc -->\n  <path d=\"M24 32\n           A8 8 0 0 1 40 32\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n</svg>",
+            "title": "ECO-FRIENDLY",
+            "description": "<p>Get your order fast with priority handling and expedited shipping.</p>"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewbox=\"0 0 64 64\" fill=\"none\">\n  <circle cx=\"32\" cy=\"32\" r=\"22\" stroke=\"currentColor\" stroke-width=\"2\"></circle>\n  <circle cx=\"32\" cy=\"32\" r=\"10\" stroke=\"currentColor\" stroke-width=\"2\"></circle>\n  <path d=\"M32 10V54\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"></path>\n  <path d=\"M10 32H54\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"></path>\n</svg>",
+            "title": "FOR ALL SKIN TYPES",
+            "description": "<p>Whether your skin is dry, oily, sensitive, or combinator, our diverse range of products caters.</p>"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewbox=\"0 0 64 64\" fill=\"none\">\n  <circle cx=\"32\" cy=\"32\" r=\"22\" stroke=\"currentColor\" stroke-width=\"2\"></circle>\n  <path d=\"M32 45\n           C26 40 20 35 20 29\n           C20 25.5 22.6 23 26 23\n           C28.3 23 30.3 24.1 32 26\n           C33.7 24.1 35.7 23 38 23\n           C41.4 23 44 25.5 44 29\n           C44 35 38 40 32 45Z\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n</svg>",
+            "title": "CRUELTY-FREE",
+            "description": "<p>Our products are never tested on animals, so you can feel good about your choices </p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

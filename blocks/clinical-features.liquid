@@ -1,0 +1,405 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{%- liquid
+  if block.settings.use_custom_colors
+    assign cf_bg   = block.settings.background_color
+    assign cf_icon = block.settings.icon_color
+    assign cf_text = block.settings.text_color
+  elsif settings.style_mode == 'gradient'
+    assign cf_bg   = 'var(--color-background)'
+    assign cf_icon = 'var(--color-gradient-1)'
+    assign cf_text = 'var(--color-foreground)'
+  else
+    assign cf_bg   = 'var(--color-background)'
+    assign cf_icon = 'var(--color-foreground)'
+    assign cf_text = 'var(--color-foreground)'
+  endif
+-%}
+
+{% style %}
+  .ai-clinical-features-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 0;
+    background-color: {{ cf_bg }};
+  }
+
+  .ai-clinical-features__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.item_spacing }}px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-clinical-features__item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: {{ block.settings.icon_text_spacing }}px;
+  }
+
+  .ai-clinical-features__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ai-clinical-features__icon-{{ ai_gen_id }} {
+    color: {{ cf_icon }};
+  }
+
+  .ai-clinical-features__icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: {{ block.settings.icon_stroke_width }};
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ai-clinical-features__headline-{{ ai_gen_id }} {
+    font-family: {{ block.settings.headline_font.family }}, {{ block.settings.headline_font.fallback_families }};
+    font-weight: {{ block.settings.headline_font.weight }};
+    font-size: {{ block.settings.headline_size }}px;
+    line-height: 1.3;
+    color: {{ cf_text }};
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-clinical-features__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_item_spacing }}px;
+    }
+
+    .ai-clinical-features__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.mobile_icon_size }}px;
+      height: {{ block.settings.mobile_icon_size }}px;
+    }
+
+    .ai-clinical-features__headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_headline_size }}px;
+    }
+  }
+{% endstyle %}
+
+<clinical-features-{{ ai_gen_id }} class="ai-clinical-features-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-clinical-features__container-{{ ai_gen_id }}">
+    {% for i in (1..3) %}
+      {% liquid
+        assign headline_key = 'feature_' | append: i | append: '_headline'
+        assign icon_key = 'feature_' | append: i | append: '_icon'
+        assign headline = block.settings[headline_key]
+        assign icon = block.settings[icon_key]
+      %}
+
+      <div class="ai-clinical-features__item-{{ ai_gen_id }}">
+        <div class="ai-clinical-features__icon-{{ ai_gen_id }}">
+          {% if icon == 'shield' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          {% elsif icon == 'sparkles' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 3v18M3 12h18M6.34 6.34l11.32 11.32M17.66 6.34L6.34 17.66"/>
+            </svg>
+          {% elsif icon == 'heart' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          {% elsif icon == 'droplet' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          {% elsif icon == 'leaf' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+          {% elsif icon == 'zap' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          {% elsif icon == 'star' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          {% elsif icon == 'check_circle' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <path d="M22 4L12 14.01l-3-3"/>
+            </svg>
+          {% elsif icon == 'sun' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+          {% endif %}
+        </div>
+
+        {% if headline != blank %}
+          <h3 class="ai-clinical-features__headline-{{ ai_gen_id }}">{{ headline }}</h3>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</clinical-features-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Clinical feature row",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Feature 1"
+    },
+    {
+      "type": "select",
+      "id": "feature_1_icon",
+      "label": "Icon",
+      "options": [
+        { "value": "shield", "label": "Shield" },
+        { "value": "sparkles", "label": "Sparkles" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "droplet", "label": "Droplet" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "zap", "label": "Zap" },
+        { "value": "star", "label": "Star" },
+        { "value": "check_circle", "label": "Check circle" },
+        { "value": "sun", "label": "Sun" }
+      ],
+      "default": "shield"
+    },
+    {
+      "type": "text",
+      "id": "feature_1_headline",
+      "label": "Headline"
+    },
+    {
+      "type": "header",
+      "content": "Feature 2"
+    },
+    {
+      "type": "select",
+      "id": "feature_2_icon",
+      "label": "Icon",
+      "options": [
+        { "value": "shield", "label": "Shield" },
+        { "value": "sparkles", "label": "Sparkles" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "droplet", "label": "Droplet" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "zap", "label": "Zap" },
+        { "value": "star", "label": "Star" },
+        { "value": "check_circle", "label": "Check circle" },
+        { "value": "sun", "label": "Sun" }
+      ],
+      "default": "sparkles"
+    },
+    {
+      "type": "text",
+      "id": "feature_2_headline",
+      "label": "Headline"
+    },
+    {
+      "type": "header",
+      "content": "Feature 3"
+    },
+    {
+      "type": "select",
+      "id": "feature_3_icon",
+      "label": "Icon",
+      "options": [
+        { "value": "shield", "label": "Shield" },
+        { "value": "sparkles", "label": "Sparkles" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "droplet", "label": "Droplet" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "zap", "label": "Zap" },
+        { "value": "star", "label": "Star" },
+        { "value": "check_circle", "label": "Check circle" },
+        { "value": "sun", "label": "Sun" }
+      ],
+      "default": "heart"
+    },
+    {
+      "type": "text",
+      "id": "feature_3_headline",
+      "label": "Headline"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Space between items",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_spacing",
+      "label": "Mobile space between items",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "icon_text_spacing",
+      "label": "Icon to text spacing",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f5f1",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#2c2c2c",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2c2c2c",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 24,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_size",
+      "label": "Mobile icon size",
+      "min": 24,
+      "max": 56,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "icon_stroke_width",
+      "label": "Icon stroke width",
+      "min": 1,
+      "max": 2,
+      "step": 0.5,
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "headline_font",
+      "label": "Headline font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_headline_size",
+      "label": "Mobile headline size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    }
+  ],
+  "presets": [
+    {
+      "name": "Clinical feature row"
+    }
+  ]
+}
+{% endschema %}

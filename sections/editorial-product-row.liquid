@@ -1,0 +1,838 @@
+{% comment %}
+  Editorial product strip.
+  Desktop: carousel (scroll-snap) by default - N visible per "page", overflow scrolls. Optional "row" mode = equal-width strip, no scroll.
+  Mobile: carousel by default; optional 2-column grid (no carousel).
+  Heading + solid Shop Now button. Minimal title + price under each image.
+{% endcomment %}
+
+{% liquid
+  assign max_products = section.settings.max_products | default: 4
+
+  assign desktop_layout = section.settings.desktop_layout | default: 'carousel'
+  if desktop_layout != 'row'
+    assign desktop_layout = 'carousel'
+  endif
+
+  assign desktop_visible = section.settings.desktop_visible_count | default: 4
+  if desktop_visible < 2
+    assign desktop_visible = 2
+  endif
+  if desktop_visible > 6
+    assign desktop_visible = 6
+  endif
+
+  assign mobile_layout = section.settings.mobile_layout | default: 'carousel'
+  if mobile_layout != 'grid'
+    assign mobile_layout = 'carousel'
+  endif
+
+  assign mobile_slide_max = section.settings.mobile_slide_max_width | default: 320
+  assign gap = section.settings.gap | default: 2
+
+  assign collection = section.settings.collection
+  if collection != blank
+    assign products_to_show = collection.products
+  else
+    assign products_to_show = collections['all'].products
+  endif
+
+  if section.settings.heading != blank
+    assign epr_heading = section.settings.heading
+  elsif collection != blank
+    assign epr_heading = collection.title | upcase
+  else
+    assign epr_heading = 'New Arrivals'
+  endif
+
+  if section.settings.view_all_text != blank
+    assign epr_view_all = section.settings.view_all_text
+  elsif collection != blank
+    assign epr_view_all = 'Shop ' | append: collection.title
+  else
+    assign epr_view_all = 'Shop Now'
+  endif
+
+  assign desktop_card_sizes = '22vw'
+  case desktop_visible
+    when 2
+      assign desktop_card_sizes = '46vw'
+    when 3
+      assign desktop_card_sizes = '31vw'
+    when 4
+      assign desktop_card_sizes = '23vw'
+    when 5
+      assign desktop_card_sizes = '19vw'
+    when 6
+      assign desktop_card_sizes = '15vw'
+  endcase
+%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --epr-gap: {{ gap }}px;
+    --epr-mobile-slide-max: {{ mobile_slide_max }}px;
+    --epr-desktop-visible: {{ desktop_visible }};
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="editorial-product-row section spacing-style color-{{ section.settings.color_scheme }}"
+  id="EditorialProductRow-{{ section.id }}"
+  data-desktop-layout="{{ desktop_layout }}"
+  data-mobile-layout="{{ mobile_layout }}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="editorial-product-row__header">
+    <h2 class="editorial-product-row__heading" id="EditorialProductRowHeading-{{ section.id }}">
+      {{ epr_heading }}
+    </h2>
+    {% if section.settings.show_view_all %}
+      <a
+        href="{{ collection.url | default: '/collections/all' }}"
+        class="editorial-product-row__shop-now"
+      >
+        {{ epr_view_all | upcase }}
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="editorial-product-row__track-bleed">
+    <div
+      class="editorial-product-row__track"
+      id="EditorialProductRowTrack-{{ section.id }}"
+      role="region"
+      aria-labelledby="EditorialProductRowHeading-{{ section.id }}"
+      tabindex="0"
+    >
+      {% if products_to_show.size > 0 %}
+        {% for product in products_to_show limit: max_products %}
+          <article class="epr-card" aria-labelledby="epr-title-{{ section.id }}-{{ forloop.index }}">
+            <a href="{{ product.url }}" class="epr-card__link">
+              <div class="epr-card__image-wrap">
+                {% if product.featured_image %}
+                  {% assign epr_img_alt = product.featured_image.alt | default: product.title %}
+                  {%- capture sizes -%}
+                    (min-width: 750px) {{ desktop_card_sizes }}, min(78vw, var(--epr-mobile-slide-max, 320px))
+                  {%- endcapture -%}
+                  {{
+                    product.featured_image
+                    | image_url: width: 1400
+                    | image_tag:
+                      class: 'epr-card__image',
+                      loading: 'lazy',
+                      widths: '400, 600, 800, 1000, 1400',
+                      sizes: sizes,
+                      alt: epr_img_alt
+                  }}
+                {% else %}
+                  <div class="epr-card__placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'epr-card__placeholder-svg' }}
+                  </div>
+                {% endif %}
+
+                {% if product.compare_at_price > product.price %}
+                  <span class="epr-card__badge epr-card__badge--sale" aria-hidden="true">SALE</span>
+                {% elsif product.tags contains 'new' or product.tags contains 'New' %}
+                  <span class="epr-card__badge epr-card__badge--new" aria-hidden="true">NEW</span>
+                {% endif %}
+              </div>
+
+              <div class="epr-card__info">
+                <p class="epr-card__name" id="epr-title-{{ section.id }}-{{ forloop.index }}">
+                  {{ product.title | upcase }}
+                </p>
+                <div class="epr-card__prices">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="epr-card__price epr-card__price--sale">{{ product.price | money }}</span>
+                    <span class="epr-card__price epr-card__price--compare">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="epr-card__price">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </article>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..max_products) %}
+          <article class="epr-card epr-card--placeholder" aria-hidden="true">
+            <div class="epr-card__link" role="presentation">
+              <div class="epr-card__image-wrap">
+                <div class="epr-card__placeholder">
+                  {{ 'product-1' | placeholder_svg_tag: 'epr-card__placeholder-svg' }}
+                </div>
+              </div>
+              <div class="epr-card__info">
+                <p class="epr-card__name">PRODUCT NAME</p>
+                <div class="epr-card__prices">
+                  <span class="epr-card__price">€35</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if desktop_layout == 'carousel' %}
+      <button
+        type="button"
+        class="editorial-product-row__nav editorial-product-row__nav--prev"
+        data-direction="prev"
+        aria-controls="EditorialProductRowTrack-{{ section.id }}"
+        aria-label="Scroll to previous products"
+        disabled
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="editorial-product-row__nav editorial-product-row__nav--next"
+        data-direction="next"
+        aria-controls="EditorialProductRowTrack-{{ section.id }}"
+        aria-label="Scroll to next products"
+        disabled
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+</div>
+
+{%- if desktop_layout == 'carousel' -%}
+  <script>
+    (function () {
+      var section = document.getElementById('EditorialProductRow-{{ section.id }}');
+      if (!section) return;
+      var track = section.querySelector('.editorial-product-row__track');
+      var prevBtn = section.querySelector('.editorial-product-row__nav--prev');
+      var nextBtn = section.querySelector('.editorial-product-row__nav--next');
+      if (!track) return;
+
+      function getStep() {
+        var card = track.querySelector('.epr-card');
+        if (!card) return Math.max(track.clientWidth * 0.8, 1);
+        var styles = window.getComputedStyle(track);
+        var gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+        return card.getBoundingClientRect().width + gap;
+      }
+
+      function updateState() {
+        var canScroll = track.scrollWidth - track.clientWidth > 1;
+        if (canScroll) {
+          section.setAttribute('data-scrollable', '');
+        } else {
+          section.removeAttribute('data-scrollable');
+        }
+        if (prevBtn && nextBtn) {
+          var atStart = track.scrollLeft <= 1;
+          var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+          prevBtn.disabled = !canScroll || atStart;
+          nextBtn.disabled = !canScroll || atEnd;
+        }
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          track.scrollBy({ left: getStep(), behavior: 'smooth' });
+        });
+      }
+
+      track.addEventListener('scroll', updateState, { passive: true });
+      window.addEventListener('resize', updateState);
+      updateState();
+    })();
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .editorial-product-row {
+    width: 100%;
+  }
+
+  .editorial-product-row__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-inline: clamp(16px, 4vw, 36px);
+    margin-bottom: 16px;
+  }
+
+  /* Match track full-bleed on desktop; inset keeps heading + CTA off the viewport edges. */
+  @media screen and (min-width: 750px) {
+    .editorial-product-row__header {
+      width: 100vw;
+      max-width: 100vw;
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      padding-inline: clamp(20px, 5vw, 56px);
+      margin-bottom: 24px;
+    }
+  }
+
+  .editorial-product-row__heading {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-foreground-heading);
+    line-height: 1.2;
+  }
+
+  /* Solid black slab CTA, white all-caps label (matches editorial reference). */
+  .editorial-product-row__shop-now {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.75rem 1.5rem;
+    min-height: 44px;
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: var(--font-body--family, inherit);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .editorial-product-row__shop-now:hover {
+    background: #1a1a1a;
+    color: #ffffff;
+    border-color: #1a1a1a;
+  }
+
+  .editorial-product-row__shop-now:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px #000000;
+  }
+
+  /* Track wrapper - always full-bleed on desktop. */
+  .editorial-product-row__track-bleed {
+    width: 100%;
+    position: relative;
+  }
+
+  @media screen and (min-width: 750px) {
+    .editorial-product-row__track-bleed {
+      width: 100vw;
+      max-width: 100vw;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+    }
+  }
+
+  .editorial-product-row__track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--epr-gap, 2px);
+    width: 100%;
+  }
+
+  /* ---------- Desktop ---------- */
+
+  @media screen and (min-width: 750px) {
+    /* Row mode: equal-width strip, no scroll */
+    [data-desktop-layout='row'] .editorial-product-row__track {
+      overflow-x: visible;
+      padding: 0;
+      scroll-snap-type: none;
+    }
+
+    [data-desktop-layout='row'] .epr-card {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: none;
+      scroll-snap-align: unset;
+    }
+
+    /* Carousel mode: scroll-snap, N slides per visible page */
+    [data-desktop-layout='carousel'] .editorial-product-row__track {
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      padding-block-end: 8px;
+      padding-inline: 0;
+      scroll-padding-inline: 0;
+    }
+
+    [data-desktop-layout='carousel'] .editorial-product-row__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    [data-desktop-layout='carousel'] .editorial-product-row__track:focus-visible {
+      outline: 2px solid var(--color-foreground);
+      outline-offset: 2px;
+    }
+
+    /* Slide width = (100% - total gaps) / visible count
+       Falls back gracefully if --epr-desktop-visible is unset. */
+    [data-desktop-layout='carousel'] .epr-card {
+      flex: 0 0 calc((100% - (var(--epr-desktop-visible, 4) - 1) * var(--epr-gap, 2px)) / var(--epr-desktop-visible, 4));
+      max-width: calc((100% - (var(--epr-desktop-visible, 4) - 1) * var(--epr-gap, 2px)) / var(--epr-desktop-visible, 4));
+      min-width: 0;
+      scroll-snap-align: start;
+    }
+  }
+
+  /* ---------- Carousel nav bubbles (hover-reveal, desktop only) ---------- */
+
+  .editorial-product-row__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+    color: #111111;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    font: inherit;
+  }
+
+  .editorial-product-row__nav:hover {
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  }
+
+  .editorial-product-row__nav:focus-visible {
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+  }
+
+  .editorial-product-row__nav svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
+
+  .editorial-product-row__nav--prev {
+    left: max(12px, var(--page-margin, 24px));
+  }
+
+  .editorial-product-row__nav--next {
+    right: max(12px, var(--page-margin, 24px));
+  }
+
+  .editorial-product-row__nav:disabled {
+    opacity: 0;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  @media screen and (min-width: 750px) and (hover: hover) {
+    [data-desktop-layout='carousel'][data-scrollable] .editorial-product-row__nav {
+      display: flex;
+    }
+
+    [data-desktop-layout='carousel'][data-scrollable] .editorial-product-row__track-bleed:hover .editorial-product-row__nav:not(:disabled),
+    [data-desktop-layout='carousel'][data-scrollable] .editorial-product-row__nav:not(:disabled):focus-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  /* ---------- Mobile ---------- */
+
+  @media screen and (max-width: 749px) {
+    [data-mobile-layout='carousel'] .editorial-product-row__track {
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--page-margin, 16px);
+      padding: 0 var(--page-margin, 16px) 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    [data-mobile-layout='carousel'] .editorial-product-row__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    [data-mobile-layout='carousel'] .editorial-product-row__track:focus-visible {
+      outline: 2px solid var(--color-foreground);
+      outline-offset: 2px;
+    }
+
+    [data-mobile-layout='carousel'] .epr-card {
+      flex: 0 0 min(78vw, var(--epr-mobile-slide-max, 320px));
+      max-width: min(78vw, var(--epr-mobile-slide-max, 320px));
+      scroll-snap-align: start;
+    }
+
+    [data-mobile-layout='grid'] .editorial-product-row__track {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 var(--page-margin, 16px) 8px;
+      overflow-x: visible;
+      scroll-snap-type: none;
+    }
+
+    [data-mobile-layout='grid'] .epr-card {
+      flex: none;
+      width: 100%;
+      min-width: 0;
+      scroll-snap-align: unset;
+    }
+
+    [data-mobile-layout='grid'] .editorial-product-row__track:focus {
+      outline: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-product-row__track {
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+    }
+  }
+
+  /* ---------- Card ---------- */
+
+  .epr-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .epr-card__image-wrap {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--color-card-background, #f5f5f5);
+    border-radius: var(--style-border-radius-cards, 0px);
+    margin-bottom: 8px;
+  }
+
+  .epr-card__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s ease;
+  }
+
+  .epr-card__link:hover .epr-card__image {
+    transform: scale(1.03);
+  }
+
+  .epr-card__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .epr-card__placeholder-svg {
+    width: 50%;
+    height: auto;
+    opacity: 0.2;
+  }
+
+  .epr-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 4px 9px;
+    text-transform: uppercase;
+    border-radius: 1px;
+    font-family: var(--font-body--family, inherit);
+  }
+
+  .epr-card__badge--sale {
+    background: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .epr-card__badge--new {
+    background: #ece8e1;
+    color: #111111;
+  }
+
+  .epr-card__info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 2px;
+  }
+
+  .epr-card__name {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+  }
+
+  .epr-card__prices {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .epr-card__price {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-foreground);
+    white-space: nowrap;
+  }
+
+  .epr-card__price--sale {
+    color: var(--color-error, #c0392b);
+    font-weight: 600;
+  }
+
+  .epr-card__price--compare {
+    text-decoration: line-through;
+    opacity: 0.45;
+    font-weight: 400;
+  }
+
+  @media screen and (min-width: 750px) {
+    .epr-card__info {
+      padding: 0 8px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    [data-mobile-layout='carousel'] .epr-card__info {
+      padding: 0 2px;
+    }
+
+    [data-mobile-layout='grid'] .epr-card__info {
+      padding: 0 4px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Product Row",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Leave empty to show all products"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Bestsellers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show Shop Now button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max products",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 4,
+      "info": "If more than the visible count, extras become carousel slides on desktop."
+    },
+    {
+      "type": "header",
+      "content": "Desktop layout"
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": "Desktop layout",
+      "options": [
+        { "value": "carousel", "label": "Carousel (scroll-snap)" },
+        { "value": "row", "label": "Static row (equal width, no scroll)" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "range",
+      "id": "desktop_visible_count",
+      "label": "Visible products per view",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "info": "How many products are visible at once on desktop."
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        { "value": "carousel", "label": "Carousel (horizontal scroll)" },
+        { "value": "grid", "label": "Grid (two columns, no carousel)" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "range",
+      "id": "mobile_slide_max_width",
+      "label": "Mobile carousel slide max width",
+      "min": 220,
+      "max": 360,
+      "step": 10,
+      "unit": "px",
+      "default": 320,
+      "info": "Caps slide width on large phones. Slide width is also ~78% of viewport."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between images",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Product Row",
+      "settings": {
+        "heading": "Bestsellers",
+        "show_view_all": true,
+        "view_all_text": "Shop Now",
+        "max_products": 4,
+        "desktop_layout": "carousel",
+        "desktop_visible_count": 4,
+        "mobile_layout": "carousel",
+        "mobile_slide_max_width": 320,
+        "gap": 2
+      }
+    }
+  ]
+}
+{% endschema %}

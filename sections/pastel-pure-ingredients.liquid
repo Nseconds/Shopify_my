@@ -1,0 +1,251 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign image = section.settings.image
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-pure-ingredients section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-pure-ingredients__inner">
+    <div class="pastel-pure-ingredients__content">
+      {% if heading != blank %}
+        <h2 class="pastel-pure-ingredients__heading">{{ heading }}</h2>
+      {% endif %}
+
+      {% if subheading != blank %}
+        <p class="pastel-pure-ingredients__subheading">{{ subheading }}</p>
+      {% endif %}
+
+      {% if benefit_blocks.size > 0 %}
+        <ul class="pastel-pure-ingredients__list">
+          {% for block in benefit_blocks %}
+            <li class="pastel-pure-ingredients__item" {{ block.shopify_attributes }}>
+              <span class="pastel-pure-ingredients__icon" aria-hidden="true">✓</span>
+              <div>
+                <strong class="pastel-pure-ingredients__title">{{ block.settings.title }}</strong>
+                {% if block.settings.text != blank %}
+                  <p class="pastel-pure-ingredients__text">{{ block.settings.text }}</p>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="pastel-pure-ingredients__media">
+      <div class="pastel-pure-ingredients__frame pastel-scalloped-frame">
+        {% if image != blank %}
+          {{ image | image_url: width: 1200 | image_tag: class: 'pastel-pure-ingredients__image', loading: 'lazy', alt: heading }}
+        {% else %}
+          <div class="pastel-pure-ingredients__placeholder">
+            {{ 'lifestyle-1' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+      <div data-forge-slot-id="image"{% if image == blank %} data-forge-slot-blank="true"{% endif %} style="position:absolute;inset:0;z-index:20;pointer-events:none;"></div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-pure-ingredients {
+    padding: 48px 24px;
+    background: var(--color-background);
+  }
+
+  .pastel-pure-ingredients__inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+    gap: 28px;
+    align-items: center;
+  }
+
+  .pastel-pure-ingredients__content {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .pastel-pure-ingredients__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+
+  .pastel-pure-ingredients__subheading {
+    font-family: var(--font-body--family);
+    font-size: 15px;
+    color: var(--color-foreground);
+    margin: 0 0 22px;
+    max-width: 36ch;
+    line-height: 1.6;
+  }
+
+  .pastel-pure-ingredients__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: left;
+  }
+
+  .pastel-pure-ingredients__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0;
+  }
+
+  .pastel-pure-ingredients__icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-primary-button-text);
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .pastel-pure-ingredients__title {
+    font-family: var(--font-body--family);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-foreground);
+    margin: 0 0 4px;
+    display: block;
+  }
+
+  .pastel-pure-ingredients__text {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    color: var(--color-foreground-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .pastel-pure-ingredients__media {
+    min-width: 0;
+    position: relative;
+  }
+
+  .pastel-pure-ingredients__frame {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-gradient-1, var(--color-background-secondary)) 30%, var(--color-background));
+    aspect-ratio: 1;
+  }
+
+  .pastel-pure-ingredients__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pastel-pure-ingredients__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pastel-pure-ingredients__placeholder svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.35;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pastel-pure-ingredients__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-pure-ingredients {
+      padding: 32px 16px;
+    }
+
+    .pastel-pure-ingredients__subheading {
+      max-width: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Pure Ingredients",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pure joy, pure ingredients"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "We use only the best for your body"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Lifestyle image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "No artificial flavors"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pure Ingredients",
+      "blocks": [
+        { "type": "benefit", "settings": { "title": "No artificial flavors", "text": "Only real ingredients you can taste" } },
+        { "type": "benefit", "settings": { "title": "No melatonin", "text": "Gentle botanicals for natural sleep" } },
+        { "type": "benefit", "settings": { "title": "Lab tested", "text": "Third-party verified for purity" } },
+        { "type": "benefit", "settings": { "title": "Vegan & gluten-free", "text": "Plant-based goodness for everyone" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

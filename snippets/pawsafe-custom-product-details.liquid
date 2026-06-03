@@ -1,0 +1,453 @@
+<div class="pawsafe-details-wrapper">
+  <!-- 1. Eyebrow Category -->
+  <div class="pawsafe-eyebrow-row">
+    <span class="pawsafe-eyebrow">Pet Safety Essentials</span>
+  </div>
+
+  <!-- 2. Main Title -->
+  <h1 class="pawsafe-main-title">Premium Car Safety Harness</h1>
+
+  <!-- Rating Stars -->
+  <div class="pawsafe-rating-row">
+    <span class="pawsafe-stars">★★★★★</span>
+    <span class="pawsafe-reviews-count">4.9 (999+ REVIEWS)</span>
+  </div>
+
+  <!-- 3. Pricing Display -->
+  <div class="pawsafe-price-row">
+    <span class="pawsafe-price-current">$24.99</span>
+    <span class="pawsafe-price-compare">$39.99</span>
+    <span class="pawsafe-save-badge">SAVE 38%</span>
+  </div>
+
+  <!-- Custom form component wrapper -->
+  <product-form-component
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+    data-product-url="{{ product.url }}"
+    data-quantity-default="1"
+  >
+    <div class="visually-hidden" ref="liveRegion" role="status"></div>
+    
+    {%- form 'product', product, id: 'pawsafe-product-form', class: 'pawsafe-form-element', data-type: 'add-to-cart-form' -%}
+      {% liquid
+        assign first_variant = product.selected_or_first_available_variant
+        assign default_variant = first_variant
+        for v in product.variants
+          assign title_down = v.title | downcase
+          if title_down contains 'army' or title_down contains 'green'
+            assign default_variant = v
+          endif
+        endfor
+      %}
+      
+      <input type="hidden" name="id" ref="variantId" id="pawsafe-variant-id" value="{{ default_variant.id }}">
+      <input type="hidden" name="properties[Size]" id="pawsafe-size-property" value="S (0-5kg)">
+      <input type="hidden" name="quantity" value="1">
+
+      <!-- Size pill selector -->
+      <div class="pawsafe-selector-group">
+        <label class="pawsafe-selector-label">Size</label>
+        <div class="pawsafe-pills-row">
+          <button type="button" class="pawsafe-size-pill selected" data-value="S (0-5kg)">S (0-5kg)</button>
+          <button type="button" class="pawsafe-size-pill" data-value="M (5-15kg)">M (5-15kg)</button>
+          <button type="button" class="pawsafe-size-pill" data-value="L (15-30kg)">L (15-30kg)</button>
+          <button type="button" class="pawsafe-size-pill" data-value="XL (30kg+)">XL (30kg+)</button>
+        </div>
+      </div>
+
+      <!-- Color pill selector -->
+      <div class="pawsafe-selector-group">
+        <label class="pawsafe-selector-label">Color — <span id="selected-color-text" class="pawsafe-selected-color-name">Army Green</span></label>
+        <div class="pawsafe-color-swatches-row">
+          <button type="button" class="pawsafe-swatch-btn selected" data-value="Army Green" title="Army Green" style="background-color: #3c4f39;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Black" title="Black" style="background-color: #000000;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Navy" title="Navy" style="background-color: #1a2b4c;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Green" title="Green" style="background-color: #2da15f;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Pink" title="Pink" style="background-color: #ffb6c1;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Red" title="Red" style="background-color: #e60000;"></button>
+          <button type="button" class="pawsafe-swatch-btn" data-value="Blue" title="Blue" style="background-color: #0066cc;"></button>
+        </div>
+      </div>
+
+      <!-- Editorial Benefit highlights -->
+      <div class="pawsafe-benefits-list">
+        <div class="pawsafe-benefit-item">
+          <span class="pawsafe-benefit-icon">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>Zinc alloy swivel snap — rust-proof</span>
+        </div>
+        <div class="pawsafe-benefit-item">
+          <span class="pawsafe-benefit-icon">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>Universal seat belt clip — fits all cars</span>
+        </div>
+        <div class="pawsafe-benefit-item">
+          <span class="pawsafe-benefit-icon">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>Adjustable for dogs & cats</span>
+        </div>
+        <div class="pawsafe-benefit-item">
+          <span class="pawsafe-benefit-icon">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>Reinforced nylon — crash tested</span>
+        </div>
+      </div>
+
+      <!-- Button Blocks -->
+      <div class="pawsafe-buttons-group">
+        <!-- Add to cart button wrapper -->
+        <add-to-cart-component ref="addToCartButtonContainer" data-add-to-cart-animation="false">
+          <button type="submit" ref="addToCartButton" class="pawsafe-btn-atc">
+            ADD TO CART — $24.99
+          </button>
+        </add-to-cart-component>
+        
+        <!-- Buy it now button -->
+        <button type="button" id="pawsafe-buy-now-btn" class="pawsafe-btn-bin">
+          BUY IT NOW
+        </button>
+      </div>
+    {%- endform -%}
+  </product-form-component>
+</div>
+
+<style>
+  .pawsafe-details-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    color: #2d2d2d;
+    background-color: transparent;
+    font-family: var(--font-body--family), sans-serif;
+  }
+
+  /* Eyebrow Label */
+  .pawsafe-eyebrow-row {
+    margin-bottom: -4px;
+  }
+  .pawsafe-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #c9a961;
+  }
+
+  /* Serif Title */
+  .pawsafe-main-title {
+    font-family: Georgia, serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1c1c1c !important;
+    margin: 0;
+  }
+
+  /* Rating Row */
+  .pawsafe-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: -6px;
+  }
+  .pawsafe-stars {
+    color: #c9a961;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+  .pawsafe-reviews-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #767676;
+    text-transform: uppercase;
+  }
+
+  /* Pricing Row */
+  .pawsafe-price-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+  .pawsafe-price-current {
+    font-size: 2.2rem;
+    font-weight: 600;
+    font-family: Georgia, serif;
+    color: #1c1c1c !important;
+  }
+  .pawsafe-price-compare {
+    font-size: 1.25rem;
+    font-family: Georgia, serif;
+    color: #a3a3a3;
+    text-decoration: line-through;
+  }
+  .pawsafe-save-badge {
+    background-color: #c9a961;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* Selectors */
+  .pawsafe-selector-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .pawsafe-selector-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1c1c1c;
+  }
+  .pawsafe-selected-color-name {
+    color: #767676;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  /* Size Pills */
+  .pawsafe-pills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pawsafe-size-pill {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    color: #1c1c1c;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .pawsafe-size-pill:hover {
+    border-color: #1c1c1c;
+  }
+  .pawsafe-size-pill.selected {
+    border-color: #1c1c1c;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px #1c1c1c;
+  }
+
+  /* Color Swatches Row */
+  .pawsafe-color-swatches-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pawsafe-swatch-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  .pawsafe-swatch-btn:hover {
+    transform: scale(1.08);
+  }
+  .pawsafe-swatch-btn.selected::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 1.5px solid #c9a961;
+  }
+
+  /* Benefits checklist */
+  .pawsafe-benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+    padding: 8px 0;
+  }
+  .pawsafe-benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #4a4a4a;
+  }
+  .pawsafe-benefit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Buttons */
+  .pawsafe-buttons-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .pawsafe-btn-atc,
+  .pawsafe-btn-bin {
+    width: 100%;
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    text-align: center;
+    display: block;
+    text-transform: uppercase;
+  }
+  .pawsafe-btn-atc {
+    background-color: #ffffff;
+    border: 1px solid #1c1c1c;
+    color: #1c1c1c;
+  }
+  .pawsafe-btn-atc:hover {
+    background-color: #fafafa;
+  }
+  .pawsafe-btn-bin {
+    background-color: #1c1c1c;
+    border: 1px solid #1c1c1c;
+    color: #ffffff;
+  }
+  .pawsafe-btn-bin:hover {
+    background-color: #2c2c2c;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 749px) {
+    .pawsafe-main-title {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Size Selectors Logic
+    const sizePills = document.querySelectorAll('.pawsafe-size-pill');
+    const sizeInput = document.getElementById('pawsafe-size-property');
+    sizePills.forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        sizePills.forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        if (sizeInput) {
+          sizeInput.value = pill.getAttribute('data-value');
+        }
+      });
+    });
+
+    // Color Swatches Logic
+    const colorSwatches = document.querySelectorAll('.pawsafe-swatch-btn');
+    const colorInput = document.getElementById('pawsafe-variant-id');
+    const colorText = document.getElementById('selected-color-text');
+    
+    // Dynamic variant mapping from Liquid
+    const colorVariantMap = {
+      {% for v in product.variants %}
+        "{{ v.title | escape }}": {{ v.id }},
+      {% endfor %}
+    };
+
+    colorSwatches.forEach(swatch => {
+      swatch.addEventListener('click', (e) => {
+        e.preventDefault();
+        colorSwatches.forEach(s => s.classList.remove('selected'));
+        swatch.classList.add('selected');
+        const colorName = swatch.getAttribute('data-value');
+        if (colorText) {
+          colorText.textContent = colorName;
+        }
+        
+        // Find variant ID in mapping
+        // Support partial matching because titles can be e.g. "S / Army Green"
+        let variantId = null;
+        for (const [key, val] of Object.entries(colorVariantMap)) {
+          if (key.toLowerCase().includes(colorName.toLowerCase())) {
+            variantId = val;
+            break;
+          }
+        }
+        
+        if (variantId && colorInput) {
+          colorInput.value = variantId;
+          
+          // Trigger variant:update event to let other theme components know of the shift
+          const event = new CustomEvent('variant:update', {
+            detail: {
+              resource: {
+                id: variantId,
+                price: 2499,
+                available: true
+              }
+            }
+          });
+          const shopifySection = document.querySelector('.shopify-section');
+          if (shopifySection) {
+            shopifySection.dispatchEvent(event);
+          }
+        }
+      });
+    });
+
+    // Buy it now redirect logic
+    const buyNowBtn = document.getElementById('pawsafe-buy-now-btn');
+    if (buyNowBtn) {
+      buyNowBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const variantId = colorInput ? colorInput.value : '';
+        const sizeVal = sizeInput ? sizeInput.value : 'S (0-5kg)';
+        
+        // Add to cart via AJAX and then redirect to checkout
+        const formData = new FormData();
+        formData.append('id', variantId);
+        formData.append('properties[Size]', sizeVal);
+        formData.append('quantity', '1');
+        
+        fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        })
+        .then(() => {
+          window.location.href = '/checkout';
+        })
+        .catch(err => {
+          console.error('Bypassed error during quick checkout, redirecting directly to checkout page:', err);
+          window.location.href = '/checkout';
+        });
+      });
+    }
+  });
+</script>

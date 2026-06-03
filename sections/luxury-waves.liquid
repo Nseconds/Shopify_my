@@ -1,0 +1,551 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- liquid
+  if section.settings.use_custom_colors
+    assign wave_c1   = section.settings.wave_color_1
+    assign wave_c2   = section.settings.wave_color_2
+    assign wave_c3   = section.settings.wave_color_3
+    assign wave_c4   = section.settings.wave_color_4
+    assign wave_c5   = section.settings.wave_color_5
+    assign keyword_c = section.settings.keyword_color
+  else
+    assign wave_c1   = section.settings.color_scheme.settings.gradient_1
+    assign wave_c2   = section.settings.color_scheme.settings.gradient_2
+    assign wave_c3   = section.settings.color_scheme.settings.gradient_3
+    assign wave_c4   = section.settings.color_scheme.settings.gradient_1
+    assign wave_c5   = section.settings.color_scheme.settings.gradient_2
+    assign keyword_c = section.settings.color_scheme.settings.foreground
+  endif
+-%}
+
+{% style %}
+  .ai-luxury-waves-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.section_height }}px;
+    overflow: hidden;
+    display: block;
+  }
+
+  .ai-luxury-waves__canvas-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-luxury-waves__keywords-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.padding_vertical }}px {{ section.settings.padding_horizontal }}px;
+    gap: {{ section.settings.keyword_spacing }}px;
+  }
+
+  .ai-luxury-waves__keyword-{{ ai_gen_id }} {
+    font-family: {{ section.settings.keyword_font.family }}, {{ section.settings.keyword_font.fallback_families }};
+    font-weight: {{ section.settings.keyword_font.weight }};
+    font-style: {{ section.settings.keyword_font.style }};
+    font-size: {{ section.settings.keyword_size }}px;
+    color: {{ keyword_c }};
+    opacity: {{ section.settings.keyword_opacity | divided_by: 100.0 }};
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-luxury-waves-{{ ai_gen_id }} {
+      min-height: {{ section.settings.section_height_mobile }}px;
+    }
+
+    .ai-luxury-waves__keywords-{{ ai_gen_id }} {
+      padding: {{ section.settings.padding_vertical_mobile }}px {{ section.settings.padding_horizontal_mobile }}px;
+      gap: {{ section.settings.keyword_spacing_mobile }}px;
+    }
+
+    .ai-luxury-waves__keyword-{{ ai_gen_id }} {
+      font-size: {{ section.settings.keyword_size_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-luxury-waves-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <canvas class="ai-luxury-waves__canvas-{{ ai_gen_id }}"></canvas>
+  
+  <div class="ai-luxury-waves__keywords-{{ ai_gen_id }}">
+    {% if section.settings.keyword_1 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="0">{{ section.settings.keyword_1 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_2 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="1">{{ section.settings.keyword_2 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_3 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="2">{{ section.settings.keyword_3 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_4 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="3">{{ section.settings.keyword_4 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_5 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="4">{{ section.settings.keyword_5 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_6 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="5">{{ section.settings.keyword_6 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_7 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="6">{{ section.settings.keyword_7 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_8 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="7">{{ section.settings.keyword_8 }}</span>
+    {% endif %}
+    {% if section.settings.keyword_9 != blank %}
+      <span class="ai-luxury-waves__keyword-{{ ai_gen_id }}" data-index="8">{{ section.settings.keyword_9 }}</span>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const sectionElement = document.querySelector(`#shopify-section-${sectionId}`);
+    
+    if (!sectionElement) return;
+    
+    const canvas = sectionElement.querySelector('.ai-luxury-waves__canvas-{{ ai_gen_id }}');
+    const ctx = canvas.getContext('2d');
+    const keywords = Array.from(sectionElement.querySelectorAll('.ai-luxury-waves__keyword-{{ ai_gen_id }}'));
+    
+    let waves = [];
+    let animationId = null;
+    let time = 0;
+    
+    function setupCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = sectionElement.getBoundingClientRect();
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      
+      ctx.scale(dpr, dpr);
+    }
+    
+    function initWaves() {
+      const colors = [
+        '{{ wave_c1 }}',
+        '{{ wave_c2 }}',
+        '{{ wave_c3 }}',
+        '{{ wave_c4 }}',
+        '{{ wave_c5 }}'
+      ];
+
+      const opacities = [
+        {{ section.settings.wave_opacity_1 | divided_by: 100.0 }},
+        {{ section.settings.wave_opacity_2 | divided_by: 100.0 }},
+        {{ section.settings.wave_opacity_3 | divided_by: 100.0 }},
+        {{ section.settings.wave_opacity_4 | divided_by: 100.0 }},
+        {{ section.settings.wave_opacity_5 | divided_by: 100.0 }}
+      ];
+
+      waves = [
+        { y: 0.2, amplitude: 40, frequency: 0.015, speed: 0.3, color: colors[0], opacity: opacities[0] },
+        { y: 0.35, amplitude: 50, frequency: 0.012, speed: 0.25, color: colors[1], opacity: opacities[1] },
+        { y: 0.5, amplitude: 45, frequency: 0.018, speed: 0.35, color: colors[2], opacity: opacities[2] },
+        { y: 0.65, amplitude: 55, frequency: 0.01, speed: 0.2, color: colors[3], opacity: opacities[3] },
+        { y: 0.8, amplitude: 48, frequency: 0.014, speed: 0.28, color: colors[4], opacity: opacities[4] }
+      ];
+    }
+    
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 0, g: 0, b: 0 };
+    }
+    
+    function drawWave(wave, time) {
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      
+      ctx.beginPath();
+      ctx.moveTo(0, height);
+
+      for (let x = 0; x <= width; x += 2) {
+        const y = wave.y * height + 
+                 Math.sin(x * wave.frequency + time * wave.speed) * wave.amplitude;
+        ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(width, height);
+      ctx.closePath();
+
+      const rgb = hexToRgb(wave.color);
+      ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${wave.opacity})`;
+      ctx.fill();
+    }
+    
+    function animateKeywords() {
+      keywords.forEach((keyword, index) => {
+        const offsetX = Math.sin(time * 0.15 + index * 0.5) * 3;
+        const offsetY = Math.cos(time * 0.2 + index * 0.7) * 2;
+        keyword.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      });
+    }
+    
+    function animate() {
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      
+      ctx.clearRect(0, 0, width, height);
+
+      waves.forEach(wave => {
+        drawWave(wave, time);
+      });
+
+      animateKeywords();
+
+      time += 0.02;
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    function handleResize() {
+      setupCanvas();
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setupCanvas();
+        initWaves();
+        animate();
+        window.addEventListener('resize', handleResize);
+      });
+    } else {
+      setupCanvas();
+      initWaves();
+      animate();
+      window.addEventListener('resize', handleResize);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxury wave atmosphere",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Override theme gradient colors",
+      "info": "When off, waves and keywords inherit the color scheme's gradient_1\u20133 and foreground color.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Desktop height",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Mobile height",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Desktop vertical padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Desktop horizontal padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical_mobile",
+      "label": "Mobile vertical padding",
+      "min": 20,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "label": "Mobile horizontal padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Wave colors"
+    },
+    {
+      "type": "color",
+      "id": "wave_color_1",
+      "label": "Wave 1 color",
+      "default": "#f4c2c2",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_1",
+      "label": "Wave 1 opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "wave_color_2",
+      "label": "Wave 2 color",
+      "default": "#d8a7ca",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_2",
+      "label": "Wave 2 opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "color",
+      "id": "wave_color_3",
+      "label": "Wave 3 color",
+      "default": "#c8b6d4",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_3",
+      "label": "Wave 3 opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "color",
+      "id": "wave_color_4",
+      "label": "Wave 4 color",
+      "default": "#e5c9b8",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_4",
+      "label": "Wave 4 opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "wave_color_5",
+      "label": "Wave 5 color",
+      "default": "#b89ba8",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity_5",
+      "label": "Wave 5 opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Keywords"
+    },
+    {
+      "type": "text",
+      "id": "keyword_1",
+      "label": "Keyword 1",
+      "default": "Confidence"
+    },
+    {
+      "type": "text",
+      "id": "keyword_2",
+      "label": "Keyword 2",
+      "default": "Desire"
+    },
+    {
+      "type": "text",
+      "id": "keyword_3",
+      "label": "Keyword 3",
+      "default": "Elegance"
+    },
+    {
+      "type": "text",
+      "id": "keyword_4",
+      "label": "Keyword 4",
+      "default": "Attraction"
+    },
+    {
+      "type": "text",
+      "id": "keyword_5",
+      "label": "Keyword 5",
+      "default": "Energy"
+    },
+    {
+      "type": "text",
+      "id": "keyword_6",
+      "label": "Keyword 6",
+      "default": "Presence"
+    },
+    {
+      "type": "text",
+      "id": "keyword_7",
+      "label": "Keyword 7",
+      "default": "Sensuality"
+    },
+    {
+      "type": "text",
+      "id": "keyword_8",
+      "label": "Keyword 8",
+      "default": "Calm"
+    },
+    {
+      "type": "text",
+      "id": "keyword_9",
+      "label": "Keyword 9",
+      "default": "Power"
+    },
+    {
+      "type": "header",
+      "content": "Keyword style"
+    },
+    {
+      "type": "font_picker",
+      "id": "keyword_font",
+      "label": "Font",
+      "default": "serif"
+    },
+    {
+      "type": "range",
+      "id": "keyword_size",
+      "label": "Desktop font size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "keyword_size_mobile",
+      "label": "Mobile font size",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "keyword_color",
+      "label": "Color",
+      "default": "#5a4a5a",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "keyword_opacity",
+      "label": "Opacity",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "keyword_spacing",
+      "label": "Desktop spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "keyword_spacing_mobile",
+      "label": "Mobile spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury wave atmosphere"
+    }
+  ]
+}
+{% endschema %}

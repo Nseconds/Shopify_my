@@ -1,0 +1,134 @@
+{% liquid
+  assign points = ''
+
+  if block.settings.point_1 != blank
+    assign points = block.settings.point_1
+  endif
+  if block.settings.point_2 != blank
+    assign points = points | append: '|' | append: block.settings.point_2
+  endif
+  if block.settings.point_3 != blank
+    assign points = points | append: '|' | append: block.settings.point_3
+  endif
+  if block.settings.point_4 != blank
+    assign points = points | append: '|' | append: block.settings.point_4
+  endif
+
+  assign point_array = points | split: '|'
+
+%}
+
+{%- if settings.style_mode == 'gradient' -%}
+  {%- assign grad_1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign grad_2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign grad_text = section.settings.color_scheme.settings.gradient_text_color -%}
+  {%- assign icon_bg = 'linear-gradient(135deg, ' | append: grad_1 | append: ', ' | append: grad_2 | append: ')' -%}
+  {%- assign icon_color = grad_text -%}
+{%- else -%}
+  {%- assign icon_bg = 'var(--color-primary)' -%}
+  {%- assign icon_color = 'var(--color-background)' -%}
+{%- endif -%}
+
+<div
+  class="pastel-benefit-points spacing-style"
+  style="--pbp-icon-bg: {{ icon_bg }}; --pbp-icon-color: {{ icon_color }};"
+  {{ block.shopify_attributes }}
+>
+  <ul class="pastel-benefit-points__list" role="list">
+    {% for point in point_array %}
+      {% if point != blank %}
+        <li class="pastel-benefit-points__item">
+          <span class="pastel-benefit-points__icon" aria-hidden="true">✦</span>
+          <span class="pastel-benefit-points__text">{{ point }}</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+{% stylesheet %}
+  .pastel-benefit-points {
+    padding-block: 8px 12px;
+  }
+
+  .pastel-benefit-points__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pastel-benefit-points__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pastel-benefit-points__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--pbp-icon-bg, var(--color-primary));
+    color: var(--pbp-icon-color, var(--color-background));
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .pastel-benefit-points__text {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--color-foreground-heading);
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-benefit-points__list {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Benefit points",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "point_1",
+      "label": "Point 1",
+      "default": "Fall asleep faster"
+    },
+    {
+      "type": "text",
+      "id": "point_2",
+      "label": "Point 2",
+      "default": "Stay asleep longer"
+    },
+    {
+      "type": "text",
+      "id": "point_3",
+      "label": "Point 3",
+      "default": "Wake up refreshed"
+    },
+    {
+      "type": "text",
+      "id": "point_4",
+      "label": "Point 4",
+      "default": "No groggy mornings"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefit points"
+    }
+  ]
+}
+{% endschema %}

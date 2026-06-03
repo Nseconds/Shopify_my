@@ -1,0 +1,174 @@
+
+{%- liquid
+  if section.settings.use_custom_colors
+    assign aq_title  = section.settings.title_color
+    assign aq_accent = section.settings.accent_color
+    assign aq_text   = section.settings.text_color
+    assign aq_muted  = section.settings.muted_color
+    assign aq_bg     = 'none'
+  elsif settings.style_mode == 'gradient'
+    assign aq_title  = 'var(--color-foreground)'
+    assign aq_accent = 'var(--color-gradient-1)'
+    assign aq_text   = 'var(--color-foreground)'
+    assign aq_muted  = 'var(--color-foreground-muted)'
+    assign aq_bg     = 'none'
+  else
+    assign aq_title  = 'var(--color-foreground)'
+    assign aq_accent = 'var(--color-primary)'
+    assign aq_text   = 'var(--color-foreground)'
+    assign aq_muted  = 'var(--color-foreground-muted)'
+    assign aq_bg     = 'none'
+  endif
+-%}
+
+<section id="shopify-section-{{ section.id }}" class="aq color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }}{
+        --aq-max: {{ section.settings.max_width }}px;
+        --aq-pad-y: {{ section.settings.padding_y }}px;
+        --aq-pad-x: {{ section.settings.padding_x }}px;
+
+        --aq-title: {{ aq_title }};
+        --aq-accent: {{ aq_accent }};
+        --aq-text: {{ aq_text }};
+        --aq-muted: {{ aq_muted }};
+        {% if aq_bg != 'none' %}background: {{ aq_bg }};{% endif %}
+      }
+  
+      #shopify-section-{{ section.id }} .aq-wrap{
+        max-width: var(--aq-max);
+        margin: 0 auto;
+        padding: var(--aq-pad-y) var(--aq-pad-x);
+        box-sizing: border-box;
+        text-align: center;
+      }
+  
+      #shopify-section-{{ section.id }} .aq-title{
+        margin: 0 0 12px 0;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        font-size: clamp(26px, 2.6vw, 38px);
+        color: var(--aq-title);
+      }
+  
+      #shopify-section-{{ section.id }} .aq-title em{
+        font-style: italic;
+        color: var(--aq-accent);
+        font-weight: 800;
+      }
+
+      {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+      #shopify-section-{{ section.id }} .aq-title em{
+        background: var(--color-card-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      {% endif %}
+  
+      #shopify-section-{{ section.id }} .aq-quote{
+        margin: 0 auto;
+        max-width: {{ section.settings.text_max_width }}ch;
+        font-style: italic;
+        color: var(--aq-text);
+        opacity: .9;
+        line-height: 1.7;
+        font-size: clamp(14px, 1.15vw, 16px);
+      }
+  
+      #shopify-section-{{ section.id }} .aq-byline{
+        margin-top: 14px;
+        font-size: 13px;
+        color: var(--aq-muted);
+        opacity: .9;
+      }
+  
+      /* Optional subtle divider */
+      #shopify-section-{{ section.id }} .aq-divider{
+        width: min(520px, 100%);
+        height: 1px;
+        margin: 18px auto 0;
+        background: rgba(0,0,0,.08);
+      }
+  
+      @media (max-width: 749px){
+        #shopify-section-{{ section.id }} .aq-wrap{
+          padding: calc(var(--aq-pad-y) * .85) calc(var(--aq-pad-x) * .85);
+        }
+        #shopify-section-{{ section.id }} .aq-quote{
+          max-width: 52ch;
+        }
+      }
+    {% endstyle %}
+  
+    <div class="aq-wrap">
+      {% if section.settings.title_prefix != blank or section.settings.title_accent != blank %}
+        <h2 class="aq-title">
+          {{ section.settings.title_prefix | escape }}
+          {% if section.settings.title_accent != blank %}
+            <em>{{ section.settings.title_accent | escape }}</em>
+          {% endif %}
+        </h2>
+      {% endif %}
+  
+      {% if section.settings.quote != blank %}
+        <div class="aq-quote rte">
+          {{ section.settings.quote }}
+        </div>
+      {% endif %}
+  
+      {% if section.settings.show_divider %}
+        <div class="aq-divider" aria-hidden="true"></div>
+      {% endif %}
+  
+      {% if section.settings.byline != blank %}
+        <div class="aq-byline">{{ section.settings.byline | escape }}</div>
+      {% endif %}
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Quote Wide",
+    "tag": "section",
+    "class": "section-wrapper",
+    "settings": [
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+  
+      { "type": "text", "id": "title_prefix", "label": "Title (left)", "default": "Facecube Face Massager" },
+      { "type": "text", "id": "title_accent", "label": "Title (accent word)", "default": "Review" },
+  
+      {
+        "type": "richtext",
+        "id": "quote",
+        "label": "Quote",
+        "default": "<p>Dr. Gary Goldfaden</p>"
+      },
+  
+      { "type": "text", "id": "byline", "label": "Byline", "default": "Verified Customer" }
+  ,
+  
+      { "type": "checkbox", "id": "show_divider", "label": "Show divider line", "default": false },
+  
+      { "type": "header", "content": "Colors" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+      { "type": "color", "id": "title_color", "label": "Title color", "default": "#111111", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#19B6E6", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "text_color", "label": "Quote text color", "default": "#111111", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "muted_color", "label": "Muted color", "default": "#6B7280", "visible_if": "{{ section.settings.use_custom_colors }}" },
+  
+      { "type": "header", "content": "Layout" },
+      { "type": "range", "id": "max_width", "label": "Section max width (px)", "min": 600, "max": 1400, "step": 20, "default": 980 },
+      { "type": "range", "id": "text_max_width", "label": "Text max width (characters)", "min": 40, "max": 120, "step": 2, "default": 96 },
+  
+      { "type": "header", "content": "Spacing" },
+      { "type": "range", "id": "padding_y", "label": "Padding Y (px)", "min": 0, "max": 120, "step": 4, "default": 44 },
+      { "type": "range", "id": "padding_x", "label": "Padding X (px)", "min": 0, "max": 60, "step": 2, "default": 16 }
+    ],
+    "presets": [
+      { "name": "Quote Wide", "category": "Text" }
+    ]
+  }
+  {% endschema %}
+  

@@ -1,0 +1,905 @@
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg      = section.settings.background_color
+    assign sc_text    = section.settings.headline_color
+    assign sc_body    = section.settings.ingredient_description_color
+    assign sc_accent  = section.settings.icon_color
+    assign sc_icon_bg = section.settings.icon_background_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg      = 'var(--color-background)'
+    assign sc_text    = 'var(--color-foreground)'
+    assign sc_body    = 'var(--color-foreground)'
+    assign sc_accent  = 'var(--color-gradient-1)'
+    assign sc_icon_bg = 'var(--color-card-gradient)'
+  else
+    assign sc_bg      = section.settings.color_scheme.settings.background
+    assign sc_text    = section.settings.color_scheme.settings.foreground
+    assign sc_body    = section.settings.color_scheme.settings.foreground
+    assign sc_accent  = section.settings.color_scheme.settings.primary
+    assign sc_icon_bg = section.settings.color_scheme.settings.background_secondary
+  endif
+-%}
+{% style %}
+  .key-ingredients-{{ section.id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+    padding: {{ section.settings.section_padding_mobile }}px 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .key-ingredients-{{ section.id }} {
+      padding: {{ section.settings.section_padding_desktop }}px 40px;
+    }
+  }
+
+  .key-ingredients-container-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .key-ingredients-headline-{{ section.id }} {
+    text-align: center;
+    margin: 0 0 {{ section.settings.headline_spacing }}px;
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.headline_size_mobile }}px;
+    line-height: 1.2;
+    letter-spacing: {{ section.settings.headline_letter_spacing }}em;
+    text-transform: {{ section.settings.headline_text_transform }};
+    color: {{ sc_text }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .key-ingredients-headline-{{ section.id }} {
+      font-size: {{ section.settings.headline_size_desktop }}px;
+    }
+  }
+
+  .key-ingredients-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .key-ingredients-grid-{{ section.id }} {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 60px;
+    }
+  }
+
+  .key-ingredients-column-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.ingredient_spacing }}px;
+  }
+
+  .key-ingredients-center-{{ section.id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .key-ingredients-product-wrapper-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ section.settings.product_image_max_width }}px;
+  }
+
+  .key-ingredients-product-image-{{ section.id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow({{ section.settings.product_shadow_x }}px {{ section.settings.product_shadow_y }}px {{ section.settings.product_shadow_blur }}px {{ section.settings.product_shadow_color }});
+  }
+
+  .key-ingredients-product-placeholder-{{ section.id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .key-ingredients-product-placeholder-{{ section.id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .key-ingredients-empty-state-{{ section.id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .key-ingredients-item-{{ section.id }} {
+    display: flex;
+    gap: {{ section.settings.ingredient_icon_spacing }}px;
+    align-items: flex-start;
+  }
+
+  @media screen and (min-width: 750px) {
+    .key-ingredients-column-{{ section.id }}--left .key-ingredients-item-{{ section.id }} {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+  }
+
+  .key-ingredients-icon-{{ section.id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ sc_icon_bg }};
+    border-radius: var(--style-border-radius-global);
+    padding: {{ section.settings.icon_padding }}px;
+  }
+
+  .key-ingredients-icon-{{ section.id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: {{ sc_accent }};
+    stroke-width: 1.5;
+  }
+
+  .key-ingredients-text-{{ section.id }} {
+    flex: 1;
+  }
+
+  .key-ingredients-name-{{ section.id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.ingredient_name_size }}px;
+    line-height: 1.3;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.ingredient_name_spacing }}px;
+    letter-spacing: 0.02em;
+  }
+
+  .key-ingredients-description-{{ section.id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.ingredient_description_size }}px;
+    line-height: 1.5;
+    color: {{ sc_body }};
+    margin: 0;
+  }
+{% endstyle %}
+
+<div class="key-ingredients-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="key-ingredients-container-{{ section.id }}">
+    {% if section.settings.headline != blank %}
+      <h2 class="key-ingredients-headline-{{ section.id }}">{{ section.settings.headline }}</h2>
+    {% endif %}
+
+    <div class="key-ingredients-grid-{{ section.id }}">
+      <div class="key-ingredients-column-{{ section.id }} key-ingredients-column-{{ section.id }}--left">
+        {% for i in (1..3) %}
+          {% liquid
+            assign ingredient_name_key = 'ingredient_' | append: i | append: '_name'
+            assign ingredient_description_key = 'ingredient_' | append: i | append: '_description'
+            assign ingredient_icon_key = 'ingredient_' | append: i | append: '_icon'
+            
+            assign ingredient_name = section.settings[ingredient_name_key]
+            assign ingredient_description = section.settings[ingredient_description_key]
+            assign ingredient_icon = section.settings[ingredient_icon_key]
+          %}
+
+          {% if ingredient_name != blank %}
+            <div class="key-ingredients-item-{{ section.id }}">
+              <div class="key-ingredients-icon-{{ section.id }}">
+                {% case ingredient_icon %}
+                  {% when 'leaf' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6c-3.31 0-6 2.69-6 6h2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.21-1.79 4-4 4v2c3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg>
+                  {% when 'droplet' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  {% when 'flower' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.05-7.05l-2.83 2.83m-5.66 5.66l-2.83 2.83m12.02 0l-2.83-2.83m-5.66-5.66l-2.83-2.83"/></svg>
+                  {% when 'sparkle' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/><path d="M5 3v4M3 5h4m10 10v4m-2-2h4"/></svg>
+                  {% when 'sun' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+                  {% when 'heart' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                {% endcase %}
+              </div>
+              <div class="key-ingredients-text-{{ section.id }}">
+                <h3 class="key-ingredients-name-{{ section.id }}">{{ ingredient_name }}</h3>
+                {% if ingredient_description != blank %}
+                  <p class="key-ingredients-description-{{ section.id }}">{{ ingredient_description }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="key-ingredients-center-{{ section.id }}">
+        <div class="key-ingredients-product-wrapper-{{ section.id }}" data-forge-slot-id="product_image"{% if section.settings.product_image == blank %} data-forge-slot-blank="true"{% endif %}>
+          {% if section.settings.product_image %}
+            <img
+              src="{{ section.settings.product_image | image_url: width: 800 }}"
+              alt="{{ section.settings.product_image.alt | escape }}"
+              loading="lazy"
+              width="{{ section.settings.product_image.width }}"
+              height="{{ section.settings.product_image.height }}"
+              class="key-ingredients-product-image-{{ section.id }}"
+            >
+          {% else %}
+            <div class="key-ingredients-product-placeholder-{{ section.id }}">
+              {{ 'product-1' | placeholder_svg_tag }}
+              <div class="key-ingredients-empty-state-{{ section.id }}">
+                Add your product image
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="key-ingredients-column-{{ section.id }} key-ingredients-column-{{ section.id }}--right">
+        {% for i in (4..6) %}
+          {% liquid
+            assign ingredient_name_key = 'ingredient_' | append: i | append: '_name'
+            assign ingredient_description_key = 'ingredient_' | append: i | append: '_description'
+            assign ingredient_icon_key = 'ingredient_' | append: i | append: '_icon'
+            
+            assign ingredient_name = section.settings[ingredient_name_key]
+            assign ingredient_description = section.settings[ingredient_description_key]
+            assign ingredient_icon = section.settings[ingredient_icon_key]
+          %}
+
+          {% if ingredient_name != blank %}
+            <div class="key-ingredients-item-{{ section.id }}">
+              <div class="key-ingredients-icon-{{ section.id }}">
+                {% case ingredient_icon %}
+                  {% when 'leaf' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6c-3.31 0-6 2.69-6 6h2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.21-1.79 4-4 4v2c3.31 0 6-2.69 6-6s-2.69-6-6-6z"/></svg>
+                  {% when 'droplet' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  {% when 'flower' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.05-7.05l-2.83 2.83m-5.66 5.66l-2.83 2.83m12.02 0l-2.83-2.83m-5.66-5.66l-2.83-2.83"/></svg>
+                  {% when 'sparkle' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/><path d="M5 3v4M3 5h4m10 10v4m-2-2h4"/></svg>
+                  {% when 'sun' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+                  {% when 'heart' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                {% endcase %}
+              </div>
+              <div class="key-ingredients-text-{{ section.id }}">
+                <h3 class="key-ingredients-name-{{ section.id }}">{{ ingredient_name }}</h3>
+                {% if ingredient_description != blank %}
+                  <p class="key-ingredients-description-{{ section.id }}">{{ ingredient_description }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Key ingredients",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Desktop padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Mobile padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f4ed",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "THE BEST INGREDIENTS"
+    },
+    {
+      "type": "range",
+      "id": "headline_size_desktop",
+      "label": "Desktop size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "headline_size_mobile",
+      "label": "Mobile size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "headline_text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "headline_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "unit": "em",
+      "default": 0.1
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "label": "Bottom spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "product_image_max_width",
+      "label": "Maximum width",
+      "min": 200,
+      "max": 500,
+      "step": 20,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "product_shadow_x",
+      "label": "Shadow horizontal offset",
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "product_shadow_y",
+      "label": "Shadow vertical offset",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "product_shadow_blur",
+      "label": "Shadow blur",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "product_shadow_color",
+      "label": "Shadow color",
+      "default": "#00000015"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient style"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_spacing",
+      "label": "Spacing between ingredients",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "ingredient_icon_spacing",
+      "label": "Icon to text spacing",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_padding",
+      "label": "Icon padding",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "icon_border_radius",
+      "label": "Icon border radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "icon_background_color",
+      "label": "Icon background",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient name"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_name_size",
+      "label": "Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "ingredient_name_color",
+      "label": "Color",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_name_spacing",
+      "label": "Bottom spacing",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Ingredient description"
+    },
+    {
+      "type": "range",
+      "id": "ingredient_description_size",
+      "label": "Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "ingredient_description_color",
+      "label": "Color",
+      "default": "#666666",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 1"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_1_name",
+      "label": "Name",
+      "default": "Hyaluronic Acid"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_1_description",
+      "label": "Description",
+      "default": "Deeply hydrates and plumps skin for a youthful glow"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_1_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "droplet"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 2"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_2_name",
+      "label": "Name",
+      "default": "Vitamin C"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_2_description",
+      "label": "Description",
+      "default": "Brightens complexion and evens skin tone naturally"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_2_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "sun"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 3"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_3_name",
+      "label": "Name",
+      "default": "Niacinamide"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_3_description",
+      "label": "Description",
+      "default": "Minimizes pores and refines skin texture"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_3_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "sparkle"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 4"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_4_name",
+      "label": "Name",
+      "default": "Retinol"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_4_description",
+      "label": "Description",
+      "default": "Reduces fine lines and promotes cell renewal"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_4_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "flower"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 5"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_5_name",
+      "label": "Name",
+      "default": "Peptides"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_5_description",
+      "label": "Description",
+      "default": "Firms and strengthens skin's natural barrier"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_5_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "heart"
+    },
+    {
+      "type": "header",
+      "content": "Ingredient 6"
+    },
+    {
+      "type": "text",
+      "id": "ingredient_6_name",
+      "label": "Name",
+      "default": "Ceramides"
+    },
+    {
+      "type": "textarea",
+      "id": "ingredient_6_description",
+      "label": "Description",
+      "default": "Locks in moisture and protects against dryness"
+    },
+    {
+      "type": "select",
+      "id": "ingredient_6_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "droplet",
+          "label": "Droplet"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "flower",
+          "label": "Flower"
+        },
+        {
+          "value": "sparkle",
+          "label": "Sparkle"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "leaf"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Key ingredients"
+    }
+  ]
+}
+{% endschema %}

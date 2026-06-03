@@ -1,0 +1,322 @@
+
+{%- doc -%}
+  A pill-shaped trust badge with overlapping avatar stack on the left,
+  bold primary text, and supporting secondary text.
+  Perfect for returns policy, social proof, or key guarantees.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign primary_text = block_settings.primary_text
+  assign secondary_text = block_settings.secondary_text
+  assign avatar_indexes = '1,2,3,4' | split: ','
+
+  if block_settings.use_scheme_colors == false
+    assign pill_bg = block_settings.background_color
+    assign pill_primary = block_settings.primary_text_color
+    assign pill_secondary = block_settings.secondary_text_color
+  else
+    assign scheme = section.settings.color_scheme
+    if scheme != blank
+      assign pill_primary = scheme.settings.primary
+      assign pill_secondary = scheme.settings.foreground
+    endif
+  endif
+%}
+
+<div
+  class="trust-pill-badge spacing-style"
+  style="
+    {% render 'spacing-padding', settings: block_settings %}
+    {% if pill_bg != blank %}--trust-pill-bg: {{ pill_bg }};{% endif %}
+    {% if pill_primary %}--trust-pill-primary-color: {{ pill_primary }};{% endif %}
+    {% if pill_secondary %}--trust-pill-secondary-color: {{ pill_secondary }};{% endif %}
+    --trust-pill-primary-size: {{ block_settings.primary_text_size }}px;
+    --trust-pill-secondary-size: {{ block_settings.secondary_text_size }}px;
+    --trust-pill-avatar-size: {{ block_settings.avatar_size }}px;
+    --trust-pill-gap: {{ block_settings.gap }}px;
+    --trust-pill-radius: {{ block_settings.border_radius }}px;
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="trust-pill-badge__pill">
+    <div class="trust-pill-badge__avatars">
+      {%- for index in avatar_indexes -%}
+        {%- assign avatar_key = 'avatar_' | append: index -%}
+        {%- assign avatar = block_settings[avatar_key] -%}
+        <div class="trust-pill-badge__avatar trust-pill-badge__avatar--{{ index }}" data-forge-slot-id="{{ avatar_key }}"{% if avatar == blank %} data-forge-slot-blank="true"{% endif %}>
+          {% if avatar != blank %}
+            {%- render 'image', image: avatar, height: 80, class: 'trust-pill-badge__avatar-img' -%}
+          {% else %}
+            <svg class="trust-pill-badge__avatar-placeholder" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+              <circle cx="16" cy="12" r="6" fill="currentColor"/>
+              <path d="M6 30c0-5.5 4.5-10 10-10s10 4.5 10 10" fill="currentColor"/>
+            </svg>
+          {% endif %}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {% if primary_text != blank or secondary_text != blank %}
+      <div class="trust-pill-badge__content">
+        {% if primary_text != blank %}
+          <span class="trust-pill-badge__primary">{{ primary_text }}</span>
+        {% endif %}
+        {% if secondary_text != blank %}
+          <span class="trust-pill-badge__secondary">{{ secondary_text }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .trust-pill-badge__pill {
+    display: flex;
+    align-items: center;
+    gap: var(--trust-pill-gap);
+    padding: 12px 20px;
+    background: var(--trust-pill-bg, color-mix(in srgb, var(--color-foreground) 10%, var(--color-background)));
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+    border-radius: var(--trust-pill-radius);
+    min-height: 48px;
+  }
+
+  .trust-pill-badge__avatars {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .trust-pill-badge__avatar {
+    width: var(--trust-pill-avatar-size);
+    height: var(--trust-pill-avatar-size);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--trust-pill-bg, color-mix(in srgb, var(--color-foreground) 10%, var(--color-background)));
+    margin-left: -10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-foreground) 18%, var(--color-background));
+    color: color-mix(in srgb, var(--color-background) 80%, var(--color-foreground));
+  }
+
+  .trust-pill-badge__avatar--1 {
+    background: color-mix(in srgb, var(--color-primary, var(--color-foreground)) 35%, var(--color-background));
+  }
+
+  .trust-pill-badge__avatar--2 {
+    background: color-mix(in srgb, var(--color-foreground) 25%, var(--color-background));
+  }
+
+  .trust-pill-badge__avatar--3 {
+    background: color-mix(in srgb, var(--color-primary, var(--color-foreground)) 22%, var(--color-background));
+  }
+
+  .trust-pill-badge__avatar--4 {
+    background: color-mix(in srgb, var(--color-foreground) 12%, var(--color-background));
+  }
+
+  .trust-pill-badge__avatar:first-child {
+    margin-left: 0;
+  }
+
+  .trust-pill-badge__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .trust-pill-badge__avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: color-mix(in srgb, var(--color-background) 78%, var(--color-foreground));
+  }
+
+  .trust-pill-badge__content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+    row-gap: 2px;
+  }
+
+  .trust-pill-badge__primary {
+    font-size: var(--trust-pill-primary-size);
+    font-weight: 700;
+    color: var(--trust-pill-primary-color, var(--color-primary));
+    line-height: 1.3;
+  }
+
+  .trust-pill-badge__secondary {
+    font-size: var(--trust-pill-secondary-size);
+    font-weight: 400;
+    color: var(--trust-pill-secondary-color, var(--color-foreground));
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 749px) {
+    .trust-pill-badge__pill {
+      padding: 10px 16px;
+    }
+
+    .trust-pill-badge__avatar {
+      margin-left: -8px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust pill badge",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "primary_text",
+      "label": "Primary text (bold)",
+      "default": "14-day returns,"
+    },
+    {
+      "type": "text",
+      "id": "secondary_text",
+      "label": "Secondary text",
+      "default": "less than 1% of customers ask for their money back"
+    },
+    {
+      "type": "header",
+      "content": "Avatars"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_1",
+      "label": "Avatar 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_2",
+      "label": "Avatar 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_3",
+      "label": "Avatar 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_4",
+      "label": "Avatar 4"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_scheme_colors",
+      "label": "Use theme color scheme",
+      "default": true,
+      "info": "When enabled, colors adapt automatically to the current color scheme."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "info": "Only applies when 'Use theme color scheme' is disabled."
+    },
+    {
+      "type": "color",
+      "id": "primary_text_color",
+      "label": "Primary text color"
+    },
+    {
+      "type": "color",
+      "id": "secondary_text_color",
+      "label": "Secondary text color"
+    },
+    {
+      "type": "range",
+      "id": "primary_text_size",
+      "label": "Primary text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "secondary_text_size",
+      "label": "Secondary text size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "avatar_size",
+      "label": "Avatar size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between avatars and text",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "number",
+      "id": "border_radius",
+      "label": "Pill border radius",
+      "default": 999
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust pill badge",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,977 @@
+{% assign ai_gen_id = section.id | replace: '_', '-' | downcase %}
+{% assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg            = section.settings.background_color
+    assign sc_text          = section.settings.heading_color
+    assign sc_body          = section.settings.body_color
+    assign sc_accent        = section.settings.progress_color
+    assign sc_nav_bg        = section.settings.nav_button_color
+    assign sc_nav_border    = section.settings.nav_button_border
+    assign sc_nav_hover     = section.settings.nav_button_hover_color
+    assign sc_nav_icon      = section.settings.nav_button_icon_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg            = section.settings.color_scheme.settings.background
+    assign sc_text          = 'var(--color-foreground)'
+    assign sc_body          = 'var(--color-foreground)'
+    assign sc_accent        = 'var(--color-gradient-1)'
+    assign sc_nav_bg        = 'var(--color-card-background)'
+    assign sc_nav_border    = 'var(--color-border)'
+    assign sc_nav_hover     = 'var(--color-card-background)'
+    assign sc_nav_icon      = 'var(--color-gradient-1)'
+  else
+    assign sc_bg            = section.settings.color_scheme.settings.background
+    assign sc_text          = section.settings.color_scheme.settings.foreground
+    assign sc_body          = section.settings.color_scheme.settings.foreground
+    assign sc_accent        = section.settings.color_scheme.settings.primary
+    assign sc_nav_bg        = section.settings.color_scheme.settings.background
+    assign sc_nav_border    = section.settings.color_scheme.settings.border
+    assign sc_nav_hover     = section.settings.color_scheme.settings.background_secondary
+    assign sc_nav_icon      = section.settings.color_scheme.settings.foreground
+  endif
+-%}
+
+{% style %}
+  .ai-social-proof-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+    padding: {{ section.settings.section_padding }}px 20px;
+  }
+
+  .ai-social-proof-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--style-gap-cards);
+    align-items: center;
+  }
+
+  .ai-social-proof-carousel-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-social-proof-carousel-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ section.settings.video_gap }}px;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-social-proof-video-{{ ai_gen_id }} {
+    position: relative;
+    flex-shrink: 0;
+    width: {{ section.settings.video_width }}px;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--style-border-radius-images);
+    overflow: hidden;
+    background-color: {{ section.settings.video_placeholder_color }};
+  }
+
+  .ai-social-proof-video-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-social-proof-video-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, {{ section.settings.video_placeholder_color }} 0%, {{ section.settings.video_placeholder_gradient }} 100%);
+  }
+
+  .ai-social-proof-video-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-social-proof-nav-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+  }
+
+  .ai-social-proof-nav-button-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: {{ sc_nav_bg }};
+    border: 1px solid {{ sc_nav_border }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-social-proof-nav-button-{{ ai_gen_id }}:hover {
+    background-color: {{ sc_nav_hover }};
+    transform: scale(1.05);
+  }
+
+  .ai-social-proof-nav-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    fill: {{ sc_nav_icon }};
+  }
+
+  {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  .ai-social-proof-nav-button-{{ ai_gen_id }} svg {
+    fill: url(#spr-nav-grad-{{ ai_gen_id }});
+  }
+  {% endif %}
+
+  .ai-social-proof-results-{{ ai_gen_id }} {
+    padding: 0 40px;
+  }
+
+  .ai-social-proof-heading-{{ ai_gen_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.2;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.heading_spacing }}px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .ai-social-proof-stats-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.stat_gap }}px;
+  }
+
+  .ai-social-proof-stat-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .ai-social-proof-progress-{{ ai_gen_id }} {
+    position: relative;
+    width: {{ section.settings.progress_size }}px;
+    height: {{ section.settings.progress_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-social-proof-progress-bg-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+      {{ sc_accent }} calc(var(--ai-progress-{{ ai_gen_id }}) * 1%),
+      {{ section.settings.progress_bg_color }} 0
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-social-proof-progress-inner-{{ ai_gen_id }} {
+    width: calc(100% - {{ section.settings.progress_thickness }}px);
+    height: calc(100% - {{ section.settings.progress_thickness }}px);
+    border-radius: 50%;
+    background-color: {{ sc_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-social-proof-progress-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.progress_text_size }}px;
+    color: {{ sc_accent }};
+    font-weight: 600;
+  }
+
+  {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  .ai-social-proof-progress-text-{{ ai_gen_id }} {
+    background: var(--color-card-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  {% endif %}
+
+  .ai-social-proof-stat-content-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-social-proof-stat-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.body_size }}px;
+    line-height: 1.6;
+    color: {{ sc_body }};
+    margin: 0;
+  }
+
+  .ai-social-proof-disclaimer-{{ ai_gen_id }} {
+    margin-top: {{ section.settings.disclaimer_spacing }}px;
+    font-size: {{ section.settings.disclaimer_size }}px;
+    color: {{ sc_body }};
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-social-proof-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .ai-social-proof-results-{{ ai_gen_id }} {
+      padding: 0;
+    }
+
+    .ai-social-proof-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-social-proof-video-{{ ai_gen_id }} {
+      width: {{ section.settings.video_width | times: 0.85 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-social-proof-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding | times: 0.7 }}px 16px;
+    }
+
+    .ai-social-proof-heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.7 }}px;
+    }
+
+    .ai-social-proof-video-{{ ai_gen_id }} {
+      width: {{ section.settings.video_width | times: 0.75 }}px;
+    }
+
+    .ai-social-proof-stat-{{ ai_gen_id }} {
+      gap: 16px;
+    }
+
+    .ai-social-proof-progress-{{ ai_gen_id }} {
+      width: {{ section.settings.progress_size | times: 0.85 }}px;
+      height: {{ section.settings.progress_size | times: 0.85 }}px;
+    }
+  }
+{% endstyle %}
+
+{% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  {%- assign spr_g1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign spr_g2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign spr_g3 = section.settings.color_scheme.settings.gradient_3 -%}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="spr-nav-grad-{{ ai_gen_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="{{ spr_g1 }}"/>
+        <stop offset="50%" stop-color="{{ spr_g2 }}"/>
+        <stop offset="100%" stop-color="{{ spr_g3 }}"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  {% style %}
+  .ai-social-proof-progress-bg-{{ ai_gen_id }} {
+    background: conic-gradient(
+      {{ spr_g1 }} 0%,
+      {{ spr_g2 }} calc(var(--ai-progress-{{ ai_gen_id }}) * 0.5%),
+      {{ spr_g3 }} calc(var(--ai-progress-{{ ai_gen_id }}) * 1%),
+      {{ section.settings.progress_bg_color }} 0
+    );
+  }
+  {% endstyle %}
+{% endif %}
+
+{%- liquid
+  assign slide_count = section.settings.number_of_slides | default: 6
+  if slide_count < 1
+    assign slide_count = 1
+  elsif slide_count > 6
+    assign slide_count = 6
+  endif
+-%}
+
+<social-proof-results-{{ ai_gen_id }} class="ai-social-proof-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}">
+  <div class="ai-social-proof-container-{{ ai_gen_id }}">
+    <div class="ai-social-proof-carousel-{{ ai_gen_id }}">
+      <div class="ai-social-proof-carousel-track-{{ ai_gen_id }}" data-track>
+        {% for i in (1..slide_count) %}
+          {% liquid
+            assign video_key = 'video_' | append: i
+            assign video = section.settings[video_key]
+          %}
+          <div class="ai-social-proof-video-{{ ai_gen_id }}" data-forge-slot-id="video_{{ i }}"{% if video == blank %} data-forge-slot-blank="true"{% endif %}>
+            {% if video != blank %}
+              <img
+                src="{{ video | image_url: width: 800 }}"
+                alt="{% if video.alt != blank %}{{ video.alt | escape }}{% else %}Customer testimonial {{ i }}{% endif %}"
+                loading="lazy"
+                width="600"
+                height="800"
+              >
+            {% else %}
+              <div class="ai-social-proof-video-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="ai-social-proof-nav-{{ ai_gen_id }}">
+        <button class="ai-social-proof-nav-button-{{ ai_gen_id }}" data-prev aria-label="Previous">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+        </button>
+        <button class="ai-social-proof-nav-button-{{ ai_gen_id }}" data-next aria-label="Next">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ai-social-proof-results-{{ ai_gen_id }}">
+      {% if section.settings.heading != blank %}
+        <h2 class="ai-social-proof-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <div class="ai-social-proof-stats-{{ ai_gen_id }}">
+        {% for i in (1..4) %}
+          {% liquid
+            assign stat_enabled_key = 'stat_' | append: i | append: '_enabled'
+            assign stat_percentage_key = 'stat_' | append: i | append: '_percentage'
+            assign stat_text_key = 'stat_' | append: i | append: '_text'
+
+            assign stat_enabled = section.settings[stat_enabled_key]
+            assign stat_percentage = section.settings[stat_percentage_key]
+            assign stat_text = section.settings[stat_text_key]
+          %}
+
+          {% if stat_enabled %}
+            <div class="ai-social-proof-stat-{{ ai_gen_id }}">
+              <div class="ai-social-proof-progress-{{ ai_gen_id }}">
+                <div class="ai-social-proof-progress-bg-{{ ai_gen_id }}" style="--ai-progress-{{ ai_gen_id }}: {{ stat_percentage }}">
+                  <div class="ai-social-proof-progress-inner-{{ ai_gen_id }}">
+                    <span class="ai-social-proof-progress-text-{{ ai_gen_id }}">{{ stat_percentage }}%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ai-social-proof-stat-content-{{ ai_gen_id }}">
+                <p class="ai-social-proof-stat-text-{{ ai_gen_id }}">{{ stat_text }}</p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if section.settings.disclaimer != blank %}
+        <p class="ai-social-proof-disclaimer-{{ ai_gen_id }}">{{ section.settings.disclaimer }}</p>
+      {% endif %}
+    </div>
+  </div>
+</social-proof-results-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SocialProofResults{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.autoplayInterval = null;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('[data-track]');
+        this.carousel = this.querySelector('.ai-social-proof-carousel-{{ ai_gen_id }}');
+        this.nav = this.querySelector('.ai-social-proof-nav-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('[data-prev]');
+        this.nextButton = this.querySelector('[data-next]');
+        this.videos = this.querySelectorAll('.ai-social-proof-video-{{ ai_gen_id }}');
+        this.slideGap = {{ section.settings.video_gap }};
+
+        this._onWinResize = () => this.syncLayout();
+        window.addEventListener('resize', this._onWinResize);
+        if (typeof ResizeObserver !== 'undefined' && this.carousel) {
+          this._resizeObserver = new ResizeObserver(() => this.syncLayout());
+          this._resizeObserver.observe(this.carousel);
+        }
+
+        this.setupEventListeners();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => this.syncLayout());
+        });
+      }
+
+      /** How many slides fit in the carousel viewport (narrow column vs full width). */
+      getVisibleCount() {
+        if (!this.videos.length) return 1;
+        const slideW = this.videos[0].getBoundingClientRect().width;
+        if (slideW <= 0) return this.getVisibleCountFallback();
+
+        const containerW = this.carousel ? this.carousel.clientWidth : 0;
+        if (containerW <= 0) return this.getVisibleCountFallback();
+
+        const vis = Math.floor((containerW + this.slideGap) / (slideW + this.slideGap));
+        return Math.max(1, Math.min(vis, this.videos.length));
+      }
+
+      getVisibleCountFallback() {
+        const w = window.innerWidth;
+        if (w < 750) return 2;
+        if (w < 990) return 3;
+        return 2;
+      }
+
+      syncLayout() {
+        if (!this.track || !this.videos.length) return;
+        this.visibleCount = this.getVisibleCount();
+        const maxIndex = Math.max(0, this.videos.length - this.visibleCount);
+        this.currentIndex = Math.min(this.currentIndex, maxIndex);
+        this.updateCarousel();
+        this.startAutoplay();
+      }
+
+      setupEventListeners() {
+        this.prevButton.addEventListener('click', () => this.prev());
+        this.nextButton.addEventListener('click', () => this.next());
+
+        this.addEventListener('mouseenter', () => this.stopAutoplay());
+        this.addEventListener('mouseleave', () => this.startAutoplay());
+      }
+
+      prev() {
+        this.currentIndex = Math.max(0, this.currentIndex - 1);
+        this.updateCarousel();
+      }
+
+      next() {
+        const vc =
+          typeof this.visibleCount === 'number'
+            ? this.visibleCount
+            : this.getVisibleCount();
+        const maxIndex = Math.max(0, this.videos.length - vc);
+        this.currentIndex = Math.min(maxIndex, this.currentIndex + 1);
+        this.updateCarousel();
+      }
+
+      updateCarousel() {
+        if (!this.track || !this.videos.length) return;
+
+        const vc =
+          typeof this.visibleCount === 'number'
+            ? this.visibleCount
+            : this.getVisibleCount();
+        const maxIndex = Math.max(0, this.videos.length - vc);
+        this.currentIndex = Math.min(this.currentIndex, maxIndex);
+
+        if (this.nav) {
+          this.nav.hidden = maxIndex === 0;
+        }
+
+        const slideW = this.videos[0].getBoundingClientRect().width;
+        const step = slideW + this.slideGap;
+        if (slideW <= 0) return;
+
+        const offset = this.currentIndex * step;
+        this.track.style.transform = `translateX(-${offset}px)`;
+      }
+
+      startAutoplay() {
+        this.stopAutoplay();
+        const vc =
+          typeof this.visibleCount === 'number'
+            ? this.visibleCount
+            : this.getVisibleCount();
+        const maxIndex = Math.max(0, this.videos.length - vc);
+        if (maxIndex === 0 || !this.videos.length) return;
+
+        this.autoplayInterval = setInterval(() => {
+          const hi = Math.max(
+            0,
+            this.videos.length -
+              (typeof this.visibleCount === 'number'
+                ? this.visibleCount
+                : this.getVisibleCount()),
+          );
+          if (this.currentIndex >= hi) {
+            this.currentIndex = 0;
+          } else {
+            this.currentIndex++;
+          }
+          this.updateCarousel();
+        }, {{ section.settings.autoplay_speed }});
+      }
+
+      stopAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+        window.removeEventListener('resize', this._onWinResize);
+        if (this._resizeObserver) {
+          this._resizeObserver.disconnect();
+          this._resizeObserver = null;
+        }
+      }
+    }
+
+    customElements.define('social-proof-results-{{ ai_gen_id }}', SocialProofResults{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Social proof with results",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f5f9",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Video carousel"
+    },
+    {
+      "type": "paragraph",
+      "content": "Slides use a 3:4 portrait frame. For best results, upload 3:4 images (e.g. 900×1200px or 1200×1600px). Other ratios are cropped to fill the frame."
+    },
+    {
+      "type": "range",
+      "id": "number_of_slides",
+      "label": "Number of slides",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 6,
+      "info": "Shows only the first N thumbnails. Lower this to use 3 slides (or any count from 1–6)."
+    },
+    {
+      "type": "image_picker",
+      "id": "video_1",
+      "label": "Slide image 1",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_2",
+      "label": "Slide image 2",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_3",
+      "label": "Slide image 3",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_4",
+      "label": "Slide image 4",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_5",
+      "label": "Slide image 5",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_6",
+      "label": "Slide image 6",
+      "info": "3:4 portrait recommended"
+    },
+    {
+      "type": "range",
+      "id": "video_width",
+      "label": "Slide width",
+      "min": 140,
+      "max": 420,
+      "step": 10,
+      "unit": "px",
+      "default": 260,
+      "info": "Height follows automatically (3:4 portrait)."
+    },
+    {
+      "type": "range",
+      "id": "video_gap",
+      "label": "Video gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "video_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "video_placeholder_color",
+      "label": "Placeholder color",
+      "default": "#e8d5e0"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "video_placeholder_gradient",
+      "label": "Placeholder gradient",
+      "default": "#d4b8c8"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_color",
+      "label": "Button background",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_border",
+      "label": "Button border",
+      "default": "#d5dde4",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_hover_color",
+      "label": "Hover background",
+      "default": "#f5f5f5",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_icon_color",
+      "label": "Icon color",
+      "default": "#2c3e50",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Results panel"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Incredible Results</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#141414",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "checkbox",
+      "id": "stat_1_enabled",
+      "label": "Enable stat 1",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stat_1_percentage",
+      "label": "Stat 1 percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 94
+    },
+    {
+      "type": "text",
+      "id": "stat_1_text",
+      "label": "Stat 1 text",
+      "default": "Feel more confident and attractive in intimate moments"
+    },
+    {
+      "type": "checkbox",
+      "id": "stat_2_enabled",
+      "label": "Enable stat 2",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stat_2_percentage",
+      "label": "Stat 2 percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 87
+    },
+    {
+      "type": "text",
+      "id": "stat_2_text",
+      "label": "Stat 2 text",
+      "default": "Notice improved mood and emotional connection"
+    },
+    {
+      "type": "checkbox",
+      "id": "stat_3_enabled",
+      "label": "Enable stat 3",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stat_3_percentage",
+      "label": "Stat 3 percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 98
+    },
+    {
+      "type": "text",
+      "id": "stat_3_text",
+      "label": "Stat 3 text",
+      "default": "Experience enhanced natural allure and magnetism"
+    },
+    {
+      "type": "checkbox",
+      "id": "stat_4_enabled",
+      "label": "Enable stat 4",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stat_4_percentage",
+      "label": "Stat 4 percentage",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 91
+    },
+    {
+      "type": "text",
+      "id": "stat_4_text",
+      "label": "Stat 4 text",
+      "default": "Create lasting impressions and memorable encounters"
+    },
+    {
+      "type": "range",
+      "id": "stat_gap",
+      "label": "Stat spacing",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Progress circles"
+    },
+    {
+      "type": "range",
+      "id": "progress_size",
+      "label": "Circle size",
+      "min": 60,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "progress_thickness",
+      "label": "Circle thickness",
+      "min": 6,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "progress_color",
+      "label": "Progress color",
+      "default": "#9b7a8f",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "progress_bg_color",
+      "label": "Background color",
+      "default": "#e8d5e0"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "progress_text_size",
+      "label": "Percentage size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "progress_text_color",
+      "label": "Percentage color",
+      "default": "#2c3e50"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Body text"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Color",
+      "default": "#2c3e50",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Disclaimer"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Disclaimer text",
+      "default": "Results based on 20,000+ orders"
+    },
+    {
+      "type": "range",
+      "id": "disclaimer_spacing",
+      "label": "Top spacing",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "disclaimer_size",
+      "label": "Size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "disclaimer_color",
+      "label": "Color",
+      "default": "#7f8c8d"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social proof with results"
+    }
+  ]
+}
+{% endschema %}

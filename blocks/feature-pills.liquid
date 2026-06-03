@@ -1,0 +1,140 @@
+
+{%- assign block_settings = block.settings -%}
+
+<div
+  class="feature-pills-container"
+  style="
+    gap: {{ block_settings.gap }}px;
+    justify-content: {{ block_settings.alignment }};
+    margin-top: {{ block_settings.margin_top }}px;
+    margin-bottom: {{ block_settings.margin_bottom }}px;
+    --feature-pill-border-radius: {% if block_settings.use_custom_border_radius %}{{ block_settings.border_radius }}px{% else %}var(--style-border-radius-global){% endif %};
+  "
+  {{ block.shopify_attributes }}
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .feature-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .feature-pills-container + * {
+    margin-top: 0;
+  }
+
+  .feature-pills-container .feature-pill {
+    border-radius: var(--feature-pill-border-radius) !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .feature-pills-container {
+      gap: 8px !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Feature Pills",
+  "blocks": [
+    {
+      "type": "_feature-pill"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between pills",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_border_radius",
+      "label": "Use custom border radius",
+      "default": false,
+      "info": "If disabled, border radius will inherit from parent settings"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Pill border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature Pills",
+      "blocks": [
+        {
+          "type": "_feature-pill",
+          "settings": {
+            "text": "TRENDING"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

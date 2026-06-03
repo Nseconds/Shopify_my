@@ -1,0 +1,796 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+    background-color: var(--color-background, {{ section.settings.section_background }});
+    overflow: hidden;
+  }
+
+  .ai-reviews-container-{{ ai_gen_id }} {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ section.settings.header_spacing }}px;
+  }
+
+  .ai-reviews-title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.title_size }}px;
+    color: var(--color-foreground, {{ section.settings.title_color }});
+    margin: 0 0 12px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .ai-reviews-subtitle-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: var(--color-foreground, {{ section.settings.subtitle_color }});
+    margin: 0;
+    font-weight: 300;
+    opacity: 0.8;
+  }
+
+  .ai-reviews-carousel-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+
+  .ai-reviews-carousel-{{ ai_gen_id }} {
+    display: flex;
+    gap: var(--style-gap-cards);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 0 24px;
+  }
+
+  .ai-reviews-carousel-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ai-reviews-card-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    width: {{ section.settings.card_width }}px;
+    background: var(--color-card-background, {{ section.settings.card_background }});
+    border-radius: var(--style-border-radius-cards);
+    padding: {{ section.settings.card_padding }}px;
+    box-shadow: var(--style-shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-reviews-card-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ai-reviews-avatar-{{ ai_gen_id }} {
+    width: {{ section.settings.avatar_size }}px;
+    height: {{ section.settings.avatar_size }}px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--color-primary, {{ section.settings.avatar_placeholder_bg }});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-reviews-avatar-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-reviews-avatar-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: {{ section.settings.avatar_size | divided_by: 2 }}px;
+    color: var(--color-background, {{ section.settings.avatar_placeholder_color }});
+    font-weight: 500;
+  }
+
+  .ai-reviews-customer-info-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-reviews-customer-name-{{ ai_gen_id }} {
+    font-size: {{ section.settings.name_size }}px;
+    color: var(--color-foreground, {{ section.settings.name_color }});
+    margin: 0 0 4px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .ai-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ai-reviews-star-{{ ai_gen_id }} {
+    width: {{ section.settings.star_size }}px;
+    height: {{ section.settings.star_size }}px;
+    color: var(--color-primary, {{ section.settings.star_color }});
+  }
+
+  .ai-reviews-testimonial-{{ ai_gen_id }} {
+    font-size: {{ section.settings.testimonial_size }}px;
+    line-height: 1.6;
+    color: var(--color-foreground, {{ section.settings.testimonial_color }});
+    margin: 0;
+    font-weight: 300;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-reviews-card-{{ ai_gen_id }} {
+      width: {{ section.settings.card_width_mobile }}px;
+    }
+
+    .ai-reviews-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-reviews-subtitle-{{ ai_gen_id }} {
+      font-size: {{ section.settings.subtitle_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  id="shopify-section-{{ section.id }}"
+  class="ai-reviews-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-reviews-container-{{ ai_gen_id }}">
+    {% if section.settings.section_title != blank or section.settings.section_subtitle != blank %}
+      <div class="ai-reviews-header-{{ ai_gen_id }}">
+        {% if section.settings.section_title != blank %}
+          <h2 class="ai-reviews-title-{{ ai_gen_id }}">{{ section.settings.section_title }}</h2>
+        {% endif %}
+        {% if section.settings.section_subtitle != blank %}
+          <p class="ai-reviews-subtitle-{{ ai_gen_id }}">{{ section.settings.section_subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-reviews-carousel-wrapper-{{ ai_gen_id }}">
+      <div class="ai-reviews-carousel-{{ ai_gen_id }}" data-carousel>
+        {% for duplicate in (1..2) %}
+        {% for i in (1..6) %}
+          {% liquid
+            assign review_enabled_key = 'review_' | append: i | append: '_enabled'
+            assign customer_name_key = 'review_' | append: i | append: '_customer_name'
+            assign testimonial_key = 'review_' | append: i | append: '_testimonial'
+            assign avatar_key = 'review_' | append: i | append: '_avatar'
+
+            assign review_enabled = section.settings[review_enabled_key]
+            assign customer_name = section.settings[customer_name_key]
+            assign testimonial = section.settings[testimonial_key]
+            assign avatar = section.settings[avatar_key]
+          %}
+
+          {% if review_enabled %}
+            <div class="ai-reviews-card-{{ ai_gen_id }}">
+              <div class="ai-reviews-card-header-{{ ai_gen_id }}">
+                <div class="ai-reviews-avatar-{{ ai_gen_id }}">
+                  {% if avatar != blank %}
+                    <img
+                      src="{{ avatar | image_url: width: 100 }}"
+                      alt="{{ customer_name | escape }}"
+                      loading="lazy"
+                      width="100"
+                      height="100"
+                    >
+                  {% else %}
+                    <div class="ai-reviews-avatar-placeholder-{{ ai_gen_id }}">
+                      {% if customer_name != blank %}
+                        {{ customer_name | slice: 0 | upcase }}
+                      {% else %}
+                        ?
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="ai-reviews-customer-info-{{ ai_gen_id }}">
+                  {% if customer_name != blank %}
+                    <h3 class="ai-reviews-customer-name-{{ ai_gen_id }}">{{ customer_name }}</h3>
+                  {% endif %}
+                  <div class="ai-reviews-stars-{{ ai_gen_id }}">
+                    {% for star in (1..5) %}
+                      <svg class="ai-reviews-star-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                      </svg>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              {% if testimonial != blank %}
+                <p class="ai-reviews-testimonial-{{ ai_gen_id }}">{{ testimonial }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const sectionElement = document.querySelector(`#shopify-section-${sectionId}`);
+    
+    if (!sectionElement) return;
+    
+    const carousel = sectionElement.querySelector('[data-carousel]');
+    if (!carousel) return;
+    
+    const scrollSpeed = {{ section.settings.scroll_speed }};
+    let scrollInterval = null;
+    let isPaused = false;
+    let isDragging = false;
+    
+    function setupTouchScroll() {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let startY;
+
+      // Mouse events
+      carousel.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = true;
+        carousel.style.cursor = 'grabbing';
+        startX = e.pageX - carousel.offsetLeft;
+        startY = e.pageY - carousel.offsetTop;
+        scrollLeft = carousel.scrollLeft;
+        isPaused = true;
+      });
+
+      carousel.addEventListener('mouseup', () => {
+        if (isDown) {
+          isDown = false;
+          isDragging = false;
+          carousel.style.cursor = 'grab';
+          // Resume scrolling after a short delay
+          setTimeout(() => {
+            isPaused = false;
+          }, 1000);
+        }
+      });
+
+      carousel.addEventListener('mouseleave', () => {
+        if (isDown) {
+          isDown = false;
+          isDragging = false;
+          carousel.style.cursor = 'grab';
+          // Resume scrolling after a short delay
+          setTimeout(() => {
+            isPaused = false;
+          }, 1000);
+        }
+      });
+
+      carousel.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 2;
+        carousel.scrollLeft = scrollLeft - walk;
+      });
+
+      // Touch events for mobile
+      carousel.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        isPaused = true;
+        startX = e.touches[0].pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', () => {
+        isDragging = false;
+        setTimeout(() => {
+          isPaused = false;
+        }, 1000);
+      }, { passive: true });
+
+      carousel.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const x = e.touches[0].pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 2;
+        carousel.scrollLeft = scrollLeft - walk;
+      }, { passive: true });
+
+      carousel.style.cursor = 'grab';
+    }
+    
+    function startAutoScroll() {
+      scrollInterval = setInterval(() => {
+        if (isPaused || isDragging) return;
+
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        
+        // Don't scroll if content doesn't overflow
+        if (maxScroll <= 0) return;
+        
+        // Reset at halfway point (content is duplicated) for seamless infinite loop
+        const loopThreshold = carousel.scrollWidth / 2;
+        if (carousel.scrollLeft >= loopThreshold - 1) {
+          carousel.scrollLeft = 0;
+        } else {
+          carousel.scrollLeft += 1;
+        }
+      }, scrollSpeed);
+    }
+    
+    function setupPauseOnHover() {
+      carousel.addEventListener('mouseenter', () => {
+        if (!isDragging) {
+          isPaused = true;
+        }
+      });
+
+      carousel.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+          isPaused = false;
+        }
+      });
+    }
+    
+    setupTouchScroll();
+    
+    {% if section.settings.enable_auto_scroll %}
+      startAutoScroll();
+      setupPauseOnHover();
+    {% endif %}
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Premium customer reviews",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Trusted by thousands"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Subtitle",
+      "default": "Real results from real customers"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Background color",
+      "default": "#ffffff"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Header style"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#141414"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#2c3e50"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto_scroll",
+      "label": "Enable auto-scroll",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "ms",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width",
+      "min": 250,
+      "max": 450,
+      "step": 10,
+      "unit": "px",
+      "default": 340
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Card width on mobile",
+      "min": 200,
+      "max": 350,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f9f5f9"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Avatar"
+    },
+    {
+      "type": "range",
+      "id": "avatar_size",
+      "label": "Avatar size",
+      "min": 32,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "avatar_placeholder_bg",
+      "label": "Placeholder background",
+      "default": "#e8dced"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "avatar_placeholder_color",
+      "label": "Placeholder text color",
+      "default": "#864a9b"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "name_size",
+      "label": "Name size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#141414"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "testimonial_size",
+      "label": "Testimonial size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "testimonial_color",
+      "label": "Testimonial color",
+      "default": "#2c3e50"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "label": "Star size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#ca90de"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_enabled",
+      "label": "Enable review 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_1_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_1_customer_name",
+      "label": "Customer name",
+      "default": "Sarah K."
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_testimonial",
+      "label": "Testimonial",
+      "default": "My skin texture improved dramatically after just two weeks. The lifting effect is real and my complexion has never looked more radiant."
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_enabled",
+      "label": "Enable review 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_2_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_2_customer_name",
+      "label": "Customer name",
+      "default": "Jennifer M."
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_testimonial",
+      "label": "Testimonial",
+      "default": "Clinical results with luxury experience. My fine lines are visibly reduced and my skin feels firmer. Worth every penny."
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_enabled",
+      "label": "Enable review 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_3_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_3_customer_name",
+      "label": "Customer name",
+      "default": "Emily R."
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_testimonial",
+      "label": "Testimonial",
+      "default": "The glow is unmatched. My dermatologist even asked what I've been using. This device transformed my skincare routine completely."
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_4_enabled",
+      "label": "Enable review 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_4_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_4_customer_name",
+      "label": "Customer name",
+      "default": "Michelle L."
+    },
+    {
+      "type": "textarea",
+      "id": "review_4_testimonial",
+      "label": "Testimonial",
+      "default": "Professional-grade results at home. My pores are smaller, skin is smoother, and the overall tone is so much more even."
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_5_enabled",
+      "label": "Enable review 5",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_5_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_5_customer_name",
+      "label": "Customer name",
+      "default": "Amanda T."
+    },
+    {
+      "type": "textarea",
+      "id": "review_5_testimonial",
+      "label": "Testimonial",
+      "default": "I was skeptical at first, but the results speak for themselves. My skin looks lifted, brighter, and years younger."
+    },
+    {
+      "type": "header",
+      "content": "Review 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_6_enabled",
+      "label": "Enable review 6",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_6_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "review_6_customer_name",
+      "label": "Customer name",
+      "default": "Lisa H."
+    },
+    {
+      "type": "textarea",
+      "id": "review_6_testimonial",
+      "label": "Testimonial",
+      "default": "Best investment in my skin ever. The device is easy to use and the results are consistent. My skin has never felt this healthy."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium customer reviews"
+    }
+  ]
+}
+{% endschema %}

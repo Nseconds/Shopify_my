@@ -1,0 +1,339 @@
+
+{%- doc -%}
+  A block displaying multiple trust badges/features in a horizontal row.
+  Perfect for reviews, shipping, support, guarantees, etc.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign tb_id = block.id | replace: '_', '' | replace: '-', '' | downcase
+%}
+
+{% if settings.style_mode == 'gradient' %}
+  {%- assign tb_g1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign tb_g2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign tb_g3 = section.settings.color_scheme.settings.gradient_3 -%}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="tb-icon-grad-{{ tb_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="{{ tb_g1 }}"/>
+        <stop offset="50%" stop-color="{{ tb_g2 }}"/>
+        <stop offset="100%" stop-color="{{ tb_g3 }}"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  {% style %}
+  .trust-badges-{{ tb_id }} .trust-badge__icon svg {
+    stroke: url(#tb-icon-grad-{{ tb_id }});
+  }
+  {% endstyle %}
+{% endif %}
+
+<div
+  class="trust-badges trust-badges-{{ tb_id }} spacing-style{% if block_settings.mobile_inline %} trust-badges--mobile-inline{% endif %}"
+  style="
+    {% render 'spacing-padding', settings: block_settings %}
+    --badge-gap: {{ block_settings.badge_gap }}px;
+    --icon-size: {{ block_settings.icon_size }}px;
+    --icon-size-mobile: {{ block_settings.icon_size_mobile }}px;
+    --icon-color: var(--color-primary, {{ block_settings.icon_color }});
+    --text-color: var(--color-foreground, {{ block_settings.text_color }});
+    --text-size: {{ block_settings.text_size }}px;
+    --text-size-mobile: {{ block_settings.text_size_mobile }}px;
+    --text-align: {{ block_settings.text_align }};
+  "
+  {{ block.shopify_attributes }}
+>
+  {% if block_settings.badge_1_icon != blank or block_settings.badge_1_text != blank %}
+    <div class="trust-badge">
+      {% if block_settings.badge_1_icon != blank %}
+        <div class="trust-badge__icon">
+          {{ block_settings.badge_1_icon }}
+        </div>
+      {% endif %}
+      {% if block_settings.badge_1_text != blank %}
+        <div class="trust-badge__text">
+          {{ block_settings.badge_1_text }}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if block_settings.badge_2_icon != blank or block_settings.badge_2_text != blank %}
+    <div class="trust-badge">
+      {% if block_settings.badge_2_icon != blank %}
+        <div class="trust-badge__icon">
+          {{ block_settings.badge_2_icon }}
+        </div>
+      {% endif %}
+      {% if block_settings.badge_2_text != blank %}
+        <div class="trust-badge__text">
+          {{ block_settings.badge_2_text }}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if block_settings.badge_3_icon != blank or block_settings.badge_3_text != blank %}
+    <div class="trust-badge">
+      {% if block_settings.badge_3_icon != blank %}
+        <div class="trust-badge__icon">
+          {{ block_settings.badge_3_icon }}
+        </div>
+      {% endif %}
+      {% if block_settings.badge_3_text != blank %}
+        <div class="trust-badge__text">
+          {{ block_settings.badge_3_text }}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .trust-badges {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: var(--badge-gap);
+    flex-wrap: wrap;
+  }
+
+  .trust-badge {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .trust-badge__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    color: var(--icon-color);
+  }
+
+  .trust-badge__icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .trust-badge__text {
+    color: var(--text-color);
+    font-size: var(--text-size);
+    line-height: 1.3;
+    text-align: var(--text-align);
+    font-weight: 500;
+  }
+
+  @media screen and (max-width: 749px) {
+    .trust-badge__icon {
+      width: var(--icon-size-mobile);
+      height: var(--icon-size-mobile);
+    }
+
+    .trust-badge__text {
+      font-size: var(--text-size-mobile);
+    }
+
+    .trust-badges:not(.trust-badges--mobile-inline) {
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .trust-badges:not(.trust-badges--mobile-inline) .trust-badge {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust badges",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge 1"
+    },
+    {
+      "type": "html",
+      "id": "badge_1_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><polygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/></svg>"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Text",
+      "default": "12,319 Five Stars"
+    },
+    {
+      "type": "header",
+      "content": "Badge 2"
+    },
+    {
+      "type": "html",
+      "id": "badge_2_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\"/><polygon points=\"16 8 20 8 23 11 23 16 16 16 16 8\"/><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"/><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"/></svg>"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Text",
+      "default": "Fast & Easy Returns"
+    },
+    {
+      "type": "header",
+      "content": "Badge 3"
+    },
+    {
+      "type": "html",
+      "id": "badge_3_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg>"
+    },
+    {
+      "type": "text",
+      "id": "badge_3_text",
+      "label": "Text",
+      "default": "24/7 VIP Support"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size (Desktop)",
+      "min": 32,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Icon size (Mobile)",
+      "min": 24,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size (Desktop)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size (Mobile)",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "badge_gap",
+      "label": "Gap between badges",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_inline",
+      "label": "Show badges inline on mobile",
+      "default": false,
+      "info": "If enabled, badges will stay in a horizontal row on mobile instead of stacking vertically"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#c4a69d"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust badges",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+

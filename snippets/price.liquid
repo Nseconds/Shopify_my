@@ -1,0 +1,190 @@
+{%- doc -%}
+  This snippet is used to render a product card.
+  It is used in the product block,featured product block, and the product card block.
+
+  @param {product} product_resource - The product to render
+  @param {boolean} [show_unit_price] - Whether to show the unit price
+  @param {boolean} [show_sale_price_first] - Whether to show the sale price first
+  @param {boolean} [show_badges] - Whether to show the discount badge
+  @param {number} [badge_border_radius] - Badge corner radius
+  @param {boolean} [badge_show_chevron] - Show chevron icon nearside
+  @param {string} [save_badge_text] - Custom word for save badge (e.g., 'SAVE', 'AHORRA')
+  @param {string} [badge_color] - Custom solid color for the save badge (overrides gradient)
+  @param {string} [badge_gradient] - CSS gradient string for the save badge background
+  @param {string} [price_color] - Custom color for the price
+  @param {string} [compare_at_price_color] - Custom color for the compare-at price
+  @param {boolean} [hide_cents] - Hide decimal values from prices
+  @param {boolean} [currency_symbol_after] - Place currency symbol after the amount
+  @param {string} [block_id] - Block ID for scoped styling
+{%- enddoc -%}
+
+{%- liquid
+  assign show_unit_price = show_unit_price | default: false
+  assign show_sale_price_first = show_sale_price_first | default: false
+  assign show_badges = show_badges | default: false
+  assign badge_border_radius = badge_border_radius | default: 12
+  assign badge_show_chevron = badge_show_chevron | default: false
+  assign save_badge_text = save_badge_text | default: 'SAVE'
+  assign badge_color = badge_color | default: ''
+  assign hide_cents = hide_cents | default: false
+  assign currency_symbol_after = currency_symbol_after | default: false
+
+  assign selected_variant = product_resource.selected_or_first_available_variant
+  assign price = selected_variant.price
+  assign compare_at_price = selected_variant.compare_at_price
+
+  assign show_compare_price = false
+  assign savings_percentage = 0
+  if compare_at_price > price
+    assign show_compare_price = true
+    assign price_difference = compare_at_price | minus: price
+    assign savings_percentage = price_difference | times: 100.0 | divided_by: compare_at_price | round
+  endif
+
+  if product_resource == blank
+    assign price = 1999
+  endif
+
+  # Round prices to whole numbers if hide_cents is enabled
+  if hide_cents
+    assign price = price | divided_by: 100 | round | times: 100
+    if compare_at_price
+      assign compare_at_price = compare_at_price | divided_by: 100 | round | times: 100
+    endif
+  endif
+
+  assign show_currency_code = false
+  if product.handle == closest.product.handle and settings.currency_code_enabled_product_pages
+    assign show_currency_code = true
+  elsif product.handle != closest.product.handle and settings.currency_code_enabled_product_cards
+    assign show_currency_code = true
+  endif
+
+  assign currency_symbol = cart.currency.symbol
+
+  # Format the price based on settings
+  if currency_symbol_after
+    assign price = price | money_without_currency | strip
+    assign compare_at_price = compare_at_price | money_without_currency | strip
+    if show_currency_code
+      assign price = price | append: ' ' | append: cart.currency.iso_code
+      assign compare_at_price = compare_at_price | append: ' ' | append: cart.currency.iso_code
+    else
+      assign price = price | append: ' ' | append: currency_symbol
+      assign compare_at_price = compare_at_price | append: ' ' | append: currency_symbol
+    endif
+  elsif hide_cents
+    assign price = price | money_without_trailing_zeros
+    assign compare_at_price = compare_at_price | money_without_trailing_zeros
+  elsif show_currency_code
+    assign price = price | money_with_currency
+    assign compare_at_price = compare_at_price | money_with_currency
+  else
+    assign price = price | money
+    assign compare_at_price = compare_at_price | money
+  endif
+
+  # Ensure USD currency always has dollar sign (skip when suffix mode shows ISO code instead)
+  if cart.currency.iso_code == 'USD' or localization.country.currency.iso_code == 'USD'
+    if currency_symbol_after
+      unless show_currency_code
+        unless price contains '$'
+          assign price = price | append: ' $'
+        endunless
+        unless compare_at_price contains '$'
+          assign compare_at_price = compare_at_price | append: ' $'
+        endunless
+      endunless
+    else
+      unless price contains '$'
+        assign price = '$' | append: price
+      endunless
+      unless compare_at_price contains '$'
+        assign compare_at_price = '$' | append: compare_at_price
+      endunless
+    endif
+  endif
+-%}
+
+<div ref="priceContainer" class="price-wrapper">
+  {% if show_sale_price_first == false and show_compare_price %}
+    <span role="group">
+      <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+      <span class="compare-at-price">{{- compare_at_price -}}</span>
+    </span>
+  {% endif %}
+
+  <div class="price-group">
+    {% if show_compare_price %}
+      <span role="group">
+        <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+        <span class="price price--sale">{{ price | default: '&nbsp;' }}</span>
+      </span>
+    {% else %}
+      <span class="price">{{ price | default: '&nbsp;' }}</span>
+    {% endif %}
+
+    {% if show_sale_price_first == true and show_compare_price %}
+      <span role="group">
+        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+        <span class="compare-at-price">{{- compare_at_price -}}</span>
+      </span>
+    {% endif %}
+
+    {% if show_badges == true and show_compare_price == true and savings_percentage > 0 %}
+      <span class="price-badge">
+        {% if badge_show_chevron %}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" fill="currentColor"/>
+          </svg>
+        {% endif %}
+        {{ save_badge_text | default: 'SAVE' }} {{ savings_percentage }}%
+      </span>
+    {% endif %}
+  </div>
+  {%- if selected_variant.unit_price and show_unit_price %}
+    {%- liquid
+      if currency_symbol_after
+        assign unit_price = selected_variant.unit_price | money_without_currency | strip
+        if show_currency_code
+          assign unit_price = unit_price | append: ' ' | append: cart.currency.iso_code
+        else
+          assign unit_price = unit_price | append: ' ' | append: currency_symbol
+        endif
+      elsif show_currency_code
+        assign unit_price = selected_variant.unit_price | money_with_currency
+      else
+        assign unit_price = selected_variant.unit_price | money
+      endif
+    -%}
+    {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
+  {%- endif -%}
+</div>
+
+{% if block_id %}
+  {% style %}
+    [data-block-id="{{ block_id }}"] .price-badge {
+      {% if badge_color != blank %}
+        background: {{ badge_color }};
+        color: white;
+      {% elsif badge_gradient != blank %}
+        background: {{ badge_gradient }};
+        color: white;
+      {% else %}
+        background: var(--color-primary);
+        color: var(--color-primary-button-text);
+      {% endif %}
+      border-radius: {{ badge_border_radius }}px;
+    }
+    {% if price_color != blank %}
+      [data-block-id="{{ block_id }}"] .price {
+        color: {{ price_color }};
+      }
+    {% endif %}
+    {% if compare_at_price_color != blank %}
+      [data-block-id="{{ block_id }}"] .compare-at-price {
+        color: {{ compare_at_price_color }};
+      }
+    {% endif %}
+  {% endstyle %}
+{% endif %}

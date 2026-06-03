@@ -1,0 +1,282 @@
+
+<section id="shopify-section-{{ section.id }}" class="anchor-feature-split color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }} {
+        --afs-blue-1: var(--color-primary);
+        --afs-blue-2: rgb(var(--color-primary-rgb) / 0.7);
+        --afs-text: var(--color-foreground-heading);
+        --afs-muted: var(--color-foreground);
+
+        --afs-pad-top: {{ section.settings.padding_top }}px;
+        --afs-pad-bottom: {{ section.settings.padding_bottom }}px;
+        --afs-pad-top-m: {{ section.settings.padding_top_mobile }}px;
+        --afs-pad-bottom-m: {{ section.settings.padding_bottom_mobile }}px;
+      }
+
+      .anchor-feature-split {
+        width: 100%;
+        padding: var(--afs-pad-top) 24px var(--afs-pad-bottom);
+        background: var(--color-background);
+      }
+
+      .afs-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+        align-items: center;
+      }
+
+      .afs-image {
+        border-radius: var(--style-border-radius-images);
+        overflow: hidden;
+      }
+
+      .afs-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: var(--style-border-radius-images);
+      }
+
+      .afs-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--afs-blue-1);
+        margin-bottom: 12px;
+      }
+
+      .afs-heading {
+        font-size: clamp(28px, 3vw, 44px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--afs-text);
+        margin-bottom: 16px;
+      }
+
+      .afs-heading span {
+        color: var(--afs-blue-1);
+      }
+
+      {% if settings.style_mode == 'gradient' %}
+      .afs-heading span {
+        background: var(--color-card-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .afs-eyebrow {
+        background: var(--color-card-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      {% endif %}
+
+      .afs-sub {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--afs-muted);
+        max-width: 46ch;
+        margin-bottom: 28px;
+      }
+
+      .afs-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      .afs-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 15px;
+        color: var(--afs-text);
+      }
+
+      .afs-icon {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        color: var(--afs-blue-1);
+      }
+
+      /* Mobile */
+      @media (max-width: 900px) {
+        .anchor-feature-split {
+          padding: var(--afs-pad-top-m) 20px var(--afs-pad-bottom-m);
+        }
+
+        .afs-wrap {
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
+
+        .afs-heading {
+          font-size: 28px;
+        }
+      }
+    {% endstyle %}
+
+    <div class="afs-wrap">
+      <div class="afs-image" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+        {% if section.settings.image %}
+          <img
+            src="{{ section.settings.image | image_url: width: 1400 }}"
+            alt="{{ section.settings.image_alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {% endif %}
+      </div>
+
+      <div class="afs-content">
+        <div class="afs-eyebrow">{{ section.settings.eyebrow }}</div>
+
+        <h2 class="afs-heading">
+          {{ section.settings.heading_before }}
+          <span>{{ section.settings.heading_highlight }}</span>
+        </h2>
+
+        <div class="afs-sub">{{ section.settings.subheading }}</div>
+
+        <div class="afs-list">
+          {% for block in section.blocks %}
+            <div class="afs-item">
+              <svg class="afs-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2l2.39 4.84L20 7.27l-4 3.9.95 5.53L12 14.77 7.05 16.7 8 11.17l-4-3.9 5.61-.43L12 2z"/>
+              </svg>
+              <div>{{ block.settings.text }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% schema %}
+  {
+    "name": "Image Feature Split",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "image_alt",
+        "label": "Image alt text",
+        "default": "Feature image"
+      },
+      {
+        "type": "text",
+        "id": "eyebrow",
+        "label": "Eyebrow",
+        "default": "Designed for Everyday Movement"
+      },
+      {
+        "type": "text",
+        "id": "heading_before",
+        "label": "Heading (first part)",
+        "default": "Secure Comfort for"
+      },
+      {
+        "type": "text",
+        "id": "heading_highlight",
+        "label": "Heading (highlight)",
+        "default": "Active Lifestyles"
+      },
+      {
+        "type": "textarea",
+        "id": "subheading",
+        "label": "Subheading",
+        "default": "Keep your glasses secure, comfortable, and ready for anything-on land or on the water."
+      },
+
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1"
+      },
+
+      {
+        "type": "header",
+        "content": "Spacing"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Padding top (desktop)",
+        "min": 0,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Padding bottom (desktop)",
+        "min": 0,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "padding_top_mobile",
+        "label": "Padding top (mobile)",
+        "min": 0,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "default": 56
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom_mobile",
+        "label": "Padding bottom (mobile)",
+        "min": 0,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "default": 56
+      }
+    ],
+    "blocks": [
+      {
+        "type": "feature",
+        "name": "Feature",
+        "settings": [
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Feature text",
+            "default": "Slip-resistant design keeps glasses secure during movement"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image Feature Split",
+        "blocks": [
+          { "type": "feature" },
+          { "type": "feature" },
+          { "type": "feature" }
+        ]
+      }
+    ]
+  }
+  {% endschema %}

@@ -1,0 +1,352 @@
+{%- liquid
+  assign title = section.settings.title
+  assign description = section.settings.description
+  assign show_image = section.settings.show_image
+  if settings.style_mode == 'gradient'
+    assign gu_card_bg = 'var(--color-card-background)'
+    assign gu_icon    = 'var(--color-gradient-1)'
+    assign gu_border  = 'var(--color-border)'
+    assign gu_text    = 'var(--color-foreground)'
+  else
+    assign gu_card_bg = 'var(--color-background-secondary)'
+    assign gu_icon    = 'var(--color-foreground)'
+    assign gu_border  = 'var(--color-border)'
+    assign gu_text    = 'var(--color-foreground)'
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .guarantee {
+    --guarantee-card-bg: {{ gu_card_bg }};
+    --guarantee-icon-color: {{ gu_icon }};
+    --guarantee-border: {{ gu_border }};
+    --guarantee-text: {{ gu_text }};
+    --guarantee-radius: var(--style-border-radius-cards);
+  }
+  #shopify-section-{{ section.id }} .guarantee__item-inner {
+    color: var(--guarantee-text);
+  }
+{% endstyle %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="guarantee section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="guarantee__container container">
+
+    {%- if title != blank or description != blank -%}
+      <div class="guarantee__header">
+        {%- if title != blank -%}
+          <div class="guarantee__title rte">{{ title }}</div>
+        {%- endif -%}
+        {%- if description != blank -%}
+          <div class="guarantee__description rte">{{ description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="guarantee__grid">
+        {%- for block in section.blocks -%}
+          <div class="guarantee__item" {{ block.shopify_attributes }}>
+            <div class="guarantee__item-inner">
+              {%- if block.settings.icon != blank -%}
+                <div class="guarantee__icon">
+                  {{ block.settings.icon }}
+                </div>
+              {%- endif -%}
+
+              <div class="guarantee__content">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="guarantee__item-title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+
+                {%- if block.settings.description != blank -%}
+                  <div class="guarantee__item-description rte">{{ block.settings.description }}</div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if show_image and section.settings.badge_image != blank -%}
+      <div class="guarantee__badge">
+        {%- render 'image',
+          image: section.settings.badge_image
+        -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% stylesheet %}
+  .guarantee {
+    width: 100%;
+    overflow: hidden;
+    color: var(--guarantee-text);
+  }
+
+  .guarantee__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .guarantee__header {
+    text-align: center;
+    margin-block-end: 48px;
+  }
+
+  .guarantee__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+    color: var(--guarantee-text);
+  }
+
+  .guarantee__description {
+    font-size: 1.125rem;
+    max-width: 700px;
+    margin: 0 auto;
+    opacity: 0.85;
+    color: var(--guarantee-text);
+  }
+
+  .guarantee__description p {
+    margin: 0;
+  }
+
+  .guarantee__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .guarantee__item {
+    position: relative;
+  }
+
+  .guarantee__item-inner {
+    height: 100%;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 32px;
+    background: var(--guarantee-card-bg);
+    border: 1px solid var(--guarantee-border);
+    border-radius: var(--guarantee-radius);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .guarantee__item:hover .guarantee__item-inner {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .guarantee__icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--guarantee-icon-color);
+  }
+
+  .guarantee__icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .guarantee__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .guarantee__item-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    color: var(--guarantee-text);
+  }
+
+  .guarantee__item-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    color: var(--guarantee-text);
+  }
+
+  .guarantee__item-description p {
+    margin: 0;
+  }
+
+  .guarantee__badge {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .guarantee__badge img {
+    max-width: 200px;
+    height: auto;
+  }
+
+  @media (max-width: 989px) {
+    .guarantee__grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .guarantee__header {
+      margin-block-end: 32px;
+    }
+
+    .guarantee__title {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .guarantee__description {
+      font-size: 1rem;
+    }
+
+    .guarantee__item-inner {
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .guarantee__icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .guarantee__item-title {
+      font-size: 1.125rem;
+    }
+
+    .guarantee__item-description {
+      font-size: 0.875rem;
+    }
+
+    .guarantee__badge {
+      margin-top: 32px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Guarantee",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "<h2>Our Promise To You</h2>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Shop with confidence. We stand behind every product we sell with industry-leading guarantees.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Design"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show guarantee badge",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_image",
+      "label": "Guarantee badge image",
+      "info": "Optional guarantee seal or certification badge"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "guarantee_item",
+      "name": "Guarantee Item",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon SVG",
+          "default": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'></path><polyline points='9 12 11 14 15 10'></polyline></svg>"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings.title",
+          "default": "30-Day Money Back"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Not satisfied? Return it within 30 days for a full refund. No questions asked.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Guarantee",
+      "category": "t:categories.product",
+      "blocks": [
+        { "type": "guarantee_item" },
+        { "type": "guarantee_item" },
+        { "type": "guarantee_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

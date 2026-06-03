@@ -1,0 +1,539 @@
+
+
+{% liquid
+  assign block_settings = block.settings
+  assign ratio = 1
+
+  case block_settings.image_ratio
+    when 'landscape'
+      assign ratio = '16 / 9'
+    when 'portrait'
+      assign ratio = '4 / 5'
+    when 'adapt'
+      assign ratio = block_settings.image.aspect_ratio
+  endcase
+
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
+%}
+
+{% capture class %}
+  image-block image-block--{{ block.id }} image-block--height-{{ block_settings.height }} spacing-style size-style{% if block_settings.auto_bounce_interval != 'off' %} image-block--bounce{% endif %}
+{% endcapture %}
+
+{% capture style %}
+  --ratio: {{ ratio }};
+  {% render 'size-style', settings: block_settings %}
+  {% render 'spacing-style', settings: block_settings %}
+{% endcapture %}
+
+{% liquid
+  assign effective_radius = block_settings.border_radius | plus: 0
+  if effective_radius == 0 and settings.global_border_radius > 0
+    assign effective_radius = settings.global_border_radius
+  endif
+%}
+
+{% capture image_border_style %}
+  --ratio: {{ ratio }};
+  --border-width: {{ block_settings.border_width }}px;
+  --border-style: {{ block_settings.border }};
+  --border-color: rgb(var(--color-border-rgb) / {{ block_settings.border_opacity | divided_by: 100.0 }});
+  --border-radius: {{ effective_radius }}px;
+  {% if effective_radius > 0 %}overflow: hidden;{% endif %}
+{% endcapture %}
+
+{% liquid
+  assign media_width_desktop = '100vw'
+  assign media_width_mobile = '100vw'
+  assign sizes = 'auto, (min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
+  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+%}
+
+{% capture image %}
+  {%- if block_settings.image -%}
+    {{
+      block_settings.image
+      | image_url: width: 3840
+      | image_tag:
+        width: block_settings.image.width,
+        widths: widths,
+        height: block_settings.image.height,
+        class: 'image-block__image border-style',
+        style: image_border_style,
+        sizes: sizes
+    }}
+  {%- else -%}
+    <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
+      {{ 'detailed-apparel-1' | placeholder_svg_tag: 'hero__image' }}
+    </div>
+  {%- endif -%}
+{% endcapture %}
+
+{% if block_settings.link == blank %}
+  <image-bounce-block
+    class="{{ class }}"
+    style="{{ style }}"
+    data-auto-bounce-interval="{{ block_settings.auto_bounce_interval }}"
+    data-bounce-intensity="{{ block_settings.bounce_intensity }}"
+    data-bounce-speed="{{ block_settings.bounce_speed }}"
+    {{ block.shopify_attributes }}
+  >
+    {{ image }}
+  </image-bounce-block>
+{% else %}
+  <a
+    href="{{ block_settings.link }}"
+    class="{{ class }}"
+    style="{{ style }}"
+    {{ block.shopify_attributes }}
+  >
+    <image-bounce-block
+      data-auto-bounce-interval="{{ block_settings.auto_bounce_interval }}"
+      data-bounce-intensity="{{ block_settings.bounce_intensity }}"
+      data-bounce-speed="{{ block_settings.bounce_speed }}"
+      style="display: block; width: 100%; height: 100%;"
+    >
+      {{ image }}
+    </image-bounce-block>
+  </a>
+{% endif %}
+
+{% stylesheet %}
+  .placeholder-image {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+  }
+
+  placeholder-image img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: var(--ratio);
+  }
+
+  .image-block {
+    display: flex;
+
+    /* When the image is nested in a group, section, etc, respect the parent's horizontal alignment */
+    justify-content: var(--horizontal-alignment, 'inline-start');
+  }
+
+  .image-block--height-fill .image-block__image {
+    height: 100%;
+  }
+
+  .image-block__image {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: var(--ratio);
+  }
+
+  /* Bounce animation styles */
+  image-bounce-block {
+    display: block;
+  }
+
+  /* Subtle bounce - up and down motion */
+  @keyframes gentle-bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    20% { transform: translateY(-4px); }
+    40% { transform: translateY(2px); }
+    60% { transform: translateY(-2px); }
+    80% { transform: translateY(1px); }
+  }
+
+  /* Normal bounce - up and down motion */
+  @keyframes gentle-bounce-normal {
+    0%, 100% { transform: translateY(0); }
+    20% { transform: translateY(-8px); }
+    40% { transform: translateY(4px); }
+    60% { transform: translateY(-4px); }
+    80% { transform: translateY(2px); }
+  }
+
+  /* Pronounced bounce - up and down motion */
+  @keyframes gentle-bounce-pronounced {
+    0%, 100% { transform: translateY(0); }
+    20% { transform: translateY(-12px); }
+    40% { transform: translateY(6px); }
+    60% { transform: translateY(-6px); }
+    80% { transform: translateY(3px); }
+  }
+
+  /* Slow speed - 0.6s */
+  image-bounce-block.bouncing[data-bounce-speed="slow"][data-bounce-intensity="subtle"] {
+    animation: gentle-bounce-subtle 0.6s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="slow"][data-bounce-intensity="normal"] {
+    animation: gentle-bounce-normal 0.6s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="slow"][data-bounce-intensity="pronounced"] {
+    animation: gentle-bounce-pronounced 0.6s ease-out;
+  }
+
+  /* Normal speed - 0.4s */
+  image-bounce-block.bouncing[data-bounce-speed="normal"][data-bounce-intensity="subtle"] {
+    animation: gentle-bounce-subtle 0.4s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="normal"][data-bounce-intensity="normal"] {
+    animation: gentle-bounce-normal 0.4s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="normal"][data-bounce-intensity="pronounced"] {
+    animation: gentle-bounce-pronounced 0.4s ease-out;
+  }
+
+  /* Fast speed - 0.25s */
+  image-bounce-block.bouncing[data-bounce-speed="fast"][data-bounce-intensity="subtle"] {
+    animation: gentle-bounce-subtle 0.25s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="fast"][data-bounce-intensity="normal"] {
+    animation: gentle-bounce-normal 0.25s ease-out;
+  }
+  image-bounce-block.bouncing[data-bounce-speed="fast"][data-bounce-intensity="pronounced"] {
+    animation: gentle-bounce-pronounced 0.25s ease-out;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ImageBounceBlock extends HTMLElement {
+    connectedCallback() {
+      this.setupAutoBounce();
+    }
+
+    disconnectedCallback() {
+      if (this.bounceInterval) {
+        clearInterval(this.bounceInterval);
+      }
+    }
+
+    setupAutoBounce() {
+      const autoBounceInterval = this.getAttribute('data-auto-bounce-interval');
+      
+      if (!autoBounceInterval || autoBounceInterval === 'off') return;
+
+      const intervalSeconds = parseInt(autoBounceInterval);
+      const speed = this.getAttribute('data-bounce-speed') || 'normal';
+      
+      // Get animation duration based on speed (faster overall)
+      const durations = { slow: 600, normal: 400, fast: 250 };
+      const animationDuration = durations[speed] || 400;
+      
+      // Start the auto-bounce interval
+      this.bounceInterval = setInterval(() => {
+        this.classList.add('bouncing');
+        
+        // Remove the class after animation completes
+        setTimeout(() => {
+          this.classList.remove('bouncing');
+        }, animationDuration);
+      }, intervalSeconds * 1000);
+    }
+  }
+
+  if (!customElements.get('image-bounce-block')) {
+    customElements.define('image-bounce-block', ImageBounceBlock);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:names.image",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:settings.link"
+    },
+    {
+      "type": "header",
+      "content": "t:content.size"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.portrait"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.landscape"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:settings.aspect_ratio"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width_desktop",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width",
+      "label": "t:settings.custom_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "custom_width_mobile",
+      "label": "t:settings.custom_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "fit",
+          "label": "t:options.fit_content"
+        },
+        {
+          "value": "fill",
+          "label": "t:options.fill"
+        }
+      ],
+      "default": "fit",
+      "visible_if": "{{ block.settings.image_ratio == 'adapt' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.borders"
+    },
+    {
+      "type": "select",
+      "id": "border",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.thickness",
+      "default": 1,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "t:settings.opacity",
+      "default": 100,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "auto_bounce_interval",
+      "label": "Auto bounce interval",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "3",
+          "label": "Every 3 seconds"
+        },
+        {
+          "value": "5",
+          "label": "Every 5 seconds"
+        },
+        {
+          "value": "10",
+          "label": "Every 10 seconds"
+        }
+      ],
+      "default": "off",
+      "info": "Automatically bounce the image up and down at regular intervals to grab attention"
+    },
+    {
+      "type": "select",
+      "id": "bounce_intensity",
+      "label": "Bounce intensity",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle (4px)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal (8px)"
+        },
+        {
+          "value": "pronounced",
+          "label": "Pronounced (12px)"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how much the image moves during bounce animation",
+      "visible_if": "{{ block.settings.auto_bounce_interval != 'off' }}"
+    },
+    {
+      "type": "select",
+      "id": "bounce_speed",
+      "label": "Bounce speed",
+      "options": [
+        {
+          "value": "slow",
+          "label": "Slow"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "fast",
+          "label": "Fast"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how fast the bounce animation plays",
+      "visible_if": "{{ block.settings.auto_bounce_interval != 'off' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.image",
+      "category": "t:categories.basic"
+    }
+  ]
+}
+{% endschema %}

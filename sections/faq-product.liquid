@@ -1,0 +1,398 @@
+{%- liquid
+  assign title = section.settings.title
+  assign subtitle = section.settings.subtitle
+-%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="faq-product section color-{{ section.settings.color_scheme }}">
+  <div class="faq-product__container container">
+    {%- if title != blank or subtitle != blank -%}
+      <div class="faq-product__header">
+        {%- if title != blank -%}
+          <div class="faq-product__title rte">{{ title }}</div>
+        {%- endif -%}
+        {%- if subtitle != blank -%}
+          <div class="faq-product__subtitle rte">{{ subtitle }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="faq-product__list">
+        {%- for block in section.blocks -%}
+          <details
+            class="faq-product__item"
+            {% if block.settings.open_by_default %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary class="faq-product__question">
+              <span class="faq-product__question-text">{{ block.settings.question }}</span>
+              <span class="faq-product__icon">
+                <svg class="faq-product__icon-plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <svg class="faq-product__icon-minus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </span>
+            </summary>
+            <div class="faq-product__answer">
+              <div class="faq-product__answer-content rte">
+                {{ block.settings.answer }}
+              </div>
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .faq-product {
+    width: 100%;
+  }
+
+  .faq-product__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .faq-product__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .faq-product__title {
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+
+  .faq-product__title.rte p {
+    margin: 0;
+  }
+
+  .faq-product__title.rte h1,
+  .faq-product__title.rte h2,
+  .faq-product__title.rte h3,
+  .faq-product__title.rte h4,
+  .faq-product__title.rte h5,
+  .faq-product__title.rte h6 {
+    margin: 0 0 0.5em 0;
+    font-weight: 700;
+    line-height: inherit;
+  }
+
+  .faq-product__title.rte h1:last-child,
+  .faq-product__title.rte h2:last-child,
+  .faq-product__title.rte h3:last-child,
+  .faq-product__title.rte h4:last-child,
+  .faq-product__title.rte h5:last-child,
+  .faq-product__title.rte h6:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-product__subtitle {
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .faq-product__subtitle.rte p {
+    margin: 0;
+  }
+
+  .faq-product__subtitle.rte h1,
+  .faq-product__subtitle.rte h2,
+  .faq-product__subtitle.rte h3,
+  .faq-product__subtitle.rte h4,
+  .faq-product__subtitle.rte h5,
+  .faq-product__subtitle.rte h6 {
+    margin: 0 0 0.5em 0;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  .faq-product__subtitle.rte h1:last-child,
+  .faq-product__subtitle.rte h2:last-child,
+  .faq-product__subtitle.rte h3:last-child,
+  .faq-product__subtitle.rte h4:last-child,
+  .faq-product__subtitle.rte h5:last-child,
+  .faq-product__subtitle.rte h6:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-product__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-product__item {
+    background: rgba(var(--color-foreground-rgb), 0.03);
+    border: 1px solid rgba(var(--color-foreground-rgb), 0.1);
+    border-radius: var(--style-border-radius-cards);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .faq-product__item:hover {
+    border-color: rgba(var(--color-foreground-rgb), 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .faq-product__item[open] {
+    background: rgba(var(--color-foreground-rgb), 0.05);
+  }
+
+  .faq-product__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    font-size: 1.125rem;
+    font-weight: 600;
+    transition: background 0.2s ease;
+  }
+
+  .faq-product__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-product__question:hover {
+    background: rgba(var(--color-foreground-rgb), 0.02);
+  }
+
+  .faq-product__question-text {
+    flex: 1;
+  }
+
+  .faq-product__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    position: relative;
+  }
+
+  .faq-product__icon svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .faq-product__icon-minus {
+    opacity: 0;
+    transform: rotate(-90deg);
+  }
+
+  .faq-product__item[open] .faq-product__icon-plus {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+
+  .faq-product__item[open] .faq-product__icon-minus {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+
+  .faq-product__answer {
+    padding: 0 24px 20px 24px;
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .faq-product__answer-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  .faq-product__answer-content p {
+    margin: 0 0 12px 0;
+  }
+
+  .faq-product__answer-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-product__answer-content ul,
+  .faq-product__answer-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+  }
+
+  .faq-product__answer-content li {
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 749px) {
+    .faq-product__header {
+      margin-bottom: 32px;
+    }
+
+
+    .faq-product__question {
+      padding: 16px 20px;
+      font-size: 1rem;
+    }
+
+    .faq-product__answer {
+      padding: 0 20px 16px 20px;
+    }
+
+    .faq-product__answer-content {
+      font-size: 0.9375rem;
+    }
+  }
+{% endstylesheet %}
+
+{%- if section.blocks.size > 0 -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{%- for block in section.blocks -%}{"@type":"Question","name":{{ block.settings.question | json }},"acceptedAnswer":{"@type":"Answer","text":{{ block.settings.answer | strip_html | json }}}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "<p>Frequently Asked Questions</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>Got questions? We've got answers</p>"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>We offer a 30-day money-back guarantee. If you're not satisfied with your purchase, simply return it for a full refund.</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "Open by default",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "category": "t:categories.product",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders are processed within 1-2 business days. Standard shipping takes 5-7 business days, while express shipping takes 2-3 business days.</p>",
+            "open_by_default": true
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We offer a 30-day money-back guarantee. If you're not satisfied with your purchase, you can return it for a full refund-no questions asked!</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is this product authentic?",
+            "answer": "<p>Absolutely! All our products are 100% authentic and sourced directly from authorized manufacturers. We stand behind the quality of every item we sell.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Do you offer international shipping?",
+            "answer": "<p>Yes! We ship worldwide. International shipping typically takes 10-20 business days depending on your location. Customs fees may apply based on your country's regulations.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How do I track my order?",
+            "answer": "<p>Once your order ships, you'll receive a tracking number via email. You can use this number to track your package in real-time on our website or the carrier's website.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

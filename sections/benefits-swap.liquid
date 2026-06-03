@@ -1,0 +1,453 @@
+{%- if settings.style_mode == 'flat' -%}
+    {%- assign grad_1 = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_2 = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_3 = section.settings.color_scheme.settings.background -%}
+    {%- assign grad_text = section.settings.color_scheme.settings.foreground -%}
+  {%- elsif section.settings.use_custom_colors -%}
+    {%- assign grad_1 = section.settings.gradient_color_1 -%}
+    {%- assign grad_2 = section.settings.gradient_color_2 -%}
+    {%- assign grad_3 = section.settings.gradient_color_3 -%}
+    {%- assign grad_text = section.settings.text_color -%}
+  {%- else -%}
+    {%- assign grad_1 = section.settings.color_scheme.settings.gradient_1 -%}
+    {%- assign grad_2 = section.settings.color_scheme.settings.gradient_2 -%}
+    {%- assign grad_3 = section.settings.color_scheme.settings.gradient_3 -%}
+    {%- assign grad_text = section.settings.color_scheme.settings.gradient_text_color -%}
+  {%- endif -%}
+
+  <section id="shopify-section-{{ section.id }}" class="absw color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }}{
+        --absw-max: {{ section.settings.max_width }}px;
+        --absw-radius: var(--style-border-radius-cards);
+
+        --absw-grad-1: {{ grad_1 }};
+        --absw-grad-2: {{ grad_2 }};
+        --absw-grad-3: {{ grad_3 }};
+
+        --absw-text: {{ grad_text }};
+        {%- if section.settings.use_custom_colors -%}
+        --absw-muted: {{ section.settings.muted_text_color }};
+        --absw-card-bg: {{ section.settings.image_card_bg }};
+        {%- else -%}
+        --absw-muted: {{ grad_text | color_modify: 'alpha', 0.65 }};
+        --absw-card-bg: rgba(255, 255, 255, 0.15);
+        {%- endif -%}
+        --absw-shadow: 0 18px 45px rgba(0,0,0,.18);
+      }
+  
+      #shopify-section-{{ section.id }}.absw{
+        width:100%;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-wrap{
+        max-width: var(--absw-max);
+        margin: 0 auto;
+        padding: {{ section.settings.padding_y_desktop }}px {{ section.settings.padding_x_desktop }}px;
+        box-sizing: border-box;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-panel{
+        background: linear-gradient(135deg, var(--absw-grad-1), var(--absw-grad-2) 55%, var(--absw-grad-3));
+        border-radius: var(--absw-radius);
+        box-shadow: var(--absw-shadow);
+        overflow: hidden; /* important */
+        position: relative;
+      }
+  
+      /* subtle texture */
+      #shopify-section-{{ section.id }} .absw-panel::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:
+          radial-gradient(1200px 700px at 10% 15%, rgba(255,255,255,.14), transparent 55%),
+          radial-gradient(1000px 600px at 90% 80%, rgba(255,255,255,.10), transparent 60%);
+        pointer-events:none;
+        opacity: .95;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-grid{
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 28px;
+        padding: 34px;
+        align-items: stretch;
+        box-sizing: border-box;
+      }
+  
+      /* Title */
+      #shopify-section-{{ section.id }} .absw-title{
+        margin: 0 0 18px 0;
+        color: var(--absw-text);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        font-size: clamp(28px, 3vw, 44px);
+      }
+      #shopify-section-{{ section.id }} .absw-title em{
+        font-style: italic;
+        opacity: .95;
+      }
+  
+      /* Left column */
+      #shopify-section-{{ section.id }} .absw-left{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        min-width: 0;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-items{
+        display:flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 8px;
+      }
+  
+      /* Benefit button */
+      #shopify-section-{{ section.id }} .absw-item{
+        display:block;
+        text-align:left;
+        width:100%;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        color: inherit;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-pill{
+        display:inline-flex;
+        align-items:center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: var(--style-border-radius-global);
+        background: rgba(255,255,255,.92);
+        color: rgba(0,0,0,.78);
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: .02em;
+        margin-bottom: 10px;
+        width: fit-content;
+        box-shadow: 0 10px 24px rgba(0,0,0,.10);
+      }
+  
+      #shopify-section-{{ section.id }} .absw-item-title-row{
+        display:flex;
+        align-items:flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-item-title{
+        margin: 0 0 6px 0;
+        font-weight: 800;
+        color: var(--absw-text);
+        letter-spacing: -0.01em;
+        font-size: 18px;
+        line-height: 1.2;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-item-text{
+        margin: 0;
+        color: {{ grad_text }};
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 52ch;
+      }
+  
+      #shopify-section-{{ section.id }} .absw-arrow{
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.18);
+        margin-top: 6px;
+        transition: transform .12s ease, background .12s ease;
+      }
+      #shopify-section-{{ section.id }} .absw-arrow svg{
+        width: 18px;
+        height: 18px;
+        fill: rgba(255,255,255,.90);
+      }
+  #shopify-section-{{ section.id }} .absw-anchor svg{
+    width: 18px;
+    height: 18px;
+    fill: rgba(255,255,255,.92);
+  }
+      #shopify-section-{{ section.id }} .absw-item:hover .absw-arrow,
+      #shopify-section-{{ section.id }} .absw-item:focus-visible .absw-arrow{
+        transform: translateX(2px);
+        background: rgba(255,255,255,.22);
+      }
+  
+      /* Active state */
+      #shopify-section-{{ section.id }} .absw-item.is-active .absw-pill{
+        background: rgba(255,255,255,.98);
+      }
+      #shopify-section-{{ section.id }} .absw-item.is-active .absw-arrow{
+        background: rgba(255,255,255,.26);
+      }
+  
+      /* Right image card (FIX: image always fills card; no weird bottom/side gaps) */
+  #shopify-section-{{ section.id }} .absw-right{
+    display:flex;
+    align-items: stretch;
+    justify-content: stretch;
+    min-width: 0;
+  }
+  
+  #shopify-section-{{ section.id }} .absw-image-card{
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: var(--absw-card-bg);
+    border-radius: calc(var(--absw-radius) - 6px);
+    box-shadow: 0 18px 45px rgba(0,0,0,.14);
+    border: 1px solid rgba(255,255,255,.10);
+  
+    /* IMPORTANT: card defines height via aspect ratio */
+    aspect-ratio: 16 / 11;
+  }
+  
+  #shopify-section-{{ section.id }} .absw-image{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display:block;
+    object-fit: cover;
+  
+    /* IMPORTANT: override theme global img rounding/padding */
+    border-radius: 0 !important;
+    max-width: none !important;
+  }
+  
+  /* Fade animation when swapping */
+  #shopify-section-{{ section.id }} .absw-image-card.is-fading .absw-image{
+    opacity: .25;
+    transition: opacity .14s ease;
+  }
+  
+  /* Mobile aspect ratio */
+  @media (max-width: 989px){
+    #shopify-section-{{ section.id }} .absw-image-card{
+      aspect-ratio: 4 / 3;
+    }
+  }
+  
+  
+      /* Mobile */
+      @media (max-width: 989px){
+        #shopify-section-{{ section.id }} .absw-wrap{
+          padding: {{ section.settings.padding_y_mobile }}px {{ section.settings.padding_x_mobile }}px;
+        }
+        #shopify-section-{{ section.id }} .absw-grid{
+          grid-template-columns: 1fr;
+          gap: 22px;
+          padding: 22px;
+        }
+        #shopify-section-{{ section.id }} .absw-right{
+          order: 2;
+        }
+        #shopify-section-{{ section.id }} .absw-left{
+          order: 1;
+        }
+        #shopify-section-{{ section.id }} .absw-image{
+          aspect-ratio: 4 / 3;
+        }
+      }
+  
+      /* Make focus ring visible */
+      #shopify-section-{{ section.id }} .absw-item:focus-visible{
+        outline: 2px solid rgba(255,255,255,.7);
+        outline-offset: 6px;
+        border-radius: 14px;
+      }
+    {% endstyle %}
+  
+    <div class="absw-wrap">
+      <div class="absw-panel">
+        <div class="absw-grid" data-absw-root>
+          <div class="absw-left">
+            {% if section.settings.heading != blank %}
+              <h2 class="absw-title">{{ section.settings.heading }}</h2>
+            {% endif %}
+  
+            <div class="absw-items" role="tablist" aria-label="Benefits">
+              {% for block in section.blocks %}
+                {% assign is_first = forloop.first %}
+                <button
+                  class="absw-item{% if is_first %} is-active{% endif %}"
+                  type="button"
+                  role="tab"
+                  aria-selected="{% if is_first %}true{% else %}false{% endif %}"
+                  data-absw-index="{{ forloop.index0 }}"
+                  data-absw-image="{% if block.settings.image != blank %}{{ block.settings.image | image_url: width: 2000 }}{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {% if block.settings.pill != blank %}
+                    <div class="absw-pill">{{ block.settings.pill }}</div>
+                  {% endif %}
+  
+                  <div class="absw-item-title-row">
+                    <div>
+                      {% if block.settings.title != blank %}
+                        <div class="absw-item-title">{{ block.settings.title }}</div>
+                      {% endif %}
+                      {% if block.settings.text != blank %}
+                        <div class="absw-item-text">{{ block.settings.text }}</div>
+                      {% endif %}
+                    </div>
+  
+                    <span class="absw-arrow absw-anchor" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="1200pt" height="1200pt" version="1.1" viewBox="0 0 1200 1200">
+                        <path d="m1116.7 297.07-512.69-296c-2.4766-1.4297-5.5234-1.4297-8 0l-512.69 296c-2.4805 1.4297-4.0039 4.0742-4 6.9336v592c-0.003906 2.8594 1.5195 5.5039 4 6.9336l512.69 296c2.4766 1.4297 5.5234 1.4297 8 0l512.69-296c2.4805-1.4297 4.0039-4.0742 4-6.9336v-592c0.003906-2.8594-1.5195-5.5039-4-6.9336zm-516.69-279.84 496.69 286.77-496.69 286.77-496.69-286.77zm-504.69 300.64 496.69 286.77v573.49l-496.69-286.72zm512.69 860.27v-573.49l496.69-286.77v573.55z"/>
+                      </svg>
+                    </span>
+                  </div>
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+  
+          <div class="absw-right">
+            <div class="absw-image-card" data-absw-card>
+              {% assign first_block = section.blocks.first %}
+              {% if first_block != blank and first_block.settings.image != blank %}
+                <img
+                  class="absw-image"
+                  data-absw-img
+                  src="{{ first_block.settings.image | image_url: width: 2000 }}"
+                  alt="{{ section.settings.image_alt | escape }}"
+                  loading="lazy"
+                  width="{{ first_block.settings.image.width }}"
+                  height="{{ first_block.settings.image.height }}"
+                >
+              {% else %}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <script>
+      (() => {
+        const root = document.querySelector('#shopify-section-{{ section.id }} [data-absw-root]');
+        if (!root) return;
+  
+        const items = Array.from(root.querySelectorAll('[data-absw-index]'));
+        const img = root.querySelector('[data-absw-img]');
+        const card = root.querySelector('[data-absw-card]');
+  
+        if (!items.length || !img) return;
+  
+        const setActive = (index) => {
+          items.forEach((btn, i) => {
+            const active = i === index;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+  
+          const nextSrc = items[index].dataset.abswImage || '';
+          if (!nextSrc || img.getAttribute('src') === nextSrc) return;
+  
+          card.classList.add('is-fading');
+  
+          // swap after a tiny beat to feel like the reference
+          window.setTimeout(() => {
+            img.setAttribute('src', nextSrc);
+            // fade back in once the new image starts loading
+            const onLoad = () => {
+              card.classList.remove('is-fading');
+              img.removeEventListener('load', onLoad);
+            };
+            img.addEventListener('load', onLoad);
+          }, 90);
+        };
+  
+        const isTouch = window.matchMedia('(hover: none)').matches;
+  
+        items.forEach((btn, idx) => {
+          // Desktop hover behavior
+          btn.addEventListener('mouseenter', () => {
+            if (!isTouch) setActive(idx);
+          });
+  
+          // Keyboard + Mobile tap behavior
+          btn.addEventListener('click', () => setActive(idx));
+          btn.addEventListener('focus', () => {
+            if (!isTouch) setActive(idx);
+          });
+        });
+      })();
+    </script>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Benefits Swap",
+    "tag": "section",
+    "class": "section-wrapper",
+    "settings": [
+      { "type": "text", "id": "heading", "label": "Heading", "default": "How this helps you keep your glasses secure" },
+      { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "This product in use" },
+  
+      { "type": "header", "content": "Style" },
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+      { "type": "header", "content": "Colors" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Override theme gradient colors", "info": "When off, uses the theme's global gradient colors", "default": false },
+
+      { "type": "color", "id": "gradient_color_1", "label": "Gradient color 1", "default": "#19B6E6", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "gradient_color_2", "label": "Gradient color 2", "default": "#06B6D4", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "gradient_color_3", "label": "Gradient color 3", "default": "#1D4ED8", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "text_color", "label": "Text color", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "muted_text_color", "label": "Muted text color", "default": "#EAFBFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "image_card_bg", "label": "Image card background", "default": "#FFFFFF" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+  
+      { "type": "range", "id": "max_width", "label": "Max width (px)", "min": 900, "max": 1600, "step": 20, "default": 1200 },
+  
+      { "type": "header", "content": "Spacing" },
+      { "type": "range", "id": "padding_x_desktop", "label": "Desktop padding X (px)", "min": 0, "max": 80, "step": 4, "default": 24 },
+      { "type": "range", "id": "padding_y_desktop", "label": "Desktop padding Y (px)", "min": 0, "max": 120, "step": 4, "default": 20 },
+      { "type": "range", "id": "padding_x_mobile", "label": "Mobile padding X (px)", "min": 0, "max": 40, "step": 2, "default": 14 },
+      { "type": "range", "id": "padding_y_mobile", "label": "Mobile padding Y (px)", "min": 0, "max": 80, "step": 2, "default": 14 }
+    ],
+    "blocks": [
+      {
+        "type": "benefit",
+        "name": "Benefit",
+        "settings": [
+          { "type": "text", "id": "pill", "label": "Pill label", "default": "First Benefit" },
+          { "type": "text", "id": "title", "label": "Title", "default": "All-day secure fit" },
+          { "type": "text", "id": "text", "label": "Description", "default": "Keeps glasses from slipping or flying off during boating, hiking, and everyday movement." },
+          { "type": "image_picker", "id": "image", "label": "Image for this benefit" }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Benefits Swap",
+        "category": "Benefits",
+        "blocks": [
+          { "type": "benefit" },
+          { "type": "benefit" },
+          { "type": "benefit" }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
+  

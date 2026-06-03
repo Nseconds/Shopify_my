@@ -1,0 +1,268 @@
+{% liquid
+  if section.settings.use_custom_colors
+    assign en_text_color = section.settings.text_color
+    assign en_bg = section.settings.bg_color
+    assign en_btn_bg = section.settings.button_bg
+    assign en_btn_text = section.settings.button_text_color
+  else
+    assign en_text_color = section.settings.color_scheme.settings.foreground
+    assign en_bg = section.settings.color_scheme.settings.background
+    assign en_btn_bg = section.settings.color_scheme.settings.primary_button_background
+    assign en_btn_text = section.settings.color_scheme.settings.primary_button_text
+  endif
+%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --en-text-color: {{ en_text_color }};
+    --en-bg: {{ en_bg }};
+    --en-btn-bg: {{ en_btn_bg }};
+    --en-btn-text: {{ en_btn_text }};
+  }
+{% endstyle %}
+
+<div class="editorial-newsletter spacing-style color-{{ section.settings.color_scheme }}" style="{% render 'spacing-style', settings: section.settings %}">
+  <div class="editorial-newsletter__container">
+    <div class="editorial-newsletter__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="editorial-newsletter__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.subheading != blank %}
+        <p class="editorial-newsletter__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    <div class="editorial-newsletter__form-wrap">
+      {% form 'customer', class: 'editorial-newsletter__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        <div class="editorial-newsletter__input-group">
+          <input
+            type="email"
+            name="contact[email]"
+            class="editorial-newsletter__input"
+            value="{{ form.email }}"
+            placeholder="{{ section.settings.placeholder }}"
+            required
+          >
+          <button type="submit" class="editorial-newsletter__submit">
+            {{ section.settings.button_label }}
+          </button>
+        </div>
+
+        {% if form.posted_successfully? %}
+          <div class="editorial-newsletter__success">
+            Thanks for subscribing!
+          </div>
+        {% elsif form.errors %}
+          <div class="editorial-newsletter__error">
+            {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+          </div>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .editorial-newsletter {
+    width: 100%;
+    background: var(--en-bg);
+    color: var(--en-text-color);
+  }
+
+  .editorial-newsletter__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    text-align: center;
+  }
+
+  .editorial-newsletter__heading {
+    margin: 0 0 12px 0;
+    font-family: var(--font-heading--family, inherit);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--en-text-color);
+  }
+
+  .editorial-newsletter__subheading {
+    margin: 0 0 32px 0;
+    font-size: 1rem;
+    color: var(--en-text-color);
+    opacity: 0.8;
+  }
+
+  .editorial-newsletter__form-wrap {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .editorial-newsletter__input-group {
+    display: flex;
+    position: relative;
+    border-bottom: 1px solid var(--en-text-color);
+    padding-bottom: 8px;
+  }
+
+  .editorial-newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--en-text-color);
+    font-size: 1rem;
+    padding: 8px 0;
+    outline: none;
+  }
+
+  .editorial-newsletter__input::placeholder {
+    color: var(--en-text-color);
+    opacity: 0.5;
+  }
+
+  .editorial-newsletter__submit {
+    background: transparent;
+    border: none;
+    color: var(--en-text-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: opacity 0.2s ease;
+  }
+
+  .editorial-newsletter__submit:hover {
+    opacity: 0.7;
+  }
+
+  .editorial-newsletter__success {
+    margin-top: 16px;
+    font-size: 0.875rem;
+    color: #4CAF50;
+  }
+
+  .editorial-newsletter__error {
+    margin-top: 16px;
+    font-size: 0.875rem;
+    color: #E53935;
+  }
+
+  @media screen and (max-width: 749px) {
+    .editorial-newsletter__container {
+      padding: 48px 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Newsletter",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Join the Club"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Sign up for exclusive offers, original stories, events and more."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Input placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "info": "Override the color scheme for this section.",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Newsletter",
+      "settings": {
+        "heading": "Join the Club",
+        "subheading": "Sign up for exclusive offers, original stories, events and more."
+      }
+    }
+  ]
+}
+{% endschema %}

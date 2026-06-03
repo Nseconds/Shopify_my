@@ -1,0 +1,126 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign overline = section.settings.overline
+  assign headline = section.settings.headline
+  assign accent_word = section.settings.accent_word
+  assign accent_position = section.settings.accent_word_position | default: 0
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-editorial section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-editorial__inner">
+    {% if overline != blank %}
+      <p class="pastel-editorial__overline">{{ overline }}</p>
+    {% endif %}
+
+    {% if headline != blank %}
+      <h2 class="pastel-editorial__headline">
+        {% if accent_word != blank and accent_position >= 0 %}
+          {% assign words = headline | split: ' ' %}
+          {% for word in words %}
+            {% if forloop.index0 == accent_position %}
+              <span class="pastel-editorial__accent">{{ accent_word }}</span>
+            {% else %}
+              {{ word }}
+            {% endif %}
+            {% unless forloop.last %} {% endunless %}
+          {% endfor %}
+        {% else %}
+          {{ headline }}
+        {% endif %}
+      </h2>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-editorial {
+    padding: 48px 24px;
+    background: var(--color-background);
+    text-align: center;
+  }
+
+  .pastel-editorial__inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .pastel-editorial__overline {
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-foreground-muted);
+    margin: 0 0 12px;
+  }
+
+  .pastel-editorial__headline {
+    font-family: var(--font-heading--family);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .pastel-editorial__accent {
+    color: var(--color-primary);
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-editorial {
+      padding: 32px 16px;
+    }
+
+    .pastel-editorial__headline {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "THE DIFFERENCE"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Bite into better sleep"
+    },
+    {
+      "type": "text",
+      "id": "accent_word",
+      "label": "Accent word (replaces word at position)",
+      "default": "better"
+    },
+    {
+      "type": "number",
+      "id": "accent_word_position",
+      "label": "Accent word position (0-based)",
+      "default": 2
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial"
+    }
+  ]
+}
+{% endschema %}

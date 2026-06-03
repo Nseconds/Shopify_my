@@ -1,0 +1,243 @@
+{% liquid
+  if section.settings.use_custom_colors
+    assign em_text_color = section.settings.text_color
+    assign em_bg = section.settings.bg_color
+  else
+    if section.settings.marquee_color_type == 'accent'
+      assign em_text_color = section.settings.color_scheme.settings.primary_button_text
+      assign em_bg = section.settings.color_scheme.settings.primary_button_background
+    else
+      assign em_text_color = section.settings.color_scheme.settings.foreground
+      assign em_bg = section.settings.color_scheme.settings.background
+    endif
+  endif
+
+  assign direction = section.settings.direction
+%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --em-text-color: {{ em_text_color }};
+    --em-bg: {{ em_bg }};
+    --em-speed: {{ section.settings.speed }}s;
+    --em-font-size: {{ section.settings.font_size }}rem;
+  }
+  #shopify-section-{{ section.id }} .editorial-marquee__text {
+    padding-block: {{ section.settings.padding_vertical }}px;
+  }
+{% endstyle %}
+
+<div class="editorial-marquee spacing-style color-{{ section.settings.color_scheme }}" style="{% render 'spacing-style', settings: section.settings %}">
+  <div class="editorial-marquee__container">
+    <div class="editorial-marquee__track editorial-marquee__track--{{ direction }}">
+      {% for i in (1..10) %}
+        <span class="editorial-marquee__text">
+          {{ section.settings.text | strip_html | strip }}
+          {% if section.settings.show_separator %}
+            <span class="editorial-marquee__separator">•</span>
+          {% endif %}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .editorial-marquee {
+    width: 100%;
+    background: var(--em-bg);
+    color: var(--em-text-color);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .editorial-marquee__container {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .editorial-marquee__track {
+    display: flex;
+    flex-shrink: 0;
+    min-width: 100%;
+  }
+
+  .editorial-marquee__track--left {
+    animation: marqueeLeft var(--em-speed) linear infinite;
+  }
+
+  .editorial-marquee__track--right {
+    animation: marqueeRight var(--em-speed) linear infinite;
+  }
+
+  .editorial-marquee__text {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-body--family, inherit);
+    font-size: var(--em-font-size);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 10px;
+  }
+
+  .editorial-marquee__separator {
+    margin-left: 20px;
+    margin-right: 10px;
+    font-size: 0.8em;
+    opacity: 0.5;
+  }
+
+  @keyframes marqueeLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes marqueeRight {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  @media screen and (max-width: 749px) {
+    .editorial-marquee__text {
+      font-size: calc(var(--em-font-size) * 0.8);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Marquee",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "SPRING SALE - UP TO 50% OFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_separator",
+      "label": "Show separator",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Animation speed",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "sec",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        { "value": "left", "label": "Right to left" },
+        { "value": "right", "label": "Left to right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 0.8,
+      "max": 4.0,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "marquee_color_type",
+      "label": "Marquee color type",
+      "options": [
+        { "value": "background", "label": "Scheme Background" },
+        { "value": "accent", "label": "Scheme Accent" }
+      ],
+      "default": "accent"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "info": "Override the color scheme for this section.",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Marquee",
+      "settings": {
+        "text": "SPRING SALE - UP TO 50% OFF",
+        "speed": 30,
+        "direction": "left"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,703 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c    = section.settings.background_color -%}
+  {%- assign title_c = section.settings.title_color -%}
+  {%- assign text_c  = section.settings.options_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c    = 'var(--color-background)' -%}
+  {%- assign title_c = 'var(--color-foreground)' -%}
+  {%- assign text_c  = 'var(--color-foreground)' -%}
+{%- else -%}
+  {%- assign bg_c    = section.settings.color_scheme.settings.background -%}
+  {%- assign title_c = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+{%- endif -%}
+
+{% style %}
+  .simple-product-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ bg_c }};
+    padding: {{ section.settings.section_padding }}px 24px;
+  }
+
+  .simple-product-grid-container-{{ ai_gen_id }} {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .simple-product-grid-products-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ section.settings.product_gap }}px;
+  }
+
+  .simple-product-grid-card-{{ ai_gen_id }} {
+    background-color: transparent;
+  }
+
+  .simple-product-grid-link-{{ ai_gen_id }} {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .simple-product-grid-image-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+    background: var(--color-background);
+    margin-bottom: {{ section.settings.content_spacing }}px;
+  }
+
+  .simple-product-grid-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .simple-product-grid-image-secondary-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .simple-product-grid-card-{{ ai_gen_id }}:has(.simple-product-grid-image-secondary-{{ ai_gen_id }}):hover .simple-product-grid-image-{{ ai_gen_id }} {
+    opacity: 0;
+  }
+
+  .simple-product-grid-card-{{ ai_gen_id }}:has(.simple-product-grid-image-secondary-{{ ai_gen_id }}):hover .simple-product-grid-image-secondary-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .simple-product-grid-card-{{ ai_gen_id }}:not(:has(.simple-product-grid-image-secondary-{{ ai_gen_id }})):hover .simple-product-grid-image-{{ ai_gen_id }} {
+    transform: scale(1.06);
+  }
+
+  .simple-product-grid-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-border, #F8F8F8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .simple-product-grid-placeholder-{{ ai_gen_id }} svg {
+    width: 40%;
+    height: 40%;
+    opacity: 0.12;
+  }
+
+  .simple-product-grid-content-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .simple-product-grid-title-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family), sans-serif;
+    font-size: {{ section.settings.title_font_size }}px;
+    color: {{ title_c }};
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 {{ section.settings.title_spacing }}px 0;
+    line-height: 1.5;
+  }
+
+  .simple-product-grid-options-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 {{ section.settings.options_spacing }}px 0;
+  }
+
+  .simple-product-grid-option-{{ ai_gen_id }} {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: {{ section.settings.options_font_size }}px;
+    color: {{ text_c }};
+    letter-spacing: 0.3px;
+  }
+
+  .simple-product-grid-option-separator-{{ ai_gen_id }} {
+    color: {{ text_c }};
+    opacity: 0.4;
+  }
+
+  .simple-product-grid-price-{{ ai_gen_id }} {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: {{ section.settings.price_font_size }}px;
+    color: {{ text_c }};
+    margin: 0;
+    letter-spacing: 0.3px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .simple-product-grid-products-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ section.settings.product_gap | times: 0.75 }}px;
+    }
+
+    .simple-product-grid-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.title_font_size | times: 0.9 }}px;
+    }
+
+    .simple-product-grid-option-{{ ai_gen_id }} {
+      font-size: {{ section.settings.options_font_size | times: 0.95 }}px;
+    }
+
+    .simple-product-grid-price-{{ ai_gen_id }} {
+      font-size: {{ section.settings.price_font_size | times: 0.95 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .simple-product-grid-products-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ section.settings.mobile_columns | default: 2 }}, 1fr);
+      gap: {{ section.settings.product_gap_mobile | default: section.settings.product_gap }}px;
+    }
+
+    .simple-product-grid-{{ ai_gen_id }} {
+      padding: {{ section.settings.section_padding_mobile | default: section.settings.section_padding }}px 20px;
+    }
+
+    .simple-product-grid-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.title_font_size | times: 0.85 }}px;
+    }
+
+    .simple-product-grid-image-container-{{ ai_gen_id }} {
+      margin-bottom: {{ section.settings.content_spacing_mobile | default: section.settings.content_spacing }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign source = section.settings.source | default: 'products'
+  assign use_collection = false
+  assign products_limit = section.settings.products_to_show
+  if products_limit == blank
+    assign products_limit = 6
+  endif
+  if products_limit == 0
+    assign products_limit = 999
+  endif
+  if source == 'collection' and section.settings.collection != blank
+    assign use_collection = true
+  endif
+%}
+
+<div class="simple-product-grid-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="simple-product-grid-container-{{ ai_gen_id }}">
+    <div class="simple-product-grid-products-{{ ai_gen_id }}">
+      {% if use_collection %}
+        {% for product in section.settings.collection.products limit: products_limit %}
+          <div class="simple-product-grid-card-{{ ai_gen_id }}">
+            <a href="{{ product.url }}" class="simple-product-grid-link-{{ ai_gen_id }}">
+              <div class="simple-product-grid-image-container-{{ ai_gen_id }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 1600 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    loading="lazy"
+                    width="1600"
+                    height="2000"
+                    class="simple-product-grid-image-{{ ai_gen_id }}"
+                  >
+                  {% if product.images.size > 1 %}
+                    <img
+                      src="{{ product.images[1] | image_url: width: 1600 }}"
+                      alt="{{ product.images[1].alt | escape }}"
+                      loading="lazy"
+                      width="1600"
+                      height="2000"
+                      class="simple-product-grid-image-secondary-{{ ai_gen_id }}"
+                    >
+                  {% endif %}
+                {% else %}
+                  <div class="simple-product-grid-placeholder-{{ ai_gen_id }}">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="simple-product-grid-content-{{ ai_gen_id }}">
+                <h3 class="simple-product-grid-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                <div class="simple-product-grid-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..6) %}
+          {% liquid
+            assign product_key = 'product_' | append: i
+            assign product = section.settings[product_key]
+            assign option1_key = 'product_' | append: i | append: '_option_1'
+            assign option2_key = 'product_' | append: i | append: '_option_2'
+            assign option3_key = 'product_' | append: i | append: '_option_3'
+            assign option1 = section.settings[option1_key]
+            assign option2 = section.settings[option2_key]
+            assign option3 = section.settings[option3_key]
+          %}
+
+          <div class="simple-product-grid-card-{{ ai_gen_id }}">
+            {% if product != blank %}
+              <a href="{{ product.url }}" class="simple-product-grid-link-{{ ai_gen_id }}">
+                <div class="simple-product-grid-image-container-{{ ai_gen_id }}">
+                  {% if product.featured_image %}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 1600 }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      loading="lazy"
+                      width="1600"
+                      height="2000"
+                      class="simple-product-grid-image-{{ ai_gen_id }}"
+                    >
+                    {% if product.images.size > 1 %}
+                      <img
+                        src="{{ product.images[1] | image_url: width: 1600 }}"
+                        alt="{{ product.images[1].alt | escape }}"
+                        loading="lazy"
+                        width="1600"
+                        height="2000"
+                        class="simple-product-grid-image-secondary-{{ ai_gen_id }}"
+                      >
+                    {% endif %}
+                  {% else %}
+                    <div class="simple-product-grid-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="simple-product-grid-content-{{ ai_gen_id }}">
+                  <h3 class="simple-product-grid-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+
+                  {% if option1 != blank or option2 != blank or option3 != blank %}
+                    <div class="simple-product-grid-options-{{ ai_gen_id }}">
+                      {% if option1 != blank %}
+                        <span class="simple-product-grid-option-{{ ai_gen_id }}">{{ option1 }}</span>
+                      {% endif %}
+                      {% if option2 != blank %}
+                        {% if option1 != blank %}
+                          <span class="simple-product-grid-option-separator-{{ ai_gen_id }}">•</span>
+                        {% endif %}
+                        <span class="simple-product-grid-option-{{ ai_gen_id }}">{{ option2 }}</span>
+                      {% endif %}
+                      {% if option3 != blank %}
+                        {% if option1 != blank or option2 != blank %}
+                          <span class="simple-product-grid-option-separator-{{ ai_gen_id }}">•</span>
+                        {% endif %}
+                        <span class="simple-product-grid-option-{{ ai_gen_id }}">{{ option3 }}</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+
+                  <div class="simple-product-grid-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                </div>
+              </a>
+            {% else %}
+              <div class="simple-product-grid-image-container-{{ ai_gen_id }}">
+                <div class="simple-product-grid-placeholder-{{ ai_gen_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              </div>
+
+              <div class="simple-product-grid-content-{{ ai_gen_id }}">
+                <h3 class="simple-product-grid-title-{{ ai_gen_id }}">Product {{ i }}</h3>
+                <div class="simple-product-grid-options-{{ ai_gen_id }}">
+                  <span class="simple-product-grid-option-{{ ai_gen_id }}">Option</span>
+                </div>
+                <div class="simple-product-grid-price-{{ ai_gen_id }}">€0.00</div>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Simple product grid",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content source"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Source",
+      "options": [
+        { "value": "collection", "label": "Collection" },
+        { "value": "products", "label": "Individual products" }
+      ],
+      "default": "products"
+    },
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "info": "0 = show all",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Product 1"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_1_option_1",
+      "label": "Option 1",
+      "placeholder": "250 мл"
+    },
+    {
+      "type": "text",
+      "id": "product_1_option_2",
+      "label": "Option 2",
+      "placeholder": "Розовый"
+    },
+    {
+      "type": "text",
+      "id": "product_1_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Product 2"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_2_option_1",
+      "label": "Option 1",
+      "placeholder": "150 мл"
+    },
+    {
+      "type": "text",
+      "id": "product_2_option_2",
+      "label": "Option 2",
+      "placeholder": "Лавандовый"
+    },
+    {
+      "type": "text",
+      "id": "product_2_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Product 3"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_3_option_1",
+      "label": "Option 1",
+      "placeholder": "300 мл"
+    },
+    {
+      "type": "text",
+      "id": "product_3_option_2",
+      "label": "Option 2",
+      "placeholder": "Набор"
+    },
+    {
+      "type": "text",
+      "id": "product_3_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Product 4"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_4_option_1",
+      "label": "Option 1"
+    },
+    {
+      "type": "text",
+      "id": "product_4_option_2",
+      "label": "Option 2"
+    },
+    {
+      "type": "text",
+      "id": "product_4_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Product 5"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_5_option_1",
+      "label": "Option 1"
+    },
+    {
+      "type": "text",
+      "id": "product_5_option_2",
+      "label": "Option 2"
+    },
+    {
+      "type": "text",
+      "id": "product_5_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Product 6"
+    },
+    {
+      "type": "product",
+      "id": "product_6",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_6_option_1",
+      "label": "Option 1"
+    },
+    {
+      "type": "text",
+      "id": "product_6_option_2",
+      "label": "Option 2"
+    },
+    {
+      "type": "text",
+      "id": "product_6_option_3",
+      "label": "Option 3"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#F2F2F2"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "product_gap",
+      "label": "Product spacing",
+      "min": 15,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Content spacing",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Section padding (mobile)",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "product_gap_mobile",
+      "label": "Product spacing (mobile)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "content_spacing_mobile",
+      "label": "Content spacing (mobile)",
+      "min": 6,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Size",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Spacing",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Options"
+    },
+    {
+      "type": "range",
+      "id": "options_font_size",
+      "label": "Size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "options_color",
+      "label": "Color",
+      "default": "#8B8B8B"
+    },
+    {
+      "type": "range",
+      "id": "options_spacing",
+      "label": "Spacing",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Price"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color",
+      "default": "#6B6B6B"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple product grid"
+    }
+  ]
+}
+{% endschema %}

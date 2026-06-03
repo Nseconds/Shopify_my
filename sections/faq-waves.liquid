@@ -1,0 +1,310 @@
+
+{%- if settings.style_mode == 'flat' -%}
+  {%- assign grad_1 = 'var(--color-card-background)' -%}
+  {%- assign grad_2 = 'var(--color-card-background)' -%}
+  {%- assign grad_3 = 'var(--color-card-background)' -%}
+  {%- assign grad_text = 'var(--color-foreground)' -%}
+{%- else -%}
+  {%- assign grad_1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign grad_2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign grad_3 = section.settings.color_scheme.settings.gradient_3 -%}
+  {%- assign grad_text = section.settings.color_scheme.settings.gradient_text_color -%}
+{%- endif -%}
+
+<section
+    id="shopify-section-{{ section.id }}"
+    class="anchor-faq color-{{ section.settings.color_scheme }}"
+    {{ section.shopify_attributes }}
+  >
+    {% style %}
+      #shopify-section-{{ section.id }}.anchor-faq {
+        --afq-grad-1: {{ grad_1 }};
+        --afq-grad-2: {{ grad_2 }};
+        --afq-grad-3: {{ grad_3 }};
+        --afq-text: {{ grad_text }};
+        --afq-radius: var(--style-border-radius-cards);
+        --afq-max: {{ section.settings.max_width }}px;
+
+        background: var(--color-background) !important;
+      }
+
+      #shopify-section-{{ section.id }} .afq-wrap {
+        max-width: var(--afq-max);
+        margin: 0 auto;
+        padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+        box-sizing: border-box;
+      }
+
+      #shopify-section-{{ section.id }} .afq-head {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+
+      #shopify-section-{{ section.id }} .afq-title {
+        margin: 0 0 8px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        font-size: clamp(28px, 3vw, 44px);
+        color: var(--color-foreground-heading);
+      }
+
+      #shopify-section-{{ section.id }} .afq-title em,
+      #shopify-section-{{ section.id }} .afq-title strong {
+        color: var(--afq-grad-1);
+      }
+
+      #shopify-section-{{ section.id }} .afq-sub {
+        margin: 0 auto;
+        max-width: 62ch;
+        color: var(--color-foreground-muted, var(--color-foreground));
+        line-height: 1.45;
+        font-size: 15px;
+        opacity: .75;
+      }
+      #shopify-section-{{ section.id }} .afq-sub p { margin: 0; color: inherit; }
+
+      #shopify-section-{{ section.id }} .afq-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      #shopify-section-{{ section.id }} .afq-item {
+        border-radius: var(--afq-radius);
+        background: linear-gradient(135deg, var(--afq-grad-1), var(--afq-grad-2) 55%, var(--afq-grad-3));
+        box-shadow: 0 18px 45px rgba(0,0,0,.18);
+        overflow: hidden;
+        position: relative;
+      }
+
+      #shopify-section-{{ section.id }} .afq-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(1200px 700px at 10% 15%, rgba(255,255,255,.14), transparent 55%),
+          radial-gradient(1000px 600px at 90% 80%, rgba(255,255,255,.10), transparent 60%);
+        pointer-events: none;
+        opacity: .95;
+      }
+
+      #shopify-section-{{ section.id }} details.afq-details {
+        width: 100%;
+        position: relative;
+        z-index: 1;
+      }
+
+      #shopify-section-{{ section.id }} summary.afq-summary {
+        list-style: none;
+        cursor: pointer;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 16px 16px;
+        user-select: none;
+      }
+
+      #shopify-section-{{ section.id }} summary.afq-summary::-webkit-details-marker { display: none; }
+
+      #shopify-section-{{ section.id }} .afq-num {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 13px;
+        color: var(--afq-grad-1);
+        background: rgba(255,255,255,.92);
+        box-shadow: 0 4px 12px rgba(0,0,0,.18);
+        flex: none;
+      }
+
+      #shopify-section-{{ section.id }} .afq-q {
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: rgba(255,255,255,.95);
+        font-size: 16px;
+        line-height: 1.25;
+      }
+
+      #shopify-section-{{ section.id }} .afq-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--style-border-radius-global);
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255,255,255,.30);
+        background: rgba(255,255,255,.15);
+      }
+
+      #shopify-section-{{ section.id }} .afq-icon svg {
+        width: 18px;
+        height: 18px;
+        color: rgba(255,255,255,.90);
+        transition: transform .15s ease;
+      }
+
+      #shopify-section-{{ section.id }} details[open] .afq-icon svg {
+        transform: rotate(180deg);
+      }
+
+      #shopify-section-{{ section.id }} .afq-a {
+        padding: 0 16px 16px;
+        color: rgba(255,255,255,.82);
+        line-height: 1.55;
+        font-size: 15px;
+      }
+      #shopify-section-{{ section.id }} .afq-a p { margin: 0; color: inherit; }
+
+      #shopify-section-{{ section.id }} .afq-divider {
+        height: 1px;
+        background: rgba(255,255,255,.18);
+        margin: 0 16px 12px;
+      }
+
+      @media (max-width: 749px) {
+        #shopify-section-{{ section.id }} .afq-wrap {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        #shopify-section-{{ section.id }} summary.afq-summary {
+          padding: 14px 14px;
+        }
+        #shopify-section-{{ section.id }} .afq-a {
+          padding: 0 14px 14px;
+        }
+        #shopify-section-{{ section.id }} .afq-divider {
+          margin: 0 14px 12px;
+        }
+      }
+    {% endstyle %}
+
+    {% if settings.style_mode == 'flat' %}
+      {% style %}
+        #shopify-section-{{ section.id }} .afq-q {
+          color: var(--color-foreground) !important;
+        }
+        #shopify-section-{{ section.id }} .afq-a,
+        #shopify-section-{{ section.id }} .afq-a p {
+          color: var(--color-foreground) !important;
+          opacity: 0.75;
+        }
+        #shopify-section-{{ section.id }} .afq-num {
+          color: var(--color-primary) !important;
+          background: var(--color-background) !important;
+        }
+        #shopify-section-{{ section.id }} .afq-icon {
+          border-color: var(--color-border) !important;
+          background: transparent !important;
+        }
+        #shopify-section-{{ section.id }} .afq-icon svg {
+          color: var(--color-foreground) !important;
+        }
+        #shopify-section-{{ section.id }} .afq-divider {
+          background: var(--color-border) !important;
+        }
+        #shopify-section-{{ section.id }} .afq-item::before {
+          display: none;
+        }
+        #shopify-section-{{ section.id }} .afq-title em,
+        #shopify-section-{{ section.id }} .afq-title strong {
+          color: var(--color-primary) !important;
+        }
+        #shopify-section-{{ section.id }} .afq-sub {
+          color: var(--color-foreground) !important;
+          opacity: 0.85;
+        }
+      {% endstyle %}
+    {% endif %}
+
+    <div class="afq-wrap">
+      <div class="afq-head">
+        {% if section.settings.heading != blank %}
+          <div class="afq-title rte">{{ section.settings.heading }}</div>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <div class="afq-sub rte">{{ section.settings.subheading }}</div>
+        {% endif %}
+      </div>
+
+      <div class="afq-list">
+        {%- assign i = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq' -%}
+            {%- assign i = i | plus: 1 -%}
+            <div class="afq-item" {{ block.shopify_attributes }}>
+              <details class="afq-details" {% if section.settings.open_first and i == 1 %}open{% endif %}>
+                <summary class="afq-summary">
+                  <div class="afq-num">{{ i }}</div>
+                  <div class="afq-q">{{ block.settings.question | escape }}</div>
+                  <div class="afq-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </summary>
+                <div class="afq-divider"></div>
+                <div class="afq-a rte">{{ block.settings.answer }}</div>
+              </details>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+{%- if section.blocks.size > 0 -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{%- for block in section.blocks -%}{"@type":"Question","name":{{ block.settings.question | json }},"acceptedAnswer":{"@type":"Answer","text":{{ block.settings.answer | strip_html | json }}}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+</script>
+{%- endif -%}
+
+  {% schema %}
+  {
+    "name": "FAQ Waves",
+    "tag": "section",
+    "class": "section-wrapper",
+    "disabled_on": { "groups": ["header", "footer"] },
+    "settings": [
+      { "type": "header", "content": "Content" },
+      { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Frequently Asked <em>Questions</em></p>" },
+      { "type": "richtext", "id": "subheading", "label": "Subheading", "default": "<p>Quick answers to most common questions</p>" },
+      { "type": "checkbox", "id": "open_first", "label": "Open first item by default", "default": true },
+
+      { "type": "header", "content": "Layout" },
+      { "type": "range", "id": "max_width", "label": "Max width", "min": 640, "max": 1200, "step": 20, "unit": "px", "default": 980 },
+
+      { "type": "header", "content": "Colors" },
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+      { "type": "header", "content": "Section padding" },
+      { "type": "range", "id": "padding_top", "label": "Top", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 56 },
+      { "type": "range", "id": "padding_bottom", "label": "Bottom", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 56 }
+    ],
+    "blocks": [
+      {
+        "type": "faq",
+        "name": "FAQ item",
+        "settings": [
+          { "type": "text", "id": "question", "label": "Question", "default": "How does the Facecube Face Massager work?" },
+          { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Our Facecube Face Massager uses advanced vibration technology and ergonomic design to provide deep facial massage. The cube-shaped design allows you to target different areas of your face, helping to improve circulation, reduce tension, and promote relaxation.</p>" }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "FAQ Waves",
+        "category": "Text",
+        "blocks": [
+          { "type": "faq" },
+          { "type": "faq", "settings": { "question": "How often should I use the Facecube Face Massager?", "answer": "<p>For best results, we recommend using the Facecube Face Massager 2-3 times per week, or as needed. Each session should last 5-10 minutes. Consistent use helps maintain skin elasticity and reduces facial tension over time.</p>" } },
+          { "type": "faq", "settings": { "question": "Is the Facecube Face Massager suitable for sensitive skin?", "answer": "<p>Yes! The Facecube Face Massager features adjustable intensity levels and is made with hypoallergenic materials. Start with the lowest setting and gradually increase as your skin becomes accustomed. Always use with a clean face and consider applying a light moisturizer or serum before use.</p>" } },
+          { "type": "faq", "settings": { "question": "Can I use the Facecube Face Massager with skincare products?", "answer": "<p>Absolutely! The Facecube Face Massager works excellently with serums, moisturizers, and facial oils. Apply your preferred skincare product first, then use the massager to help the product penetrate deeper into your skin for enhanced absorption and better results.</p>" } }
+        ]
+      }
+    ]
+  }
+  {% endschema %}

@@ -1,0 +1,377 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.text_color
+    assign sc_head   = section.settings.heading_color
+    assign sc_accent = section.settings.accent_color
+    assign sc_icon   = section.settings.icon_color
+    assign sc_glow   = section.settings.glow_color
+    assign sc_border = section.settings.border_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_head   = 'var(--color-foreground)'
+    assign sc_accent = 'var(--color-gradient-1)'
+    assign sc_icon   = 'var(--color-gradient-1)'
+    assign sc_glow   = 'var(--color-gradient-1)'
+    assign sc_border = 'var(--color-border)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_head   = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+    assign sc_icon   = section.settings.color_scheme.settings.primary
+    assign sc_glow   = section.settings.color_scheme.settings.primary
+    assign sc_border = section.settings.color_scheme.settings.border
+  endif
+-%}
+
+{% style %}
+  .ai-guarantee-banner-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: {{ section.settings.section_margin_top }}px auto {{ section.settings.section_margin_bottom }}px;
+    padding: 0 20px;
+  }
+
+  .ai-guarantee-banner__container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: {{ section.settings.padding }}px;
+    background: {{ sc_bg }};
+    border-radius: var(--style-border-radius-cards);
+    border: {{ section.settings.border_width }}px solid {{ sc_border }};
+    position: relative;
+    overflow: visible;
+    {% if section.settings.show_glow %}
+      box-shadow: 0 0 {{ section.settings.glow_spread }}px {{ section.settings.glow_blur }}px {{ sc_glow }};
+    {% endif %}
+  }
+
+  .ai-guarantee-banner__icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ section.settings.icon_background_color }};
+    border-radius: var(--style-border-radius-global);
+    color: {{ sc_icon }};
+  }
+
+  .ai-guarantee-banner__icon-{{ ai_gen_id }} svg {
+    width: calc({{ section.settings.icon_size }}px * 0.6);
+    height: calc({{ section.settings.icon_size }}px * 0.6);
+  }
+
+  .ai-guarantee-banner__content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-guarantee-banner__heading-{{ ai_gen_id }} {
+    margin: 0 0 6px 0;
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: 600;
+    color: {{ sc_head }};
+    line-height: 1.3;
+  }
+
+  .ai-guarantee-banner__text-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ section.settings.text_size }}px;
+    color: {{ sc_text }};
+    line-height: 1.5;
+  }
+
+  .ai-guarantee-banner__accent-{{ ai_gen_id }} {
+    color: {{ sc_accent }};
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-guarantee-banner__container-{{ ai_gen_id }} {
+      gap: 16px;
+      padding: {{ section.settings.padding | times: 0.8 }}px;
+    }
+
+    .ai-guarantee-banner__icon-{{ ai_gen_id }} {
+      width: {{ section.settings.icon_size | times: 0.85 }}px;
+      height: {{ section.settings.icon_size | times: 0.85 }}px;
+    }
+
+    .ai-guarantee-banner__icon-{{ ai_gen_id }} svg {
+      width: calc({{ section.settings.icon_size | times: 0.85 }}px * 0.6);
+      height: calc({{ section.settings.icon_size | times: 0.85 }}px * 0.6);
+    }
+
+    .ai-guarantee-banner__heading-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.9 }}px;
+    }
+
+    .ai-guarantee-banner__text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<guarantee-banner-{{ ai_gen_id }} class="ai-guarantee-banner-{{ ai_gen_id }}">
+  <div class="ai-guarantee-banner__container-{{ ai_gen_id }}">
+    <div class="ai-guarantee-banner__icon-{{ ai_gen_id }}">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+    </div>
+    <div class="ai-guarantee-banner__content-{{ ai_gen_id }}">
+      {% if section.settings.heading != blank %}
+        <h3 class="ai-guarantee-banner__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h3>
+      {% endif %}
+      {% if section.settings.text != blank %}
+        <p class="ai-guarantee-banner__text-{{ ai_gen_id }}">{{ section.settings.text }}</p>
+      {% endif %}
+    </div>
+  </div>
+</guarantee-banner-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Guarantee banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>30-Day Money-Back Guarantee</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>If your leggings or top don't feel right, return them within 30 days for a full refund.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#F0F7F0",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#1A3A1A",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#3D5A3D",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#2E7D32",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#C8E6C9",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Glow effect"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_glow",
+      "label": "Enable glow",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Glow color",
+      "default": "#81C784",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "glow_spread",
+      "label": "Glow spread",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "glow_blur",
+      "label": "Glow blur",
+      "min": 4,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Size",
+      "min": 40,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "icon_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "icon_background_color",
+      "label": "Background",
+      "default": "#E8F5E9"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#2E7D32"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Guarantee banner"
+    }
+  ]
+}
+{% endschema %}

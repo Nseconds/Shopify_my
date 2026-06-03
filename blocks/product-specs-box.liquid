@@ -1,0 +1,196 @@
+{%- doc -%}
+  Light purple rounded box displaying product specs (e.g. 30 GUMMIES, 10MG DELTA-9 THC).
+  Playful pastel supplement/gummy product info block.
+{%- enddoc -%}
+
+{% liquid
+  assign ai_gen_id = block.id | replace: '_', '' | downcase
+  assign specs = ''
+  assign spec_count = 0
+
+  if block.settings.spec_1 != blank
+    assign specs = block.settings.spec_1
+    assign spec_count = 1
+  endif
+  if block.settings.spec_2 != blank
+    if spec_count > 0
+      assign specs = specs | append: '|' | append: block.settings.spec_2
+    else
+      assign specs = block.settings.spec_2
+    endif
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_3 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_3
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_4 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_4
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_5 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_5
+    assign spec_count = spec_count | plus: 1
+  endif
+
+  assign spec_array = specs | split: '|'
+%}
+
+<div
+  class="product-specs-box product-specs-box--{{ ai_gen_id }} spacing-style"
+  style="
+    {% render 'spacing-padding', settings: block.settings %}
+    --specs-box-bg: {{ block.settings.background_color }};
+    --specs-box-text: {{ block.settings.text_color }};
+    --specs-box-radius: {{ block.settings.border_radius }}px;
+    --specs-box-gap: {{ block.settings.spec_gap }}px;
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="product-specs-box__inner">
+    {% for spec in spec_array %}
+      {% if spec != blank %}
+        <span class="product-specs-box__spec">{{ spec }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-specs-box {
+    display: inline-block;
+    background: var(--specs-box-bg, #e8e0f0);
+    color: var(--specs-box-text, #4a3f5c);
+    border-radius: var(--specs-box-radius, 16px);
+    padding: 12px 20px;
+  }
+
+  .product-specs-box__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--specs-box-gap, 12px);
+  }
+
+  .product-specs-box__spec {
+    font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .product-specs-box__spec + .product-specs-box__spec::before {
+    content: "•";
+    margin: 0 var(--specs-box-gap, 12px);
+    opacity: 0.6;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product specs box",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Specs"
+    },
+    {
+      "type": "text",
+      "id": "spec_1",
+      "label": "Spec 1",
+      "default": "30 GUMMIES"
+    },
+    {
+      "type": "text",
+      "id": "spec_2",
+      "label": "Spec 2",
+      "default": "10MG DELTA-9 THC"
+    },
+    {
+      "type": "text",
+      "id": "spec_3",
+      "label": "Spec 3",
+      "default": "10MG CBD"
+    },
+    {
+      "type": "text",
+      "id": "spec_4",
+      "label": "Spec 4",
+      "default": "5MG CBN"
+    },
+    {
+      "type": "text",
+      "id": "spec_5",
+      "label": "Spec 5"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#e8e0f0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4a3f5c"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "spec_gap",
+      "label": "Gap between specs",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product specs box",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

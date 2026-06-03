@@ -1,0 +1,479 @@
+{% doc %}
+  Sale badge with optional “sale ends” copy and a countdown timer. End time is persisted in
+  localStorage per block instance and resets when the countdown expires.
+{% enddoc %}
+
+{% liquid
+  assign ai_gen_id = block.id | replace: '_', '-' | downcase
+  assign ai_gen_id_js = block.id | replace: '_', '' | replace: '-', '' | downcase
+%}
+
+{% style %}
+  .ai-sale-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: {{ block.settings.spacing }}px;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-sale-badge__text-{{ ai_gen_id }} {
+    background: {{ block.settings.text_background }};
+    color: {{ block.settings.text_color }};
+    padding: {{ block.settings.text_padding_vertical }}px {{ block.settings.text_padding_horizontal }}px;
+    border-radius: {{ block.settings.text_border_radius }}px;
+    font-size: {{ block.settings.text_font_size }}px;
+    font-weight: {{ block.settings.text_font_weight }};
+    white-space: nowrap;
+  }
+
+  .ai-sale-badge__sale-ends-{{ ai_gen_id }} {
+    color: {{ block.settings.sale_ends_color }};
+    font-size: {{ block.settings.sale_ends_size }}px;
+    font-weight: {{ block.settings.sale_ends_weight }};
+  }
+
+  .ai-sale-badge__divider-{{ ai_gen_id }} {
+    width: 1px;
+    height: {{ block.settings.divider_height }}px;
+    background: {{ block.settings.divider_color }};
+    opacity: {{ block.settings.divider_opacity }};
+  }
+
+  .ai-sale-badge__timer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.timer_spacing }}px;
+    color: {{ block.settings.timer_color }};
+    font-weight: {{ block.settings.timer_font_weight }};
+  }
+
+  .ai-sale-badge__timer-value-{{ ai_gen_id }} {
+    font-size: {{ block.settings.timer_value_size }}px;
+    line-height: 1;
+    min-width: {{ block.settings.timer_min_width }}px;
+    text-align: center;
+  }
+
+  .ai-sale-badge__timer-separator-{{ ai_gen_id }} {
+    font-size: {{ block.settings.timer_value_size }}px;
+    opacity: 0.6;
+    line-height: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-sale-badge__text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_font_size | times: 0.9 }}px;
+      padding: {{ block.settings.text_padding_vertical | times: 0.85 }}px {{ block.settings.text_padding_horizontal | times: 0.85 }}px;
+    }
+
+    .ai-sale-badge__sale-ends-{{ ai_gen_id }} {
+      font-size: {{ block.settings.sale_ends_size | times: 0.9 }}px;
+    }
+
+    .ai-sale-badge__timer-value-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_value_size | times: 0.9 }}px;
+      min-width: {{ block.settings.timer_min_width | times: 0.85 }}px;
+    }
+
+    .ai-sale-badge__divider-{{ ai_gen_id }} {
+      height: {{ block.settings.divider_height | times: 0.85 }}px;
+    }
+
+    .ai-sale-badge-{{ ai_gen_id }} {
+      gap: {{ block.settings.spacing | times: 0.85 }}px;
+    }
+  }
+{% endstyle %}
+
+<sale-badge-{{ ai_gen_id }}
+  class="ai-sale-badge-{{ ai_gen_id }}"
+  data-duration-hours="{{ block.settings.duration_hours }}"
+  {{ block.shopify_attributes }}
+>
+  <span class="ai-sale-badge__text-{{ ai_gen_id }}">
+    {{ block.settings.badge_text }}
+  </span>
+
+  {% if block.settings.show_divider %}
+    <span class="ai-sale-badge__divider-{{ ai_gen_id }}"></span>
+  {% endif %}
+
+  {% if block.settings.show_sale_ends %}
+    <span class="ai-sale-badge__sale-ends-{{ ai_gen_id }}">
+      {{ block.settings.sale_ends_text }}
+    </span>
+  {% endif %}
+
+  {% if block.settings.show_timer %}
+    {% if block.settings.show_sale_ends %}
+      <span class="ai-sale-badge__divider-{{ ai_gen_id }}"></span>
+    {% endif %}
+
+    <div class="ai-sale-badge__timer-{{ ai_gen_id }}">
+      <span class="ai-sale-badge__timer-value-{{ ai_gen_id }}" data-timer-hours>00</span>
+      <span class="ai-sale-badge__timer-separator-{{ ai_gen_id }}">:</span>
+      <span class="ai-sale-badge__timer-value-{{ ai_gen_id }}" data-timer-minutes>00</span>
+      <span class="ai-sale-badge__timer-separator-{{ ai_gen_id }}">:</span>
+      <span class="ai-sale-badge__timer-value-{{ ai_gen_id }}" data-timer-seconds>00</span>
+    </div>
+  {% endif %}
+</sale-badge-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SaleBadge{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+        this.durationHours = parseInt(this.dataset.durationHours, 10) || 24;
+        this.hoursEl = this.querySelector('[data-timer-hours]');
+        this.minutesEl = this.querySelector('[data-timer-minutes]');
+        this.secondsEl = this.querySelector('[data-timer-seconds]');
+        this.interval = null;
+        this.endTime = null;
+      }
+
+      connectedCallback() {
+        this.initTimer();
+      }
+
+      disconnectedCallback() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
+
+      initTimer() {
+        const storageKey = 'sale_badge_end_time_{{ ai_gen_id_js }}';
+        const storedEndTime = localStorage.getItem(storageKey);
+
+        if (storedEndTime) {
+          this.endTime = parseInt(storedEndTime, 10);
+          const now = new Date().getTime();
+
+          if (now >= this.endTime) {
+            this.endTime = now + (this.durationHours * 60 * 60 * 1000);
+            localStorage.setItem(storageKey, this.endTime.toString());
+          }
+        } else {
+          const now = new Date().getTime();
+          this.endTime = now + (this.durationHours * 60 * 60 * 1000);
+          localStorage.setItem(storageKey, this.endTime.toString());
+        }
+
+        this.startTimer();
+      }
+
+      startTimer() {
+        this.updateTimer();
+        this.interval = setInterval(() => {
+          this.updateTimer();
+        }, 1000);
+      }
+
+      updateTimer() {
+        const now = new Date().getTime();
+        const distance = this.endTime - now;
+
+        if (distance < 0) {
+          const storageKey = 'sale_badge_end_time_{{ ai_gen_id_js }}';
+          this.endTime = now + (this.durationHours * 60 * 60 * 1000);
+          localStorage.setItem(storageKey, this.endTime.toString());
+          return;
+        }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (this.hoursEl) {
+          this.hoursEl.textContent = String(hours).padStart(2, '0');
+        }
+        if (this.minutesEl) {
+          this.minutesEl.textContent = String(minutes).padStart(2, '0');
+        }
+        if (this.secondsEl) {
+          this.secondsEl.textContent = String(seconds).padStart(2, '0');
+        }
+      }
+    }
+
+    customElements.define('sale-badge-{{ ai_gen_id }}', SaleBadge{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Sale badge timer",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge text"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Text",
+      "default": "You saved 50% today"
+    },
+    {
+      "type": "color",
+      "id": "text_background",
+      "label": "Background",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "text_font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "text_padding_vertical",
+      "label": "Vertical padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "text_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Sale ends"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_ends",
+      "label": "Show sale ends text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sale_ends_text",
+      "label": "Sale ends text",
+      "default": "Ends in"
+    },
+    {
+      "type": "color",
+      "id": "sale_ends_color",
+      "label": "Text color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "sale_ends_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "sale_ends_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Show timer",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "duration_hours",
+      "label": "Timer duration",
+      "min": 1,
+      "max": 48,
+      "step": 1,
+      "unit": "h",
+      "default": 24,
+      "info": "Timer resets automatically after expiry"
+    },
+    {
+      "type": "color",
+      "id": "timer_color",
+      "label": "Timer color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "timer_value_size",
+      "label": "Timer value size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "timer_font_weight",
+      "label": "Timer font weight",
+      "options": [
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "timer_min_width",
+      "label": "Timer digit width",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "timer_spacing",
+      "label": "Timer spacing",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Divider"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Height",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "divider_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Element spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sale badge timer"
+    }
+  ]
+}
+{% endschema %}

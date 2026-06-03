@@ -1,0 +1,397 @@
+{% doc %}
+  @prompt
+    Generate a low stock alert block for product pages.
+{% enddoc %}
+
+{%- liquid
+  assign ai_gen_id = block.id | replace: '_', '' | downcase
+  assign variant = closest.product.selected_or_first_available_variant
+  assign inventory_quantity = variant.inventory_quantity | default: 0
+  assign threshold = block.settings.stock_threshold
+  assign inventory_managed = false
+  assign should_show = false
+
+  if variant.inventory_management == 'shopify'
+    assign inventory_managed = true
+  endif
+
+  if inventory_managed and inventory_quantity > 0 and inventory_quantity <= threshold
+    assign should_show = true
+  endif
+-%}
+
+{% style %}
+  .ai-low-stock-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-low-stock-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+  }
+
+  .ai-low-stock-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-low-stock-content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-low-stock-message-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    font-weight: {{ block.settings.text_weight }};
+  }
+
+  .ai-low-stock-count-{{ ai_gen_id }} {
+    color: {{ block.settings.count_color }};
+    font-weight: 600;
+  }
+
+  .ai-low-stock-hidden-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-low-stock-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<low-stock-indicator
+  class="ai-low-stock-{{ ai_gen_id }}{% unless should_show %} ai-low-stock-hidden-{{ ai_gen_id }}{% endunless %}"
+  data-threshold="{{ threshold }}"
+  data-hidden-class="ai-low-stock-hidden-{{ ai_gen_id }}"
+  data-block-id="{{ block.id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-low-stock-container-{{ ai_gen_id }}">
+    {% if block.settings.show_icon %}
+      <div class="ai-low-stock-icon-{{ ai_gen_id }}">
+        {% if block.settings.icon_style == 'alert' %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        {% elsif block.settings.icon_style == 'fire' %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 23a7.5 7.5 0 0 1-5.138-12.963C8.204 8.774 11.5 6.5 11 1.5c6 4 9 8 3 14 1 0 2.5 0 5-2.47.27.773.5 1.604.5 2.47A7.5 7.5 0 0 1 12 23z"/>
+          </svg>
+        {% elsif block.settings.icon_style == 'clock' %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-low-stock-content-{{ ai_gen_id }}">
+      <p class="ai-low-stock-message-{{ ai_gen_id }}">
+        {% if block.settings.message_type == 'custom' %}
+          {{ block.settings.custom_message }}
+        {% else %}
+          {{ block.settings.message_prefix }}
+          <span class="ai-low-stock-count-{{ ai_gen_id }}" data-stock-count>
+            {{ inventory_quantity }}
+          </span>
+          {{ block.settings.message_suffix }}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</low-stock-indicator>
+
+{% javascript %}
+  class LowStockIndicator extends HTMLElement {
+    connectedCallback() {
+      this.hiddenClass = this.dataset.hiddenClass;
+      this.blockId = this.dataset.blockId;
+      this.closestSection = this.closest('.shopify-section, dialog');
+
+      this.onVariantUpdate = (event) => {
+        const html = event?.detail?.data?.html;
+        if (!html) return;
+
+        const updatedBlock = html.querySelector(`low-stock-indicator[data-block-id="${this.blockId}"]`);
+        if (!updatedBlock) return;
+
+        const nextCount = updatedBlock.querySelector('[data-stock-count]');
+        const currentCount = this.querySelector('[data-stock-count]');
+
+        if (nextCount && currentCount) {
+          currentCount.textContent = nextCount.textContent;
+        }
+
+        const shouldHide = updatedBlock.classList.contains(this.hiddenClass);
+        this.classList.toggle(this.hiddenClass, shouldHide);
+      };
+
+      this.closestSection?.addEventListener('variant:update', this.onVariantUpdate);
+    }
+
+    disconnectedCallback() {
+      this.closestSection?.removeEventListener('variant:update', this.onVariantUpdate);
+    }
+  }
+
+  if (!customElements.get('low-stock-indicator')) {
+    customElements.define('low-stock-indicator', LowStockIndicator);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Low stock alert",
+  "tag": "low-stock-indicator",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Stock settings"
+    },
+    {
+      "type": "range",
+      "id": "stock_threshold",
+      "label": "Show when stock is below",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 10,
+      "info": "Display indicator when inventory is at or below this number"
+    },
+    {
+      "type": "header",
+      "content": "Message"
+    },
+    {
+      "type": "select",
+      "id": "message_type",
+      "label": "Message type",
+      "options": [
+        {
+          "value": "dynamic",
+          "label": "Dynamic with count"
+        },
+        {
+          "value": "custom",
+          "label": "Custom message"
+        }
+      ],
+      "default": "dynamic"
+    },
+    {
+      "type": "text",
+      "id": "message_prefix",
+      "label": "Message prefix",
+      "default": "Only"
+    },
+    {
+      "type": "text",
+      "id": "message_suffix",
+      "label": "Message suffix",
+      "default": "left in stock!"
+    },
+    {
+      "type": "text",
+      "id": "custom_message",
+      "label": "Custom message",
+      "default": "Hurry! Limited stock available"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Icon style",
+      "options": [
+        {
+          "value": "alert",
+          "label": "Alert triangle"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "clock",
+          "label": "Clock"
+        },
+        {
+          "value": "info",
+          "label": "Info circle"
+        }
+      ],
+      "default": "alert"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Icon spacing",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFF3E0"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#FFB74D"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#F57C00"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#E65100"
+    },
+    {
+      "type": "color",
+      "id": "count_color",
+      "label": "Stock count",
+      "default": "#D84315"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Low stock alert"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+{% liquid
+  assign timeline_scope = ''
+  assign last_index = count | minus: 1
+
+  for index in (0..last_index)
+    assign scope = '--prefix-index, ' | replace: 'prefix', prefix | replace: 'index', index
+    assign timeline_scope = timeline_scope | append: scope
+  endfor
+
+  assign timeline_scope = timeline_scope | strip | split: ',' | compact | join: ','
+-%}
+{{- timeline_scope -}}

@@ -1,0 +1,177 @@
+{% render 'pastel-scalloped' %}
+{% assign items = section.blocks | where: 'type', 'item' %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-trust-bar section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-trust-bar__inner">
+    {% for block in items limit: 3 %}
+      <div class="pastel-trust-bar__item" {{ block.shopify_attributes }}>
+        <span class="pastel-trust-bar__icon" aria-hidden="true">
+          {% case block.settings.icon %}
+            {% when 'truck' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="6" width="13" height="10" rx="0.5"/><path d="M14.5 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg>
+            {% when 'leaf' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 6-14 16-14 0 10-6 16-14 16-1 0-2-1-2-2z"/><path d="M5 19l9-9"/></svg>
+            {% when 'clock' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg>
+            {% when 'check' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6"/></svg>
+            {% when 'star' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.7 6.3.9-4.6 4.4 1.1 6.3L12 17.3 6.5 20.3l1.1-6.3L3 9.6l6.3-.9L12 3z"/></svg>
+            {% when 'shield' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v7c0 5-4 9-8 10-4-1-8-5-8-10V5l8-3z"/></svg>
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/></svg>
+          {% endcase %}
+        </span>
+        <span class="pastel-trust-bar__text">{{ block.settings.text }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-trust-bar {
+    padding: 28px 24px;
+    background: transparent;
+  }
+
+  .pastel-trust-bar__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px 32px;
+  }
+
+  .pastel-trust-bar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-primary);
+  }
+
+  .pastel-trust-bar__icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+  }
+
+  .pastel-trust-bar__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .pastel-trust-bar__text {
+    font-family: var(--font-heading--family, var(--font-body--family));
+    font-size: 1.5em;
+    font-weight: 800;
+    line-height: 1.1;
+    color: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  @media screen and (max-width: 1199px) {
+    .pastel-trust-bar__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 24px;
+      row-gap: 18px;
+      justify-items: center;
+      align-items: center;
+    }
+
+    .pastel-trust-bar__item:nth-child(3) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-trust-bar {
+      padding: 20px 16px;
+    }
+
+    .pastel-trust-bar__inner {
+      grid-template-columns: 1fr;
+      row-gap: 14px;
+      justify-items: start;
+    }
+
+    .pastel-trust-bar__item:nth-child(3) {
+      grid-column: auto;
+    }
+
+    .pastel-trust-bar__icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .pastel-trust-bar__text {
+      font-size: 1.25em;
+      letter-spacing: 0.03em;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust Bar",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck (shipping)" },
+            { "value": "leaf", "label": "Leaf (natural)" },
+            { "value": "clock", "label": "Clock (fast acting)" },
+            { "value": "check", "label": "Check" },
+            { "value": "star", "label": "Star" },
+            { "value": "shield", "label": "Shield" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "DISCREET DELIVERY"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust Bar",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "truck", "text": "DISCREET DELIVERY" } },
+        { "type": "item", "settings": { "icon": "leaf", "text": "ALL NATURAL INGREDIENTS" } },
+        { "type": "item", "settings": { "icon": "clock", "text": "FAST ACTING" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

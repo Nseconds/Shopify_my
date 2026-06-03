@@ -1,0 +1,624 @@
+{%- liquid
+  assign title = section.settings.title
+  assign subtitle = section.settings.subtitle
+  assign layout = section.settings.layout
+  assign marquee_speed = section.settings.marquee_speed | default: 30
+  assign logo_height = section.settings.logo_height | default: 60
+-%}
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="as-seen-in section color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; --logo-height: {{ logo_height }}px;">
+  <div class="as-seen-in__container container">
+    
+    {%- if title != blank or subtitle != blank -%}
+      <div class="as-seen-in__header">
+        {%- if title != blank -%}
+          <h2 class="as-seen-in__title{% if section.settings.use_custom_colors and section.settings.title_color != blank %} as-seen-in__title--custom-color{% endif %}" style="font-size: {{ section.settings.title_font_size }}px;{% if section.settings.use_custom_colors and section.settings.title_color != blank %} color: {{ section.settings.title_color }};{% endif %}">{{ title }}</h2>
+        {%- endif -%}
+        {%- if subtitle != blank -%}
+          <p class="as-seen-in__subtitle{% if section.settings.use_custom_colors and section.settings.subtitle_color != blank %} as-seen-in__subtitle--custom-color{% endif %}" style="font-size: {{ section.settings.subtitle_font_size }}px;{% if section.settings.use_custom_colors and section.settings.subtitle_color != blank %} color: {{ section.settings.subtitle_color }};{% endif %}">{{ subtitle }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {%- if layout == 'marquee' -%}
+      <div class="as-seen-in__logos as-seen-in__logos--marquee">
+        <div class="as-seen-in__marquee-track" style="--marquee-duration: {{ marquee_speed }}s;">
+          {%- for block in section.blocks -%}
+            <div class="as-seen-in__logo-wrapper" {{ block.shopify_attributes }}>
+              {%- if block.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link" target="_blank" rel="noopener">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </div>
+                {%- endif -%}
+              {%- elsif block.settings.logo_svg != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link as-seen-in__logo-svg" target="_blank" rel="noopener">
+                    {{ block.settings.logo_svg }}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo as-seen-in__logo-svg">
+                    {{ block.settings.logo_svg }}
+                  </div>
+                {%- endif -%}
+              {%- else -%}
+                <div class="as-seen-in__logo as-seen-in__logo-placeholder">
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'as-seen-in__logo-placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+          {%- comment -%} Duplicate for seamless loop {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            <div class="as-seen-in__logo-wrapper" aria-hidden="true">
+              {%- if block.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link" target="_blank" rel="noopener">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </div>
+                {%- endif -%}
+              {%- elsif block.settings.logo_svg != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link as-seen-in__logo-svg" target="_blank" rel="noopener">
+                    {{ block.settings.logo_svg }}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo as-seen-in__logo-svg">
+                    {{ block.settings.logo_svg }}
+                  </div>
+                {%- endif -%}
+              {%- else -%}
+                <div class="as-seen-in__logo as-seen-in__logo-placeholder">
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'as-seen-in__logo-placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+          {%- comment -%} Second duplicate for seamless loop {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            <div class="as-seen-in__logo-wrapper" aria-hidden="true">
+              {%- if block.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link" target="_blank" rel="noopener">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </div>
+                {%- endif -%}
+              {%- elsif block.settings.logo_svg != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link as-seen-in__logo-svg" target="_blank" rel="noopener">
+                    {{ block.settings.logo_svg }}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo as-seen-in__logo-svg">
+                    {{ block.settings.logo_svg }}
+                  </div>
+                {%- endif -%}
+              {%- else -%}
+                <div class="as-seen-in__logo as-seen-in__logo-placeholder">
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'as-seen-in__logo-placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- else -%}
+        <div class="as-seen-in__logos as-seen-in__logos--{{ layout }}">
+          {%- for block in section.blocks -%}
+            <div class="as-seen-in__logo-wrapper" {{ block.shopify_attributes }}>
+              {%- if block.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link" target="_blank" rel="noopener">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo">
+                    {%- render 'image', 
+                      image: block.settings.logo_image,
+                      class: 'as-seen-in__logo-image'
+                    -%}
+                  </div>
+                {%- endif -%}
+              {%- elsif block.settings.logo_svg != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="as-seen-in__logo-link as-seen-in__logo-svg" target="_blank" rel="noopener">
+                    {{ block.settings.logo_svg }}
+                  </a>
+                {%- else -%}
+                  <div class="as-seen-in__logo as-seen-in__logo-svg">
+                    {{ block.settings.logo_svg }}
+                  </div>
+                {%- endif -%}
+              {%- else -%}
+                <div class="as-seen-in__logo as-seen-in__logo-placeholder">
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'as-seen-in__logo-placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .as-seen-in {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .as-seen-in__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .as-seen-in__header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .as-seen-in__title {
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .as-seen-in__title--custom-color {
+    opacity: 1;
+  }
+
+  .as-seen-in__subtitle {
+    margin: 0;
+    opacity: 0.7;
+    max-width: none;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .as-seen-in__subtitle--custom-color {
+    opacity: 1;
+  }
+
+  .as-seen-in__logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .as-seen-in__logos--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 32px;
+  }
+
+  .as-seen-in__logos--scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding-bottom: 16px;
+    scrollbar-width: thin;
+  }
+
+  .as-seen-in__logos--scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .as-seen-in__logos--scroll::-webkit-scrollbar-track {
+    background: rgba(var(--color-foreground-rgb), 0.05);
+    border-radius: 3px;
+  }
+
+  .as-seen-in__logos--scroll::-webkit-scrollbar-thumb {
+    background: rgba(var(--color-foreground-rgb), 0.2);
+    border-radius: 3px;
+  }
+
+  .as-seen-in__logo-wrapper {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .as-seen-in__logo,
+  .as-seen-in__logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    filter: grayscale(100%);
+  }
+
+  .as-seen-in__logo:hover,
+  .as-seen-in__logo-link:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  .as-seen-in .as-seen-in__logo-image,
+  .as-seen-in__logo-image {
+    max-width: 140px;
+    height: var(--logo-height, 60px) !important;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .as-seen-in .as-seen-in__logo-svg,
+  .as-seen-in__logo-svg {
+    width: 140px;
+    height: var(--logo-height, 60px) !important;
+  }
+
+  .as-seen-in__logo-svg svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .as-seen-in__logo-placeholder {
+    opacity: 0.3;
+  }
+
+  .as-seen-in__logo-placeholder-svg {
+    width: 140px;
+    height: var(--logo-height, 60px) !important;
+  }
+
+  .as-seen-in__logo-placeholder-svg svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Marquee Animation */
+  .as-seen-in__logos--marquee {
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 0 20px;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    box-sizing: border-box;
+  }
+
+  .as-seen-in__marquee-track {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: max-content;
+    will-change: transform;
+    animation: marquee var(--marquee-duration, 30s) linear infinite;
+  }
+
+  .as-seen-in__logos--marquee .as-seen-in__logo-wrapper {
+    flex-shrink: 0;
+  }
+
+  .as-seen-in__logos--marquee:hover .as-seen-in__marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% / 3));
+    }
+  }
+
+  @media (max-width: 989px) {
+    .as-seen-in__logos {
+      gap: 32px;
+    }
+
+    .as-seen-in__logos--grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 24px;
+    }
+
+    .as-seen-in__marquee-track {
+      gap: 50px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .as-seen-in__container {
+      padding: 0 16px;
+    }
+
+    .as-seen-in__header {
+      margin-bottom: 32px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .as-seen-in__title,
+    .as-seen-in__subtitle {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .as-seen-in__logos {
+      gap: 24px;
+    }
+
+    .as-seen-in__logos--grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .as-seen-in__logo-image {
+      max-width: 110px;
+      height: calc(var(--logo-height, 60px) * 0.83) !important;
+    }
+
+    .as-seen-in__logo-svg {
+      width: 110px;
+      height: calc(var(--logo-height, 60px) * 0.83) !important;
+    }
+
+    .as-seen-in__logo-placeholder-svg {
+      width: 110px;
+      height: calc(var(--logo-height, 60px) * 0.83) !important;
+    }
+
+    .as-seen-in__marquee-track {
+      gap: 40px;
+    }
+
+    .as-seen-in__logos--marquee {
+      width: calc(100vw - 32px);
+      max-width: calc(100% + 32px);
+      margin-left: calc(-16px);
+      padding: 0 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "As Seen In",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:settings.title",
+      "default": "AS SEEN IN"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Featured in leading publications"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "info": "Leave empty to use default opacity"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "info": "Leave empty to use default opacity"
+    ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Logo layout",
+      "options": [
+        {
+          "value": "flex",
+          "label": "Flexible wrap"
+        },
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "scroll",
+          "label": "Horizontal scroll"
+        },
+        {
+          "value": "marquee",
+          "label": "Infinite scroll (Marquee)"
+        }
+      ],
+      "default": "marquee"
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "label": "Marquee speed (seconds)",
+      "info": "Lower = faster. Only applies to Infinite scroll layout.",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height",
+      "min": 30,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo image",
+          "info": "Recommended: 280x120px PNG with transparent background"
+        },
+        {
+          "type": "html",
+          "id": "logo_svg",
+          "label": "Logo SVG",
+          "info": "Alternative to image. Use SVG code for better quality."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "info": "Link to publication or press mention"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "As Seen In",
+      "category": "t:categories.product",
+      "blocks": [
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

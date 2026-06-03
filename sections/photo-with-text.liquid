@@ -1,0 +1,290 @@
+
+{% liquid
+  assign ai_gen_id = section.id | replace: '_', '' | downcase
+%}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c    = section.settings.background_color -%}
+  {%- assign title_c = section.settings.heading_color -%}
+  {%- assign text_c  = section.settings.text_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c    = 'var(--color-background)' -%}
+  {%- assign title_c = 'var(--color-foreground)' -%}
+  {%- assign text_c  = 'var(--color-foreground)' -%}
+{%- else -%}
+  {%- assign bg_c    = section.settings.color_scheme.settings.background -%}
+  {%- assign title_c = section.settings.color_scheme.settings.foreground_heading -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+{%- endif -%}
+
+{% style %}
+  .ai-photo-text-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-photo-text-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: {{ section.settings.layout }};
+    gap: {{ section.settings.gap }}px;
+    align-items: center;
+    background: {{ bg_c }};
+    padding: {{ section.settings.padding }}px;
+    border-radius: var(--style-border-radius-cards);
+  }
+
+  .ai-photo-text-image-wrapper-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+    border-radius: var(--style-border-radius-cards);
+    overflow: hidden;
+  }
+
+  .ai-photo-text-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-photo-text-image-placeholder-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-border, #f4f4f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-photo-text-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-photo-text-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-photo-text-content-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-photo-text-heading-{{ ai_gen_id }} {
+    margin: 0 0 {{ section.settings.heading_spacing }}px;
+    color: {{ title_c }};
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.2;
+  }
+
+  .ai-photo-text-text-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ text_c }};
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-photo-text-container-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+  }
+{% endstyle %}
+
+<photo-text-{{ ai_gen_id }} class="ai-photo-text-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="ai-photo-text-container-{{ ai_gen_id }}">
+    <div class="ai-photo-text-image-wrapper-{{ ai_gen_id }}" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+      {% if section.settings.image %}
+        <img
+          src="{{ section.settings.image | image_url: width: 1200 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="ai-photo-text-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-photo-text-image-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-photo-text-empty-state-{{ ai_gen_id }}">
+            Next, add an image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-photo-text-content-{{ ai_gen_id }}">
+      {% if section.settings.heading != blank %}
+        <h2 class="ai-photo-text-heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="ai-photo-text-text-{{ ai_gen_id }}">{{ section.settings.text }}</div>
+      {% endif %}
+    </div>
+  </div>
+</photo-text-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Photo with text",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Your heading here</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Add your description text here. Share details about your product, story, or brand.</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "row",
+          "label": "Image left"
+        },
+        {
+          "value": "row-reverse",
+          "label": "Image right"
+        }
+      ],
+      "default": "row-reverse"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between image and text",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f4f6f6"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#141414"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Photo with text"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,252 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign heading = section.settings.heading
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign section_width = section.settings.section_width | default: 'full-width'
+  assign heading_alignment = section.settings.heading_alignment | default: 'center'
+  assign open_first = section.settings.open_first
+  assign show_icon = section.settings.show_icon
+
+  case section_width
+    when 'full-width'
+      assign width_class = 'section--full-width'
+    when 'page-width'
+      assign width_class = 'section--page-width'
+    else
+      assign width_class = 'section--page-width pastel-product-faq--narrow'
+  endcase
+
+  assign root_classes = 'pastel-product-faq section color-' | append: section.settings.color_scheme
+  assign root_classes = root_classes | append: ' ' | append: width_class
+  assign root_classes = root_classes | append: ' pastel-product-faq--heading-' | append: heading_alignment
+  unless show_icon
+    assign root_classes = root_classes | append: ' pastel-product-faq--no-icon'
+  endunless
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="{{ root_classes }}" {{ section.shopify_attributes }}>
+  <div class="pastel-product-faq__inner">
+    {% if heading != blank %}
+      <h2 class="pastel-product-faq__heading">{{ heading }}</h2>
+    {% endif %}
+    {% if faq_blocks.size > 0 %}
+      <div class="pastel-product-faq__list">
+        {% for block in faq_blocks %}
+          <details
+            class="pastel-product-faq__item"
+            {% if open_first and forloop.first %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary class="pastel-product-faq__question">
+              <span>{{ block.settings.question }}</span>
+              {% if show_icon %}
+                <span class="pastel-product-faq__icon" aria-hidden="true">+</span>
+              {% endif %}
+            </summary>
+            <div class="pastel-product-faq__answer rte">{{ block.settings.answer }}</div>
+          </details>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-product-faq {
+    padding-block: 64px;
+    background: var(--color-background);
+  }
+
+  /* Inner constrained only for the explicit narrow variant; full-width and
+     page-width rely on the global .section grid to size the content. */
+  .pastel-product-faq__inner {
+    width: 100%;
+  }
+
+  .pastel-product-faq.section--full-width .pastel-product-faq__inner {
+    padding-inline: var(--page-margin, 24px);
+  }
+
+  .pastel-product-faq--narrow .pastel-product-faq__inner {
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  .pastel-product-faq__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0 0 32px;
+    text-align: center;
+  }
+
+  .pastel-product-faq--heading-left .pastel-product-faq__heading {
+    text-align: left;
+  }
+
+  .pastel-product-faq--heading-right .pastel-product-faq__heading {
+    text-align: right;
+  }
+
+  .pastel-product-faq__list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  }
+
+  .pastel-product-faq__item {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  }
+
+  .pastel-product-faq__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    font-family: var(--font-body--family);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-foreground);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .pastel-product-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .pastel-product-faq__icon {
+    font-size: 24px;
+    font-weight: 300;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  .pastel-product-faq__answer {
+    padding: 0 0 24px;
+    font-family: var(--font-body--family);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+  }
+
+  .pastel-product-faq__answer p {
+    margin: 0 0 12px;
+  }
+
+  .pastel-product-faq__answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-product-faq {
+      padding-block: 48px;
+    }
+
+    .pastel-product-faq.section--full-width .pastel-product-faq__inner {
+      padding-inline: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{%- if section.blocks.size > 0 -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{%- for block in section.blocks -%}{"@type":"Question","name":{{ block.settings.question | json }},"acceptedAnswer":{"@type":"Answer","text":{{ block.settings.answer | strip_html | json }}}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product FAQ",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQS"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "full-width", "label": "Full width" },
+        { "value": "page-width", "label": "Page width" },
+        { "value": "narrow", "label": "Narrow" }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first FAQ by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show expand/collapse icon",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How many gummies should I take?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Start with one gummy 30-60 minutes before bed. You can adjust based on your needs.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product FAQ",
+      "blocks": [
+        { "type": "faq", "settings": { "question": "How many gummies should I take?", "answer": "<p>Start with one gummy 30-60 minutes before bed.</p>" } },
+        { "type": "faq", "settings": { "question": "Are these safe to take every night?", "answer": "<p>Our gummies are formulated for nightly use. Always follow the recommended dosage.</p>" } },
+        { "type": "faq", "settings": { "question": "When will I receive my order?", "answer": "<p>Orders typically ship within 1-2 business days. You'll receive tracking once shipped.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,276 @@
+
+
+{%- doc -%}
+  This block is used to display the add to cart button.
+  Intended for product-form.liquid block.
+
+  @param {string} can_add_to_cart - Whether the product can be added to the cart
+  @param {string} add_to_cart_text - The text of the add to cart button
+{%- enddoc -%}
+
+{% liquid
+  assign class = 'add-to-cart-button ' | append: block.settings.style_class
+  assign id = 'BuyButtons-ProductSubmitButton-' | append: block.id
+
+  if block.settings.button_label != blank
+    assign add_to_cart_text = block.settings.button_label
+  endif
+
+  assign needs_color_overrides = false
+  if block.settings.button_background_color != blank or block.settings.button_text_color != blank
+    assign needs_color_overrides = true
+  endif
+
+  assign needs_wiggle_styles = false
+  if block.settings.enable_hover_wiggle or block.settings.auto_wiggle_interval != 'off'
+    assign needs_wiggle_styles = true
+  endif
+
+  assign needs_wiggle_js = false
+  if block.settings.auto_wiggle_interval != 'off'
+    assign needs_wiggle_js = true
+  endif
+
+  assign needs_scoped_wrapper = false
+  if needs_wiggle_styles or needs_color_overrides
+    assign needs_scoped_wrapper = true
+  endif
+%}
+
+{% if needs_scoped_wrapper %}
+  <style>
+    {% if needs_color_overrides %}
+      [data-block-id="{{ block.id }}"] button[type="submit"][name="add"] {
+        {% if block.settings.button_background_color != blank %}
+          --button-background-color: {{ block.settings.button_background_color }} !important;
+          background-color: {{ block.settings.button_background_color }} !important;
+        {% endif %}
+        {% if block.settings.button_text_color != blank %}
+          --button-color: {{ block.settings.button_text_color }} !important;
+          color: {{ block.settings.button_text_color }} !important;
+        {% endif %}
+      }
+    {% endif %}
+
+    {% if needs_wiggle_styles %}
+      {% assign wiggle_intensity = block.settings.wiggle_intensity | default: 'normal' %}
+
+      {% if wiggle_intensity == 'subtle' %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-0.25deg) translateY(-1.5px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(0.25deg) translateY(-1.5px); }
+        }
+      {% elsif wiggle_intensity == 'pronounced' %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-1.5deg) translateY(-3px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(1.5deg) translateY(-3px); }
+        }
+      {% else %}
+        @keyframes gentle-wiggle-atc-{{ block.id }} {
+          0%, 100% { transform: rotate(0deg) translateY(-1px); }
+          25% { transform: rotate(-0.5deg) translateY(-2px); }
+          50% { transform: rotate(0deg) translateY(-1px); }
+          75% { transform: rotate(0.5deg) translateY(-2px); }
+        }
+      {% endif %}
+
+      {% if block.settings.enable_hover_wiggle %}
+        [data-block-id="{{ block.id }}"].add-to-cart-block-wrapper--wiggle button:hover:not(:disabled) {
+          animation: gentle-wiggle-atc-{{ block.id }} 0.6s ease-in-out;
+        }
+      {% endif %}
+
+      [data-block-id="{{ block.id }}"] button.auto-wiggle:not(:disabled) {
+        animation: gentle-wiggle-atc-{{ block.id }} 0.6s ease-in-out;
+      }
+    {% endif %}
+  </style>
+{% endif %}
+
+<span
+  {{ block.shopify_attributes }}
+  style="--add-to-cart-font-case: {{ settings.button_text_case }};"
+>
+  {% if needs_scoped_wrapper %}
+    <div
+      class="add-to-cart-block-wrapper{% if block.settings.enable_hover_wiggle %} add-to-cart-block-wrapper--wiggle{% endif %}"
+      data-block-id="{{ block.id }}"
+    >
+      {% if needs_wiggle_js %}
+        <add-to-cart-block-wiggle data-auto-wiggle-interval="{{ block.settings.auto_wiggle_interval }}">
+          {% render 'add-to-cart-button',
+            id: id,
+            class: class,
+            can_add_to_cart: can_add_to_cart,
+            product: closest.product,
+            add_to_cart_text: add_to_cart_text
+          %}
+        </add-to-cart-block-wiggle>
+      {% else %}
+        {% render 'add-to-cart-button',
+          id: id,
+          class: class,
+          can_add_to_cart: can_add_to_cart,
+          product: closest.product,
+          add_to_cart_text: add_to_cart_text
+        %}
+      {% endif %}
+    </div>
+  {% else %}
+    {% render 'add-to-cart-button',
+      id: id,
+      class: class,
+      can_add_to_cart: can_add_to_cart,
+      product: closest.product,
+      add_to_cart_text: add_to_cart_text
+    %}
+  {% endif %}
+</span>
+
+{% stylesheet %}
+  .add-to-cart-block-wrapper,
+  add-to-cart-block-wiggle {
+    display: block;
+    width: 100%;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class AddToCartBlockWiggle extends HTMLElement {
+    connectedCallback() {
+      // Defer execution until children are parsed
+      setTimeout(() => {
+        this.setupAutoWiggle();
+      }, 0);
+    }
+
+    disconnectedCallback() {
+      if (this.wiggleInterval) {
+        clearInterval(this.wiggleInterval);
+      }
+    }
+
+    setupAutoWiggle() {
+      const autoWiggleInterval = this.getAttribute('data-auto-wiggle-interval');
+
+      if (!autoWiggleInterval || autoWiggleInterval === 'off') return;
+
+      const intervalSeconds = parseInt(autoWiggleInterval, 10);
+      if (Number.isNaN(intervalSeconds)) return;
+
+      this.wiggleInterval = setInterval(() => {
+        const button = this.querySelector('button[type="submit"]');
+        if (!button || button.hasAttribute('disabled') || button.disabled) return;
+
+        // Force reflow
+        button.classList.remove('auto-wiggle');
+        void button.offsetWidth;
+        button.classList.add('auto-wiggle');
+
+        setTimeout(() => {
+          if (button) button.classList.remove('auto-wiggle');
+        }, 600);
+      }, intervalSeconds * 1000);
+    }
+  }
+
+  if (!customElements.get('add-to-cart-block-wiggle')) {
+    customElements.define('add-to-cart-block-wiggle', AddToCartBlockWiggle);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:names.add_to_cart",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button text",
+      "info": "Override the default 'Add to cart' button text. Leave blank to use the default."
+    },
+    {
+      "type": "select",
+      "id": "style_class",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "button",
+          "label": "t:options.primary"
+        },
+        {
+          "value": "button-secondary",
+          "label": "t:options.secondary"
+        }
+      ],
+      "default": "button-secondary"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Background color",
+      "info": "Uses color scheme primary or secondary button colors if not set"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "info": "Uses color scheme primary or secondary button colors if not set"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_wiggle",
+      "label": "Enable hover wiggle animation",
+      "default": false,
+      "info": "Adds a gentle wiggle effect when hovering over the button"
+    },
+    {
+      "type": "select",
+      "id": "auto_wiggle_interval",
+      "label": "Auto wiggle interval",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "5",
+          "label": "Every 5 seconds"
+        },
+        {
+          "value": "10",
+          "label": "Every 10 seconds"
+        }
+      ],
+      "default": "off",
+      "info": "Automatically wiggle the button at regular intervals to grab attention"
+    },
+    {
+      "type": "select",
+      "id": "wiggle_intensity",
+      "label": "Wiggle intensity",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle (Less movement)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "pronounced",
+          "label": "Pronounced (More movement)"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how much the button moves during wiggle animation"
+    }
+  ]
+}
+{% endschema %}

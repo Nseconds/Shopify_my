@@ -1,0 +1,1005 @@
+{%- liquid
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.text_color
+    assign sc_accent = section.settings.accent_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_accent = 'var(--color-gradient-1)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+  endif
+-%}
+{% style %}
+  .skincare-media-carousel-{{ section.id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+  }
+
+  .skincare-media-carousel-container-{{ section.id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .skincare-media-carousel-media-{{ section.id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .skincare-media-carousel-slider-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+    {% if section.settings.show_shadow %}
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    {% endif %}
+    background-color: var(--color-background);
+    aspect-ratio: {% if section.settings.aspect_ratio == '1-1' %}1 / 1{% elsif section.settings.aspect_ratio == '4-5' %}4 / 5{% else %}16 / 9{% endif %};
+  }
+
+  .skincare-media-carousel-slides-{{ section.id }} {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+  }
+
+  .skincare-media-carousel-slide-{{ section.id }} {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .skincare-media-carousel-slide-{{ section.id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .skincare-media-carousel-slide-{{ section.id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .skincare-media-carousel-video-overlay-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
+  }
+
+  .skincare-media-carousel-video-overlay-{{ section.id }}:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .skincare-media-carousel-video-overlay-{{ section.id }}.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .skincare-media-carousel-video-overlay-{{ section.id }} svg {
+    width: 24px;
+    height: 24px;
+    fill: {{ sc_text }};
+    margin-left: 3px;
+  }
+
+  .skincare-media-carousel-placeholder-{{ section.id }} {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .skincare-media-carousel-placeholder-{{ section.id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.3;
+  }
+
+  .skincare-media-carousel-arrows-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+    pointer-events: none;
+  }
+
+  .skincare-media-carousel-arrow-{{ section.id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+  }
+
+  .skincare-media-carousel-arrow-{{ section.id }}:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+
+  .skincare-media-carousel-arrow-{{ section.id }}:focus {
+    outline: 2px solid {{ sc_accent }};
+    outline-offset: 2px;
+  }
+
+  .skincare-media-carousel-arrow-{{ section.id }} svg {
+    width: 20px;
+    height: 20px;
+    stroke: {{ sc_text }};
+  }
+
+  .skincare-media-carousel-dots-{{ section.id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .skincare-media-carousel-dot-{{ section.id }} {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .skincare-media-carousel-dot-{{ section.id }}:focus {
+    outline: 2px solid {{ sc_accent }};
+    outline-offset: 2px;
+  }
+
+  .skincare-media-carousel-dot-{{ section.id }}.active {
+    background-color: {{ sc_accent }};
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .skincare-media-carousel-content-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .skincare-media-carousel-eyebrow-{{ section.id }} {
+    font-family: {{ section.settings.heading_font }}, serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: {{ sc_accent }};
+    margin: 0;
+  }
+
+  .skincare-media-carousel-heading-{{ section.id }} {
+    font-family: {% if section.settings.heading_font == 'serif' %}Georgia, serif{% else %}{{ settings.type_body_font.family }}, sans-serif{% endif %};
+    font-size: 42px;
+    line-height: 1.2;
+    color: {{ sc_text }};
+    margin: 0;
+    position: relative;
+  }
+
+  .skincare-media-carousel-highlight-{{ section.id }} {
+    position: relative;
+    display: inline-block;
+  }
+
+  .skincare-media-carousel-highlight-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: linear-gradient(to right, {{ sc_accent }}40, {{ sc_accent }}20);
+    z-index: -1;
+    border-radius: 2px;
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+  .skincare-media-carousel-highlight-{{ section.id }} {
+    background: var(--color-card-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .skincare-media-carousel-highlight-{{ section.id }}::after {
+    background: var(--color-card-gradient);
+    opacity: 0.3;
+  }
+  {% endif %}
+
+  .skincare-media-carousel-body-{{ section.id }} {
+    font-family: {{ settings.type_body_font.family }}, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: {{ sc_text }};
+    opacity: 0.85;
+  }
+
+  .skincare-media-carousel-body-{{ section.id }} p {
+    margin: 0 0 16px;
+  }
+
+  .skincare-media-carousel-body-{{ section.id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .skincare-media-carousel-button-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    text-decoration: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  .skincare-media-carousel-button-{{ section.id }}:hover {
+    background: var(--color-primary-button-hover-background);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .skincare-media-carousel-button-{{ section.id }}:focus {
+    outline: 2px solid {{ sc_accent }};
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .skincare-media-carousel-container-{{ section.id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .skincare-media-carousel-heading-{{ section.id }} {
+      font-size: 32px;
+    }
+
+    .skincare-media-carousel-body-{{ section.id }} {
+      font-size: 15px;
+    }
+
+    .skincare-media-carousel-arrows-{{ section.id }} {
+      padding: 0 12px;
+    }
+
+    .skincare-media-carousel-arrow-{{ section.id }} {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skincare-media-carousel-slides-{{ section.id }} {
+      transition: none;
+    }
+
+    .skincare-media-carousel-arrow-{{ section.id }},
+    .skincare-media-carousel-dot-{{ section.id }},
+    .skincare-media-carousel-button-{{ section.id }} {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+<skincare-media-carousel-{{ section.id | downcase | replace: '_', '-' }} class="skincare-media-carousel-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="skincare-media-carousel-container-{{ section.id }}">
+    <div class="skincare-media-carousel-media-{{ section.id }}">
+      <div class="skincare-media-carousel-slider-{{ section.id }}">
+        <div class="skincare-media-carousel-slides-{{ section.id }}">
+          {% assign slide_count = 0 %}
+          {% for i in (1..3) %}
+            {% assign media_type_key = 'media_type_' | append: i %}
+            {% assign image_key = 'image_' | append: i %}
+            {% assign video_key = 'video_' | append: i %}
+            {% assign external_video_key = 'external_video_url_' | append: i %}
+            {% assign video_autoplay_key = 'video_autoplay_' | append: i %}
+
+            {% assign media_type = section.settings[media_type_key] %}
+            {% assign slide_image = section.settings[image_key] %}
+            {% assign slide_video = section.settings[video_key] %}
+            {% assign external_video = section.settings[external_video_key] %}
+            {% assign video_autoplay = section.settings[video_autoplay_key] %}
+
+            {% if media_type == 'image' and slide_image != blank or media_type == 'video' and slide_video != blank or media_type == 'video' and external_video != blank %}
+              {% assign slide_count = slide_count | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+
+          {% if slide_count == 0 %}
+            <div class="skincare-media-carousel-slide-{{ section.id }}">
+              <div class="skincare-media-carousel-placeholder-{{ section.id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            </div>
+          {% else %}
+            {% for i in (1..3) %}
+              {% assign media_type_key = 'media_type_' | append: i %}
+              {% assign image_key = 'image_' | append: i %}
+              {% assign video_key = 'video_' | append: i %}
+              {% assign external_video_key = 'external_video_url_' | append: i %}
+              {% assign video_autoplay_key = 'video_autoplay_' | append: i %}
+
+              {% assign media_type = section.settings[media_type_key] %}
+              {% assign slide_image = section.settings[image_key] %}
+              {% assign slide_video = section.settings[video_key] %}
+              {% assign external_video = section.settings[external_video_key] %}
+              {% assign video_autoplay = section.settings[video_autoplay_key] %}
+
+              {% if media_type == 'image' %}
+                <div data-forge-slot-id="image_{{ i }}"{% if slide_image == blank %} data-forge-slot-blank="true"{% endif %} style="display:contents">
+                {% if slide_image != blank %}
+                  <div class="skincare-media-carousel-slide-{{ section.id }}" data-slide-index="{{ forloop.index0 }}">
+                    <img
+                      src="{{ slide_image | image_url: width: 1200 }}"
+                      alt="{{ slide_image.alt | default: section.settings.heading | escape }}"
+                      loading="lazy"
+                      width="{{ slide_image.width }}"
+                      height="{{ slide_image.height }}"
+                    >
+                  </div>
+                {% endif %}
+                </div>
+              {% elsif media_type == 'video' %}
+                {% if slide_video != blank %}
+                  <div class="skincare-media-carousel-slide-{{ section.id }}" data-slide-index="{{ forloop.index0 }}">
+                    <video
+                      playsinline
+                      {% if video_autoplay %}autoplay muted loop{% endif %}
+                      data-video-element
+                    >
+                      {% # theme-check-disable RemoteAsset %}<source src="{{ slide_video.sources[0].url }}" type="{{ slide_video.sources[0].mime_type }}">{% # theme-check-enable RemoteAsset %}
+                    </video>
+                    {% unless video_autoplay %}
+                      <div class="skincare-media-carousel-video-overlay-{{ section.id }}" data-play-button>
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                    {% endunless %}
+                  </div>
+                {% elsif external_video != blank %}
+                  <div class="skincare-media-carousel-slide-{{ section.id }}" data-slide-index="{{ forloop.index0 }}">
+                    {% if external_video contains 'youtube.com' or external_video contains 'youtu.be' %}
+                      {% assign video_id = external_video | split: 'v=' | last | split: '&' | first %}
+                      {% if external_video contains 'youtu.be' %}
+                        {% assign video_id = external_video | split: 'youtu.be/' | last | split: '?' | first %}
+                      {% endif %}
+                      <iframe
+                        src="https://www.youtube.com/embed/{{ video_id }}?controls=1&modestbranding=1&rel=0"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        style="width: 100%; height: 100%;"
+                      ></iframe>
+                    {% elsif external_video contains 'vimeo.com' %}
+                      {% assign video_id = external_video | split: 'vimeo.com/' | last | split: '?' | first %}
+                      <iframe
+                        src="https://player.vimeo.com/video/{{ video_id }}?title=0&byline=0&portrait=0"
+                        frameborder="0"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowfullscreen
+                        style="width: 100%; height: 100%;"
+                      ></iframe>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        {% if slide_count > 1 %}
+          <div class="skincare-media-carousel-arrows-{{ section.id }}">
+            <button
+              class="skincare-media-carousel-arrow-{{ section.id }} skincare-media-carousel-prev-{{ section.id }}"
+              aria-label="Previous slide"
+              data-prev
+            >
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button
+              class="skincare-media-carousel-arrow-{{ section.id }} skincare-media-carousel-next-{{ section.id }}"
+              aria-label="Next slide"
+              data-next
+            >
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if slide_count > 1 %}
+        <div class="skincare-media-carousel-dots-{{ section.id }}">
+          {% for i in (1..slide_count) %}
+            <button
+              class="skincare-media-carousel-dot-{{ section.id }} {% if forloop.first %}active{% endif %}"
+              aria-label="Go to slide {{ forloop.index }}"
+              data-dot="{{ forloop.index0 }}"
+            ></button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="skincare-media-carousel-content-{{ section.id }}">
+      {% if section.settings.eyebrow != blank %}
+        <p class="skincare-media-carousel-eyebrow-{{ section.id }}">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="skincare-media-carousel-heading-{{ section.id }}">
+          {% if section.settings.highlight_word != blank %}
+            {% assign heading_parts = section.settings.heading | split: section.settings.highlight_word %}
+            {{ heading_parts[0] }}<span class="skincare-media-carousel-highlight-{{ section.id }}">{{ section.settings.highlight_word }}</span>{{ heading_parts[1] }}
+          {% else %}
+            {{ section.settings.heading }}
+          {% endif %}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.body != blank %}
+        <div class="skincare-media-carousel-body-{{ section.id }}">
+          {{ section.settings.body }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <a href="{{ section.settings.button_link }}" class="skincare-media-carousel-button-{{ section.id }}">
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</skincare-media-carousel-{{ section.id | downcase | replace: '_', '-' }}>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const tagName = 'skincare-media-carousel-' + sectionId.toLowerCase().replace(/_/g, '-');
+    const className = 'SkincareMediaCarousel' + sectionId.replace(/-/g, '');
+    
+    class SkincareMediaCarousel extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.totalSlides = 0;
+        this.autoplayInterval = null;
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+      }
+
+      connectedCallback() {
+        this.slidesContainer = this.querySelector('.skincare-media-carousel-slides-' + sectionId);
+        this.slides = this.querySelectorAll('.skincare-media-carousel-slide-' + sectionId);
+        this.dots = this.querySelectorAll('.skincare-media-carousel-dot-' + sectionId);
+        this.prevButton = this.querySelector('[data-prev]');
+        this.nextButton = this.querySelector('[data-next]');
+        this.playButtons = this.querySelectorAll('[data-play-button]');
+
+        this.totalSlides = this.slides.length;
+
+        if (this.totalSlides <= 1) return;
+
+        this.setupEventListeners();
+        this.setupTouchEvents();
+        this.setupVideoControls();
+
+        {% if section.settings.autoplay %}
+          this.startAutoplay();
+        {% endif %}
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.goToPrevSlide());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.goToNextSlide());
+        }
+
+        this.dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') this.goToPrevSlide();
+          if (e.key === 'ArrowRight') this.goToNextSlide();
+        });
+      }
+
+      setupTouchEvents() {
+        this.slidesContainer.addEventListener('touchstart', (e) => {
+          this.touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        this.slidesContainer.addEventListener('touchend', (e) => {
+          this.touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe();
+        }, { passive: true });
+      }
+
+      setupVideoControls() {
+        this.playButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const slide = button.closest('.skincare-media-carousel-slide-' + sectionId);
+            const video = slide.querySelector('video');
+            if (video) {
+              video.play();
+              button.classList.add('hidden');
+              video.setAttribute('controls', 'controls');
+            }
+          });
+        });
+      }
+
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.goToNextSlide();
+          } else {
+            this.goToPrevSlide();
+          }
+        }
+      }
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        this.updateSlider();
+        this.resetAutoplay();
+      }
+
+      goToNextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        this.updateSlider();
+        this.resetAutoplay();
+      }
+
+      goToPrevSlide() {
+        this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        this.updateSlider();
+        this.resetAutoplay();
+      }
+
+      updateSlider() {
+        const offset = -this.currentSlide * 100;
+        this.slidesContainer.style.transform = `translateX(${offset}%)`;
+
+        this.dots.forEach((dot, index) => {
+          if (index === this.currentSlide) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+
+        this.pauseAllVideos();
+      }
+
+      pauseAllVideos() {
+        const videos = this.querySelectorAll('video');
+        videos.forEach((video) => {
+          if (!video.hasAttribute('autoplay')) {
+            video.pause();
+          }
+        });
+
+        const overlays = this.querySelectorAll('[data-play-button]');
+        overlays.forEach((overlay) => {
+          overlay.classList.remove('hidden');
+        });
+      }
+
+      startAutoplay() {
+        const interval = {{ section.settings.slide_interval | times: 1000 }};
+        this.autoplayInterval = setInterval(() => {
+          this.goToNextSlide();
+        }, interval);
+      }
+
+      resetAutoplay() {
+        {% if section.settings.autoplay %}
+          if (this.autoplayInterval) {
+            clearInterval(this.autoplayInterval);
+            this.startAutoplay();
+          }
+        {% endif %}
+      }
+
+      disconnectedCallback() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+        }
+      }
+    }
+
+    customElements.define(tagName, SkincareMediaCarousel);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Media carousel",
+  "tag": "section",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Radiant skin starts here"
+    },
+    {
+      "type": "text",
+      "id": "highlight_word",
+      "label": "Highlight word",
+      "info": "Enter a word from the heading to highlight with an accent"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>Discover our luxurious collection of skincare essentials, crafted with premium ingredients to nourish and transform your skin.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f4ed",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2c2c2c",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#c9a88a",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "serif",
+          "label": "Serif"
+        },
+        {
+          "value": "sans-serif",
+          "label": "Sans-serif"
+        }
+      ],
+      "default": "serif"
+    },
+    {
+      "type": "header",
+      "content": "Media settings"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "1-1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4-5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "16-9",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "4-5"
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shadow",
+      "label": "Show shadow",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Carousel settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "slide_interval",
+      "label": "Slide interval",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "select",
+      "id": "media_type_1",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "video_1",
+      "label": "Video"
+    },
+    {
+      "type": "url",
+      "id": "external_video_url_1",
+      "label": "External video URL",
+      "info": "YouTube or Vimeo URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay_1",
+      "label": "Autoplay video",
+      "default": false,
+      "info": "Only works for Shopify hosted videos"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "select",
+      "id": "media_type_2",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "video_2",
+      "label": "Video"
+    },
+    {
+      "type": "url",
+      "id": "external_video_url_2",
+      "label": "External video URL",
+      "info": "YouTube or Vimeo URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay_2",
+      "label": "Autoplay video",
+      "default": false,
+      "info": "Only works for Shopify hosted videos"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "select",
+      "id": "media_type_3",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "video_3",
+      "label": "Video"
+    },
+    {
+      "type": "url",
+      "id": "external_video_url_3",
+      "label": "External video URL",
+      "info": "YouTube or Vimeo URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay_3",
+      "label": "Autoplay video",
+      "default": false,
+      "info": "Only works for Shopify hosted videos"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Media carousel"
+    }
+  ]
+}
+{% endschema %}

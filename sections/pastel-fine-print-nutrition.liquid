@@ -1,0 +1,127 @@
+{% liquid
+  assign fine_print_heading = section.settings.fine_print_heading
+  assign fine_print_text = section.settings.fine_print_text
+  assign nutrition_heading = section.settings.nutrition_heading
+  assign nutrition_text = section.settings.nutrition_text
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-fine-print section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-fine-print__inner">
+    <div class="pastel-fine-print__grid">
+      <div class="pastel-fine-print__col">
+        {% if fine_print_heading != blank %}
+          <h3 class="pastel-fine-print__heading">{{ fine_print_heading }}</h3>
+        {% endif %}
+        {% if fine_print_text != blank %}
+          <div class="pastel-fine-print__text rte">{{ fine_print_text }}</div>
+        {% endif %}
+      </div>
+      <div class="pastel-fine-print__col">
+        {% if nutrition_heading != blank %}
+          <h3 class="pastel-fine-print__heading">{{ nutrition_heading }}</h3>
+        {% endif %}
+        {% if nutrition_text != blank %}
+          <div class="pastel-fine-print__nutrition rte">{{ nutrition_text }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-fine-print {
+    padding: 64px 24px;
+    background: var(--color-background);
+  }
+
+  .pastel-fine-print__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .pastel-fine-print__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .pastel-fine-print__heading {
+    font-family: var(--font-heading--family);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0 0 16px;
+  }
+
+  .pastel-fine-print__text,
+  .pastel-fine-print__nutrition {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+  }
+
+  .pastel-fine-print__nutrition {
+    border: 2px solid var(--color-foreground);
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-fine-print {
+      padding: 48px 16px;
+    }
+
+    .pastel-fine-print__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Fine + Nutrition",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "fine_print_heading",
+      "label": "Fine print heading",
+      "default": "The Fine Print"
+    },
+    {
+      "type": "richtext",
+      "id": "fine_print_text",
+      "label": "Fine print content",
+      "default": "<p>Dosage, effects, and safety information. Consult your healthcare provider before use.</p>"
+    },
+    {
+      "type": "text",
+      "id": "nutrition_heading",
+      "label": "Nutrition heading",
+      "default": "Nutrition Facts"
+    },
+    {
+      "type": "richtext",
+      "id": "nutrition_text",
+      "label": "Nutrition facts content",
+      "default": "<p>Serving Size: 1 gummy<br>Servings per container: 30<br>Calories: 10<br>Delta-9 THC: 10mg<br>CBD: 10mg<br>CBN: 5mg</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fine + Nutrition"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,423 @@
+
+{%- liquid
+  assign btn_link = section.settings.button_link
+  if btn_link == blank
+    assign btn_link = routes.all_products_collection_url
+  endif
+
+  assign heading_text   = section.settings.heading_text   | default: ''
+  assign heading_accent = section.settings.heading_accent | default: ''
+
+  if section.settings.use_custom_colors
+    assign aba_text_bg   = section.settings.text_bg
+    assign aba_text      = section.settings.text_color
+    assign aba_muted     = section.settings.muted_text_color
+    assign aba_accent    = section.settings.accent_color
+    assign aba_handle    = section.settings.handle_color
+    assign aba_btn_bg    = section.settings.button_bg
+    assign aba_btn_hover = section.settings.button_bg_hover
+    assign aba_btn_text  = section.settings.button_text
+  elsif settings.style_mode == 'gradient'
+    assign aba_text_bg   = 'var(--color-background)'
+    assign aba_text      = 'var(--color-foreground)'
+    assign aba_muted     = 'var(--color-foreground-muted, var(--color-foreground))'
+    assign aba_accent    = 'var(--color-primary)'
+    assign aba_handle    = 'var(--color-primary)'
+    assign aba_btn_bg    = 'var(--color-primary)'
+    assign aba_btn_hover = 'var(--color-primary)'
+    assign aba_btn_text  = 'var(--color-background)'
+  else
+    assign aba_text_bg   = 'var(--color-background)'
+    assign aba_text      = 'var(--color-foreground)'
+    assign aba_muted     = 'var(--color-foreground-muted, var(--color-foreground))'
+    assign aba_accent    = 'var(--color-primary)'
+    assign aba_handle    = 'var(--color-primary)'
+    assign aba_btn_bg    = 'var(--color-primary)'
+    assign aba_btn_hover = 'var(--color-primary)'
+    assign aba_btn_text  = 'var(--color-background)'
+  endif
+-%}
+  
+  <section id="shopify-section-{{ section.id }}" class="anchor-before-after color-{{ section.settings.color_scheme }}">
+    {% style %}
+      #shopify-section-{{ section.id }}{
+        --aba-radius: var(--style-border-radius-cards);
+        --aba-shadow: 0 18px 55px rgba(0,0,0,.14);
+  
+        --aba-text: {{ aba_text }};
+        --aba-muted: {{ aba_muted }};
+
+        --aba-btn-bg: {{ aba_btn_bg }};
+        --aba-btn-bg-hover: {{ aba_btn_hover }};
+        --aba-btn-text: {{ aba_btn_text }};
+
+        --aba-accent: {{ aba_accent }};
+        --aba-handle: {{ aba_handle }};
+        --aba-badge-bg: rgba(0,0,0,.70);
+        --aba-badge-text: #fff;
+      }
+  
+      #shopify-section-{{ section.id }} .section-background{ display:none !important; }
+  
+      #shopify-section-{{ section.id }} .aba-wrap{
+        max-width: 980px;
+        margin: 0 auto;
+        padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+        box-sizing: border-box;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-card{
+        border-radius: var(--aba-radius);
+        overflow: hidden;
+        box-shadow: var(--aba-shadow);
+        background: #0b1220;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-compare{
+        position: relative;
+        width: 100%;
+        aspect-ratio: {{ section.settings.aspect_ratio_desktop }};
+        background: #111;
+        user-select: none;
+        touch-action: pan-y pinch-zoom;
+        overflow: hidden;
+        --aba-pos: {{ section.settings.start_position }}%;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-img,
+      #shopify-section-{{ section.id }} .aba-img img{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-img img{
+        object-fit: cover;
+        display: block;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-img--after{ z-index: 1; }
+  
+      #shopify-section-{{ section.id }} .aba-img--before{
+        z-index: 2;
+        inset: auto;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--aba-pos, 50%);
+        height: 100%;
+        overflow: hidden;
+      }
+
+      #shopify-section-{{ section.id }} .aba-img--before img{
+        inset: auto;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: var(--aba-img-width, 100%);
+        max-width: none;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-badge{
+        position: absolute;
+        top: 14px;
+        padding: 6px 10px;
+        border-radius: var(--style-border-radius-global);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .02em;
+        background: var(--aba-badge-bg);
+        color: var(--aba-badge-text);
+        z-index: 5;
+      }
+      #shopify-section-{{ section.id }} .aba-badge--before{ left: 14px; }
+      #shopify-section-{{ section.id }} .aba-badge--after{ right: 14px; }
+  
+      #shopify-section-{{ section.id }} .aba-divider{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: rgba(255,255,255,.75);
+        z-index: 6;
+        transform: translateX(-1px);
+        pointer-events: none;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-handle{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.92);
+        border: 1px solid rgba(255,255,255,.55);
+        box-shadow: 0 10px 30px rgba(0,0,0,.18);
+        transform: translate(-50%, -50%);
+        z-index: 7;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-handle svg{
+        width: 22px;
+        height: 22px;
+        color: var(--aba-handle);
+        opacity: .95;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-range{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        z-index: 10;
+        cursor: ew-resize;
+      }
+  
+      #shopify-section-{{ section.id }} .aba-text{
+        text-align: center;
+        padding: 22px 18px 24px;
+        background: {{ aba_text_bg }};
+        color: var(--aba-text);
+      }
+  
+      #shopify-section-{{ section.id }} .aba-title{
+        margin: 0 0 10px;
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-size: clamp(26px, 3vw, 36px);
+        color: var(--aba-text);
+      }
+  
+      /* Accent word (reliable) */
+      #shopify-section-{{ section.id }} .aba-accent{
+        color: var(--aba-accent) !important;
+        font-style: italic;
+      }
+
+      {% if settings.style_mode == 'gradient' %}
+      #shopify-section-{{ section.id }} .aba-accent {
+        background: var(--color-card-gradient) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        color: unset !important;
+      }
+      {% endif %}
+  
+      #shopify-section-{{ section.id }} .aba-desc{
+        margin: 0 auto 16px;
+        max-width: 58ch;
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--aba-muted);
+      }
+      #shopify-section-{{ section.id }} .aba-desc p{ margin: 0; color: inherit; }
+  
+      #shopify-section-{{ section.id }} .aba-btn{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 22px;
+        border-radius: var(--style-border-radius-buttons-primary);
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 15px;
+        background: var(--aba-btn-bg);
+        color: var(--aba-btn-text);
+        border: 0;
+        transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+        box-shadow: 0 14px 34px rgba(0,0,0,.18);
+        cursor: pointer;
+        min-width: 220px;
+      }
+      #shopify-section-{{ section.id }} .aba-btn:hover{
+        background: var(--aba-btn-bg-hover);
+        transform: translateY(-1px);
+      }
+  
+      @media (max-width: 749px){
+        #shopify-section-{{ section.id }} .aba-wrap{
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        #shopify-section-{{ section.id }} .aba-compare{
+          aspect-ratio: {{ section.settings.aspect_ratio_mobile }};
+        }
+        #shopify-section-{{ section.id }} .aba-btn{
+          width: 100%;
+          min-width: 0;
+        }
+      }
+    {% endstyle %}
+  
+    <div class="aba-wrap">
+      <div class="aba-card" data-aba>
+        <div class="aba-compare" data-aba-compare>
+          <div class="aba-img aba-img--after">
+            {% if section.settings.after_image != blank %}
+              <img
+                src="{{ section.settings.after_image | image_url: width: 2400 }}"
+                alt="{{ section.settings.after_alt | escape }}"
+                loading="lazy"
+                width="{{ section.settings.after_image.width }}"
+                height="{{ section.settings.after_image.height }}"
+              >
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </div>
+
+          <div class="aba-img aba-img--before" data-aba-before>
+            {% if section.settings.before_image != blank %}
+              <img
+                src="{{ section.settings.before_image | image_url: width: 2400 }}"
+                alt="{{ section.settings.before_alt | escape }}"
+                loading="lazy"
+                width="{{ section.settings.before_image.width }}"
+                height="{{ section.settings.before_image.height }}"
+              >
+            {% else %}
+              {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </div>
+  
+          <div class="aba-badge aba-badge--before">{{ section.settings.before_label }}</div>
+          <div class="aba-badge aba-badge--after">{{ section.settings.after_label }}</div>
+  
+          <div class="aba-divider" data-aba-divider></div>
+          <div class="aba-handle" data-aba-handle aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 7L4 12L8 17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 7L20 12L16 17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+  
+          <input class="aba-range" type="range" min="0" max="100" value="{{ section.settings.start_position }}" aria-label="Before and after slider">
+          <div data-forge-slot-id="before"{% if section.settings.before_image == blank %} data-forge-slot-blank="true"{% endif %} style="position:absolute;left:0;top:0;width:50%;height:60px;z-index:20;pointer-events:none;"></div>
+          <div data-forge-slot-id="after"{% if section.settings.after_image == blank %} data-forge-slot-blank="true"{% endif %} style="position:absolute;right:0;top:0;width:50%;height:60px;z-index:20;pointer-events:none;"></div>
+        </div>
+  
+        <div class="aba-text">
+          {% if heading_text != blank or heading_accent != blank %}
+    <div class="aba-title">
+      {% if heading_text != blank %}{{ heading_text }}{% endif %}{% if heading_text != blank and heading_accent != blank %} {% endif %}
+      {% if heading_accent != blank %}<span class="aba-accent">{{ heading_accent }}</span>{% endif %}
+    </div>
+  {% endif %}
+  
+          {% if section.settings.description != blank %}
+            <div class="aba-desc rte">{{ section.settings.description }}</div>
+          {% endif %}
+  
+          {% if section.settings.button_label != blank %}
+            <a class="aba-btn" href="{{ btn_link }}">{{ section.settings.button_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  
+    <script>
+      (function(){
+        const root = document.querySelector('#shopify-section-{{ section.id }} [data-aba]');
+        if(!root) return;
+
+        const range = root.querySelector('.aba-range');
+        const compare = root.querySelector('[data-aba-compare]');
+        const beforeLayer = root.querySelector('[data-aba-before]');
+        const beforeImg = beforeLayer && beforeLayer.querySelector('img');
+        const divider = root.querySelector('[data-aba-divider]');
+        const handle = root.querySelector('[data-aba-handle]');
+        if(!range || !compare || !beforeLayer || !divider || !handle) return;
+
+        const syncBeforeImgWidth = () => {
+          if(!beforeImg) return;
+          const w = compare.getBoundingClientRect().width;
+          if(w > 0) compare.style.setProperty('--aba-img-width', `${w}px`);
+        };
+
+        const setPos = (val) => {
+          const v = Math.max(0, Math.min(100, Number(val)));
+          compare.style.setProperty('--aba-pos', `${v}%`);
+          divider.style.left = `${v}%`;
+          handle.style.left = `${v}%`;
+          syncBeforeImgWidth();
+        };
+
+        setPos(range.value);
+        range.addEventListener('input', (e) => setPos(e.target.value));
+        range.addEventListener('change', (e) => setPos(e.target.value));
+
+        if(typeof ResizeObserver !== 'undefined'){
+          const ro = new ResizeObserver(syncBeforeImgWidth);
+          ro.observe(compare);
+        } else {
+          window.addEventListener('resize', syncBeforeImgWidth);
+        }
+      })();
+    </script>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Before/After Slider",
+    "tag": "section",
+    "class": "section-wrapper",
+    "disabled_on": { "groups": ["header", "footer"] },
+    "settings": [
+      { "type": "header", "content": "Images" },
+      { "type": "image_picker", "id": "before_image", "label": "Before image" },
+      { "type": "image_picker", "id": "after_image", "label": "After image" },
+      { "type": "text", "id": "before_alt", "label": "Before image alt", "default": "Before" },
+      { "type": "text", "id": "after_alt", "label": "After image alt", "default": "After" },
+      { "type": "text", "id": "before_label", "label": "Before label", "default": "Before" },
+      { "type": "text", "id": "after_label", "label": "After label", "default": "After" },
+      { "type": "range", "id": "start_position", "label": "Start position (%)", "min": 0, "max": 100, "step": 1, "default": 50 },
+  
+      { "type": "header", "content": "Text" },
+      { "type": "text", "id": "heading_text", "label": "Heading (normal)", "default": "Our " },
+      { "type": "text", "id": "heading_accent", "label": "Heading (accent)", "default": "Exciting Results" },
+  
+      { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Sign up to receive your welcome offer, plus access to product launches and exclusive offers</p>" },
+  
+      { "type": "header", "content": "Button" },
+      { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
+      { "type": "url", "id": "button_link", "label": "Button link (optional)" },
+  
+      { "type": "header", "content": "Style" },
+      { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Override theme colors", "info": "When off, uses the theme color scheme automatically", "default": false },
+
+      { "type": "color", "id": "text_bg", "label": "Text area background", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "text_color", "label": "Heading text color", "default": "#0B1020", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "muted_text_color", "label": "Body text color", "default": "#6B7280", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "accent_color", "label": "Accent color (highlight word)", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "handle_color", "label": "Handle icon color", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "button_bg", "label": "Button background", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_bg_hover", "label": "Button hover background", "default": "#4F46E5", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_text", "label": "Button text", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+  
+      { "type": "header", "content": "Layout" },
+      { "type": "text", "id": "aspect_ratio_desktop", "label": "Desktop aspect ratio (e.g. 16/10, 3/2)", "default": "3/2" },
+      { "type": "text", "id": "aspect_ratio_mobile", "label": "Mobile aspect ratio (e.g. 1/1, 4/5)", "default": "1/1" },
+  
+      { "type": "header", "content": "Section padding" },
+      { "type": "range", "id": "padding_top", "label": "Top", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 },
+      { "type": "range", "id": "padding_bottom", "label": "Bottom", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 }
+    ],
+    "presets": [
+      { "name": "Before/After Slider", "category": "Image" }
+    ]
+  }
+  {% endschema %}
+  

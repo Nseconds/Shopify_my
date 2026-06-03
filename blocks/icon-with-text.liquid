@@ -1,0 +1,222 @@
+
+{%- doc -%}
+  A flexible block displaying an icon alongside text.
+  Perfect for shipping info, guarantees, returns, features, etc.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  
+  case block_settings.text_align
+    when 'left'
+      assign justify_content = 'flex-start'
+    when 'center'
+      assign justify_content = 'center'
+    when 'right'
+      assign justify_content = 'flex-end'
+    else
+      assign justify_content = 'flex-start'
+  endcase
+%}
+
+<div
+  class="icon-with-text spacing-style"
+  style="
+    {% render 'spacing-padding', settings: block_settings %}
+    --icon-text-gap: {{ block_settings.gap }}px;
+    --icon-size: {{ block_settings.icon_size }}px;
+    --icon-color: var(--color-primary, {{ block_settings.icon_color }});
+    --text-color: var(--color-foreground, {{ block_settings.text_color }});
+    --text-size: {{ block_settings.text_size }}px;
+    --justify-content: {{ justify_content }};
+  "
+  {{ block.shopify_attributes }}
+>
+  {% if block_settings.custom_icon != blank %}
+    <div class="icon-with-text__icon">
+      {{ block_settings.custom_icon }}
+    </div>
+  {% elsif block_settings.icon_image %}
+    <div class="icon-with-text__icon">
+      {%- render 'image',
+        image: block_settings.icon_image,
+        height: block_settings.icon_size,
+        class: 'icon-with-text__image'
+      -%}
+    </div>
+  {% endif %}
+
+  {% if block_settings.text != blank %}
+    <div class="icon-with-text__text">
+      {{ block_settings.text }}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .icon-with-text {
+    display: flex;
+    align-items: center;
+    gap: var(--icon-text-gap);
+    justify-content: var(--justify-content);
+  }
+
+  .icon-with-text__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    color: var(--icon-color);
+  }
+
+  .icon-with-text__icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .icon-with-text__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .icon-with-text__text {
+    color: var(--text-color);
+    font-size: var(--text-size);
+    line-height: 1.4;
+  }
+
+  .icon-with-text__text p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Icon with text",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "html",
+      "id": "custom_icon",
+      "label": "Custom SVG icon",
+      "info": "Paste your SVG code here. Leave empty to use an uploaded image instead.",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M18 18.5c0-.83-.67-1.5-1.5-1.5h-1c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h1c.83 0 1.5-.67 1.5-1.5zm-10 0c0-.83-.67-1.5-1.5-1.5h-1C4.67 17 4 17.67 4 18.5S4.67 20 5.5 20h1c.83 0 1.5-.67 1.5-1.5z\"/><path d=\"M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c0 .83-.67 1.5-1.5 1.5S3 19.33 3 18.5 3.67 17 4.5 17 6 17.67 6 18.5zm13.5 1.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM17 12V9.5h2.5l1.96 2.5H17z\"/></svg>"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Icon image",
+      "info": "Alternative to SVG icon. Only used if Custom SVG is empty."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "<p>Arrives in 5 days, if you order today</p>"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between icon and text",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#c4a69d"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Icon with text",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+

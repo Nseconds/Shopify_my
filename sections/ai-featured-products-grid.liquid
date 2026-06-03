@@ -1,0 +1,732 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% liquid
+  if section.settings.product_source == 'collection' and section.settings.collection != blank
+    assign products = section.settings.collection.products
+  elsif section.settings.manual_products != blank
+    assign products = section.settings.manual_products
+  else
+    assign products = blank
+  endif
+
+  assign products_limit = section.settings.products_limit
+  assign show_vendor = section.settings.show_vendor
+  assign show_badges = section.settings.show_badges
+  assign enable_hover_image = section.settings.enable_hover_image
+  assign desktop_columns = section.settings.desktop_columns
+  assign spacing = section.settings.spacing_density
+%}
+
+{% style %}
+  .ai-featured-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    {% if spacing == 'compact' %}
+      padding: 40px 20px;
+    {% else %}
+      padding: 60px 20px;
+    {% endif %}
+  }
+
+  .ai-featured-grid__container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-featured-grid__header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    {% if spacing == 'compact' %}
+      margin-bottom: 32px;
+    {% else %}
+      margin-bottom: 48px;
+    {% endif %}
+    gap: 20px;
+  }
+
+  .ai-featured-grid__header-content-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-featured-grid__eyebrow-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-accent);
+    margin-bottom: 8px;
+  }
+
+  .ai-featured-grid__heading-{{ ai_gen_id }} {
+    font-size: 36px;
+    font-weight: 400;
+    margin: 0 0 8px;
+    color: var(--color-foreground-heading);
+  }
+
+  .ai-featured-grid__subheading-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: var(--color-foreground);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+
+  .ai-featured-grid__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    {% if spacing == 'compact' %}
+      gap: 16px;
+    {% else %}
+      gap: 24px;
+    {% endif %}
+  }
+
+  .ai-featured-grid__card-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--style-border-radius-cards);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .ai-featured-grid__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(26, 26, 24, 0.08);
+  }
+
+  .ai-featured-grid__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    {% if section.settings.image_aspect_ratio == 'square' %}
+      padding-bottom: 100%;
+    {% elsif section.settings.image_aspect_ratio == 'portrait' %}
+      padding-bottom: 133%;
+    {% else %}
+      padding-bottom: 0;
+    {% endif %}
+    overflow: hidden;
+    background-color: var(--color-background-secondary, rgba(var(--color-foreground-rgb), 0.04));
+  }
+
+  .ai-featured-grid__image-wrapper-{{ ai_gen_id }}.natural {
+    padding-bottom: 0;
+  }
+
+  .ai-featured-grid__image-{{ ai_gen_id }} {
+    {% if section.settings.image_aspect_ratio == 'natural' %}
+      position: relative;
+    {% else %}
+      position: absolute;
+    {% endif %}
+    top: 0;
+    left: 0;
+    width: 100%;
+    {% if section.settings.image_aspect_ratio == 'natural' %}
+      height: auto;
+    {% else %}
+      height: 100%;
+    {% endif %}
+    object-fit: cover;
+    transition: transform 0.6s ease, opacity 0.3s ease;
+  }
+
+  .ai-featured-grid__card-{{ ai_gen_id }}:hover .ai-featured-grid__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-featured-grid__image-secondary-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-featured-grid__card-{{ ai_gen_id }}:hover .ai-featured-grid__image-secondary-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-featured-grid__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--style-border-radius-global);
+    z-index: 2;
+  }
+
+  .ai-featured-grid__badge--sold-out-{{ ai_gen_id }} {
+    background-color: var(--color-foreground);
+    opacity: 0.5;
+  }
+
+  .ai-featured-grid__content-{{ ai_gen_id }} {
+    {% if spacing == 'compact' %}
+      padding: 16px;
+    {% else %}
+      padding: 20px;
+    {% endif %}
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .ai-featured-grid__vendor-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: var(--color-foreground);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  .ai-featured-grid__title-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-foreground-heading);
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+  }
+
+  .ai-featured-grid__title-link-{{ ai_gen_id }} {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ai-featured-grid__title-link-{{ ai_gen_id }}:hover {
+    color: var(--color-accent);
+  }
+
+  .ai-featured-grid__price-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .ai-featured-grid__price-regular-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .ai-featured-grid__price-compare-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: var(--color-foreground);
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  .ai-featured-grid__price-sale-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  .ai-featured-grid__button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    border: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+    min-height: 44px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-featured-grid__button-{{ ai_gen_id }}:hover:not(:disabled) {
+    filter: brightness(0.9);
+  }
+
+  .ai-featured-grid__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-featured-grid__button--secondary-{{ ai_gen_id }} {
+    background-color: transparent;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+  }
+
+  .ai-featured-grid__button--secondary-{{ ai_gen_id }}:hover {
+    background-color: rgba(var(--color-foreground-rgb), 0.05);
+    border-color: var(--color-foreground);
+  }
+
+  {% if settings.style_mode == 'gradient' %}
+    .ai-featured-grid__button--secondary-{{ ai_gen_id }} {
+      color: var(--color-gradient-text) !important;
+    }
+  {% endif %}
+
+  .ai-featured-grid__button--success-{{ ai_gen_id }} {
+    background: var(--color-primary-button-background);
+    filter: brightness(0.85);
+  }
+
+  .ai-featured-grid__empty-state-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background-color: rgba(var(--color-foreground-rgb), 0.03);
+    border-radius: var(--style-border-radius-cards);
+    border: 2px dashed var(--color-border);
+  }
+
+  .ai-featured-grid__empty-state-{{ ai_gen_id }} p {
+    font-size: 16px;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .ai-featured-grid__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(var(--color-foreground-rgb), 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-featured-grid__placeholder-{{ ai_gen_id }} svg,
+  .ai-featured-grid__placeholder-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-featured-grid-{{ ai_gen_id }} {
+      {% if spacing == 'compact' %}
+        padding: 60px 40px;
+      {% else %}
+        padding: 80px 40px;
+      {% endif %}
+    }
+
+    .ai-featured-grid__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ desktop_columns }}, 1fr);
+      {% if spacing == 'compact' %}
+        gap: 20px;
+      {% else %}
+        gap: 32px;
+      {% endif %}
+    }
+
+    .ai-featured-grid__heading-{{ ai_gen_id }} {
+      font-size: 48px;
+    }
+
+    .ai-featured-grid__header-{{ ai_gen_id }} {
+      align-items: center;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-featured-grid__header-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .ai-featured-grid__header-{{ ai_gen_id }} .button,
+    .ai-featured-grid__header-{{ ai_gen_id }} .button-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+{% endstyle %}
+
+<featured-products-grid-{{ ai_gen_id }} class="ai-featured-grid-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="ai-featured-grid__container-{{ ai_gen_id }}">
+    {% if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank or section.settings.view_all_link != blank %}
+      <div class="ai-featured-grid__header-{{ ai_gen_id }}">
+        <div class="ai-featured-grid__header-content-{{ ai_gen_id }}">
+          {% if section.settings.eyebrow != blank %}
+            <div class="ai-featured-grid__eyebrow-{{ ai_gen_id }}">{{ section.settings.eyebrow }}</div>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="ai-featured-grid__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="ai-featured-grid__subheading-{{ ai_gen_id }}">{{ section.settings.subheading }}</p>
+          {% endif %}
+        </div>
+        {% if section.settings.view_all_link != blank %}
+          <a href="{{ section.settings.view_all_link }}" class="button">
+            {{ section.settings.view_all_text }}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-featured-grid__grid-{{ ai_gen_id }}">
+      {% if products != blank %}
+        {% for product in products limit: products_limit %}
+          <div class="ai-featured-grid__card-{{ ai_gen_id }}" data-product-id="{{ product.id }}">
+            <a href="{{ product.url }}" class="ai-featured-grid__image-wrapper-{{ ai_gen_id }} {% if section.settings.image_aspect_ratio == 'natural' %}natural{% endif %}">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 800 }}"
+                  alt="{{ product.featured_image.alt | escape }}"
+                  class="ai-featured-grid__image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="800"
+                  height="800"
+                >
+                {% if enable_hover_image and product.images[1] %}
+                  <img
+                    src="{{ product.images[1] | image_url: width: 800 }}"
+                    alt="{{ product.images[1].alt | escape }}"
+                    class="ai-featured-grid__image-secondary-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="800"
+                    height="800"
+                  >
+                {% endif %}
+              {% else %}
+                <div class="ai-featured-grid__placeholder-{{ ai_gen_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+
+              {% if show_badges %}
+                {% if product.available == false %}
+                  <span class="ai-featured-grid__badge-{{ ai_gen_id }} ai-featured-grid__badge--sold-out-{{ ai_gen_id }}">Sold out</span>
+                {% elsif product.compare_at_price > product.price %}
+                  <span class="ai-featured-grid__badge-{{ ai_gen_id }}">Sale</span>
+                {% endif %}
+              {% endif %}
+            </a>
+
+            <div class="ai-featured-grid__content-{{ ai_gen_id }}">
+              {% if show_vendor and product.vendor != blank %}
+                <p class="ai-featured-grid__vendor-{{ ai_gen_id }}">{{ product.vendor }}</p>
+              {% endif %}
+
+              <h3 class="ai-featured-grid__title-{{ ai_gen_id }}">
+                <a href="{{ product.url }}" class="ai-featured-grid__title-link-{{ ai_gen_id }}">
+                  {{ product.title }}
+                </a>
+              </h3>
+
+              <div class="ai-featured-grid__price-{{ ai_gen_id }}">
+                {% if product.compare_at_price > product.price %}
+                  <span class="ai-featured-grid__price-compare-{{ ai_gen_id }}">{{ product.compare_at_price | money }}</span>
+                  <span class="ai-featured-grid__price-sale-{{ ai_gen_id }}">{{ product.price | money }}</span>
+                {% else %}
+                  <span class="ai-featured-grid__price-regular-{{ ai_gen_id }}">{{ product.price | money }}</span>
+                {% endif %}
+              </div>
+
+              {% if product.available %}
+                {% if product.has_only_default_variant %}
+                  <button
+                    type="button"
+                    class="ai-featured-grid__button-{{ ai_gen_id }}"
+                    data-product-id="{{ product.id }}"
+                    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                    data-action="add-to-cart"
+                  >
+                    Add to cart
+                  </button>
+                {% else %}
+                  <a href="{{ product.url }}" class="ai-featured-grid__button-{{ ai_gen_id }} ai-featured-grid__button--secondary-{{ ai_gen_id }}">
+                    Choose options
+                  </a>
+                {% endif %}
+              {% else %}
+                <button type="button" class="ai-featured-grid__button-{{ ai_gen_id }}" disabled>
+                  Sold out
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="ai-featured-grid__empty-state-{{ ai_gen_id }}">
+          <p>Select a collection or add products to display them here</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</featured-products-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FeaturedProductsGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.buttons = this.querySelectorAll('[data-action="add-to-cart"]');
+      }
+
+      connectedCallback() {
+        this.buttons.forEach(button => {
+          button.addEventListener('click', this.handleAddToCart.bind(this));
+        });
+      }
+
+      async handleAddToCart(event) {
+        const button = event.target;
+        const variantId = button.dataset.variantId;
+        const originalText = button.textContent;
+
+        button.disabled = true;
+        button.textContent = 'Adding...';
+
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: variantId,
+              quantity: 1
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to add to cart');
+          }
+
+          button.textContent = 'Added ✓';
+          button.classList.add('ai-featured-grid__button--success-{{ ai_gen_id }}');
+
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+            button.classList.remove('ai-featured-grid__button--success-{{ ai_gen_id }}');
+          }, 2000);
+
+          const cartResponse = await fetch('/cart.js');
+          const cart = await cartResponse.json();
+
+          document.dispatchEvent(new CustomEvent('cart:updated', {
+            detail: { cart }
+          }));
+
+        } catch (error) {
+          button.textContent = 'Error';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+        }
+      }
+    }
+
+    customElements.define('featured-products-grid-{{ ai_gen_id }}', FeaturedProductsGrid{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Featured products grid",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured products"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Product source"
+    },
+    {
+      "type": "select",
+      "id": "product_source",
+      "label": "Source",
+      "options": [
+        {
+          "value": "collection",
+          "label": "Collection"
+        },
+        {
+          "value": "manual",
+          "label": "Manual selection"
+        }
+      ],
+      "default": "collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "product_list",
+      "id": "manual_products",
+      "label": "Products",
+      "limit": 12
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Maximum products",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "desktop_columns",
+      "label": "Desktop columns",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        },
+        {
+          "value": "natural",
+          "label": "Natural"
+        }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "select",
+      "id": "spacing_density",
+      "label": "Spacing",
+      "options": [
+        {
+          "value": "compact",
+          "label": "Compact"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "header",
+      "content": "Product card options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show badges",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_image",
+      "label": "Enable hover second image",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "View all button"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured products grid"
+    }
+  ]
+}
+{% endschema %}

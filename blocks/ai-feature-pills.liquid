@@ -1,0 +1,552 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% assign use_custom = block.settings.use_custom_colors %}
+
+{% style %}
+  .ai-feature-pills-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-feature-pills__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.gap }}px;
+    justify-content: {{ block.settings.alignment }};
+  }
+
+  .ai-feature-pill-{{ ai_gen_id }} {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    {% if use_custom %}
+      background: {{ block.settings.pill_background }};
+      color: {{ block.settings.pill_text_color }};
+      border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+      box-shadow: 0 0 {{ block.settings.glow_blur }}px {{ block.settings.glow_spread }}px {{ block.settings.glow_color }};
+    {% elsif settings.style_mode == 'gradient' %}
+      background: var(--color-primary-button-background);
+      color: var(--color-primary-button-text);
+      border: {{ block.settings.border_width }}px solid transparent;
+      box-shadow: none;
+    {% else %}
+      background: var(--color-primary);
+      color: var(--color-primary-button-text);
+      border: {{ block.settings.border_width }}px solid transparent;
+      box-shadow: none;
+    {% endif %}
+  }
+
+  .ai-feature-pill__content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+  }
+
+  .ai-feature-pill__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-feature-pill__icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .ai-feature-pill__text-{{ ai_gen_id }} {
+    line-height: 1.2;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-feature-pills__container-{{ ai_gen_id }} {
+      gap: {{ block.settings.gap | times: 0.75 }}px;
+    }
+
+    .ai-feature-pill-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_vertical | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px;
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+    }
+
+    .ai-feature-pill__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size | times: 0.85 }}px;
+      height: {{ block.settings.icon_size | times: 0.85 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-feature-pills-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-feature-pills__container-{{ ai_gen_id }}">
+    {% if block.settings.feature_1_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_1_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_1_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_1_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_1_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_2_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_2_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_2_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_2_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_2_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_3_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_3_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_3_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_3_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_3_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_4_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_4_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_4_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_4_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_4_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_5_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_5_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_5_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_5_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_5_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_6_enabled %}
+      <div class="ai-feature-pill-{{ ai_gen_id }}">
+        <div class="ai-feature-pill__content-{{ ai_gen_id }}">
+          {% if block.settings.feature_6_icon != blank %}
+            <div class="ai-feature-pill__icon-{{ ai_gen_id }}">
+              {{ block.settings.feature_6_icon }}
+            </div>
+          {% endif %}
+          {% if block.settings.feature_6_text != blank %}
+            <span class="ai-feature-pill__text-{{ ai_gen_id }}">
+              {{ block.settings.feature_6_text }}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "AI Feature pills",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between pills",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Pill style"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 4,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 8,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false,
+      "info": "When disabled, colors are inherited from the color scheme"
+    },
+    {
+      "type": "color",
+      "id": "pill_background",
+      "label": "Background",
+      "default": "#0A0A0A",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "pill_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E0E0E0",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Glow effect",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Glow color",
+      "default": "#FFD700",
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "glow_blur",
+      "label": "Glow blur",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20,
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "range",
+      "id": "glow_spread",
+      "label": "Glow spread",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 2,
+      "visible_if": "{{ block.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Icon spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Feature 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_1_enabled",
+      "label": "Enable feature 1",
+      "default": true
+    },
+    {
+      "type": "html",
+      "id": "feature_1_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\"></rect><polygon points=\"16 8 20 8 23 11 23 16 16 16 16 8\"></polygon><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"></circle><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"></circle></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_1_text",
+      "label": "Text",
+      "default": "Free shipping"
+    },
+    {
+      "type": "header",
+      "content": "Feature 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_2_enabled",
+      "label": "Enable feature 2",
+      "default": true
+    },
+    {
+      "type": "html",
+      "id": "feature_2_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"23 4 23 10 17 10\"></polyline><path d=\"M20.49 15a9 9 0 1 1-2.12-9.36L23 10\"></path></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_2_text",
+      "label": "Text",
+      "default": "30-day returns"
+    },
+    {
+      "type": "header",
+      "content": "Feature 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_3_enabled",
+      "label": "Enable feature 3",
+      "default": true
+    },
+    {
+      "type": "html",
+      "id": "feature_3_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\" ry=\"2\"></rect><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"></path></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_3_text",
+      "label": "Text",
+      "default": "Secure checkout"
+    },
+    {
+      "type": "header",
+      "content": "Feature 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_4_enabled",
+      "label": "Enable feature 4",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "feature_4_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_4_text",
+      "label": "Text",
+      "default": "Quality guaranteed"
+    },
+    {
+      "type": "header",
+      "content": "Feature 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_5_enabled",
+      "label": "Enable feature 5",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "feature_5_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2L2 7l10 5 10-5-10-5z\"></path><path d=\"M2 17l10 5 10-5M2 12l10 5 10-5\"></path></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_5_text",
+      "label": "Text",
+      "default": "Fast delivery"
+    },
+    {
+      "type": "header",
+      "content": "Feature 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_6_enabled",
+      "label": "Enable feature 6",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "feature_6_icon",
+      "label": "Icon SVG",
+      "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"></path></svg>"
+    },
+    {
+      "type": "text",
+      "id": "feature_6_text",
+      "label": "Text",
+      "default": "Made with love"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AI Feature pills"
+    }
+  ]
+}
+{% endschema %}

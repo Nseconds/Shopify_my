@@ -1,0 +1,560 @@
+{%- liquid
+  assign ai_gen_id = section.id | replace: '_', '-' | downcase
+  assign ai_gen_id_js = section.id | replace: '_', '' | replace: '-', '' | downcase
+  if section.settings.use_custom_colors
+    assign sc_bg     = section.settings.background_color
+    assign sc_text   = section.settings.text_color
+    assign sc_accent = section.settings.check_color
+  elsif settings.style_mode == 'gradient'
+    assign sc_bg     = 'var(--color-background)'
+    assign sc_text   = 'var(--color-foreground)'
+    assign sc_accent = 'var(--color-gradient-1)'
+  else
+    assign sc_bg     = section.settings.color_scheme.settings.background
+    assign sc_text   = section.settings.color_scheme.settings.foreground
+    assign sc_accent = section.settings.color_scheme.settings.primary
+  endif
+-%}
+
+{% style %}
+  .ai-brand-story-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ sc_bg }};
+    padding: {{ section.settings.section_padding }}px 20px;
+  }
+
+  .ai-brand-story-container-{{ ai_gen_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-brand-story-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: var(--style-gap-cards);
+    align-items: center;
+  }
+
+  .ai-brand-story-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-brand-story-headline-{{ ai_gen_id }} {
+    font-family: var(--font-heading--family);
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.2;
+    color: {{ sc_text }};
+    margin: 0 0 {{ section.settings.text_spacing }}px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .ai-brand-story-text-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.body_size }}px;
+    line-height: 1.6;
+    color: {{ sc_text }};
+    margin: 0;
+  }
+
+  .ai-brand-story-text-{{ ai_gen_id }} p {
+    margin: 0 0 {{ section.settings.text_spacing }}px 0;
+  }
+
+  .ai-brand-story-text-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-brand-story-media-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-brand-story-media-{{ ai_gen_id }} img,
+  .ai-brand-story-media-{{ ai_gen_id }} video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-brand-story-media-placeholder-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 125%;
+    background-color: var(--color-border, #f4f4f4);
+    border-radius: var(--style-border-radius-images);
+  }
+
+  .ai-brand-story-media-placeholder-{{ ai_gen_id }} svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-brand-story-benefits-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.benefit_spacing }}px;
+  }
+
+  .ai-brand-story-benefit-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ai-brand-story-check-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.check_size }}px;
+    height: {{ section.settings.check_size }}px;
+    margin-top: 2px;
+  }
+
+  .ai-brand-story-check-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: {{ sc_accent }};
+    stroke-width: 2;
+    fill: none;
+  }
+
+  {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  .ai-brand-story-check-{{ ai_gen_id }} svg {
+    stroke: url(#bs-check-grad-{{ ai_gen_id }});
+  }
+  {% endif %}
+
+  .ai-brand-story-benefit-text-{{ ai_gen_id }} {
+    font-family: var(--font-body--family);
+    font-size: {{ section.settings.benefit_size }}px;
+    line-height: 1.5;
+    color: {{ sc_text }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-brand-story-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_spacing }}px;
+    }
+
+    .ai-brand-story-column-{{ ai_gen_id }}:nth-child(2) {
+      order: -1;
+    }
+
+    .ai-brand-story-headline-{{ ai_gen_id }} {
+      font-size: {{ section.settings.heading_size | times: 0.75 }}px;
+    }
+
+    .ai-brand-story-body-{{ ai_gen_id }} {
+      font-size: {{ section.settings.body_size | times: 0.9 }}px;
+    }
+
+    .ai-brand-story-benefit-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.benefit_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+{% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+  {%- assign bs_g1 = section.settings.color_scheme.settings.gradient_1 -%}
+  {%- assign bs_g2 = section.settings.color_scheme.settings.gradient_2 -%}
+  {%- assign bs_g3 = section.settings.color_scheme.settings.gradient_3 -%}
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="bs-check-grad-{{ ai_gen_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="{{ bs_g1 }}"/>
+        <stop offset="50%" stop-color="{{ bs_g2 }}"/>
+        <stop offset="100%" stop-color="{{ bs_g3 }}"/>
+      </linearGradient>
+    </defs>
+  </svg>
+{% endif %}
+
+<brand-story-{{ ai_gen_id }} class="ai-brand-story-{{ ai_gen_id }}" {{ section.shopify_attributes }}>
+  <div class="ai-brand-story-container-{{ ai_gen_id }}">
+    <div class="ai-brand-story-grid-{{ ai_gen_id }}">
+      <div class="ai-brand-story-column-{{ ai_gen_id }}">
+        {% if section.settings.headline != blank %}
+          <h2 class="ai-brand-story-headline-{{ ai_gen_id }}">{{ section.settings.headline }}</h2>
+        {% endif %}
+        {% if section.settings.story_text != blank %}
+          <div class="ai-brand-story-text-{{ ai_gen_id }}">{{ section.settings.story_text }}</div>
+        {% endif %}
+      </div>
+
+      <div class="ai-brand-story-column-{{ ai_gen_id }}">
+        <div class="ai-brand-story-media-{{ ai_gen_id }}" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+          {% if section.settings.media_type == 'image' %}
+            {% if section.settings.image %}
+              <img
+                src="{{ section.settings.image | image_url: width: 1200 }}"
+                alt="{{ section.settings.image.alt | escape }}"
+                loading="lazy"
+                width="{{ section.settings.image.width }}"
+                height="{{ section.settings.image.height }}"
+              >
+            {% else %}
+              <div class="ai-brand-story-media-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          {% elsif section.settings.media_type == 'video' %}
+            {% if section.settings.video %}
+              <video
+                autoplay
+                loop
+                muted
+                playsinline
+                src="{{ section.settings.video }}"
+              ></video>
+            {% else %}
+              <div class="ai-brand-story-media-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-brand-story-column-{{ ai_gen_id }}">
+        <div class="ai-brand-story-benefits-{{ ai_gen_id }}">
+          {% if section.settings.benefit_1 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_1 }}</p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_2 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_2 }}</p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_3 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_3 }}</p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_4 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_4 }}</p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_5 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_5 }}</p>
+            </div>
+          {% endif %}
+
+          {% if section.settings.benefit_6 != blank %}
+            <div class="ai-brand-story-benefit-{{ ai_gen_id }}">
+              <div class="ai-brand-story-check-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <p class="ai-brand-story-benefit-text-{{ ai_gen_id }}">{{ section.settings.benefit_6 }}</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</brand-story-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BrandStory{{ ai_gen_id_js }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const video = this.querySelector('video');
+        if (video) {
+          video.play().catch(() => {});
+        }
+      }
+    }
+
+    customElements.define('brand-story-{{ ai_gen_id }}', BrandStory{{ ai_gen_id_js }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand storytelling",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing",
+      "label": "Mobile spacing",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Story content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Nourish Your Skin"
+    },
+    {
+      "type": "richtext",
+      "id": "story_text",
+      "label": "Story text",
+      "default": "<p>Our luxurious cream melts into skin with a silky, weightless texture. Formulated with rare botanical extracts and advanced peptides, it delivers deep hydration while visibly smoothing fine lines.</p><p>Experience the ritual of true skincare luxury-a moment of calm, a touch of indulgence, and skin that feels renewed.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Video URL"
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Benefits"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Deeply hydrates for 24 hours"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Visibly reduces fine lines"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Lightweight, non-greasy texture"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Dermatologist tested"
+    },
+    {
+      "type": "text",
+      "id": "benefit_5",
+      "label": "Benefit 5",
+      "default": "Suitable for sensitive skin"
+    },
+    {
+      "type": "text",
+      "id": "benefit_6",
+      "label": "Benefit 6",
+      "default": "Clean, vegan formula"
+    },
+    {
+      "type": "range",
+      "id": "benefit_spacing",
+      "label": "Spacing between benefits",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "check_size",
+      "label": "Check icon size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Use custom colors", "default": false },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#faf9f7",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2c2c2c",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Check icon",
+      "default": "#8b7355",
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Body text size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "benefit_size",
+      "label": "Benefit text size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Text spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand storytelling"
+    }
+  ]
+}
+{% endschema %}

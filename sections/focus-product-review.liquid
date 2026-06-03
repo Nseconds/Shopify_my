@@ -1,0 +1,438 @@
+
+{% liquid
+  assign ai_gen_id = section.id | replace: '_', '' | downcase
+%}
+
+{%- if section.settings.use_custom_colors -%}
+  {%- assign bg_c    = section.settings.background_color -%}
+  {%- assign text_c  = section.settings.text_color -%}
+  {%- assign btn_bg  = section.settings.button_background -%}
+  {%- assign btn_hov = section.settings.button_hover_background -%}
+  {%- assign btn_txt = section.settings.button_text_color -%}
+{%- elsif settings.style_mode == 'gradient' -%}
+  {%- assign bg_c    = 'var(--color-background)' -%}
+  {%- assign text_c  = 'var(--color-foreground)' -%}
+  {%- assign btn_bg  = 'var(--color-primary-button-background)' -%}
+  {%- assign btn_hov = 'var(--color-primary-hover)' -%}
+  {%- assign btn_txt = 'var(--color-primary-button-text)' -%}
+{%- else -%}
+  {%- assign bg_c    = section.settings.color_scheme.settings.background -%}
+  {%- assign text_c  = section.settings.color_scheme.settings.foreground -%}
+  {%- assign btn_bg  = section.settings.color_scheme.settings.primary_button_background -%}
+  {%- assign btn_hov = btn_bg | color_darken: 10 -%}
+  {%- assign btn_txt = section.settings.color_scheme.settings.primary_button_text -%}
+{%- endif -%}
+
+{% style %}
+  .ai-product-review-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ section.settings.padding }}px;
+    background: {{ bg_c }};
+    border-radius: var(--style-border-radius-cards);
+  }
+
+  .ai-product-review-container-{{ ai_gen_id }} {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .ai-product-review-photo-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.photo_width }}px;
+    border-radius: var(--style-border-radius-images);
+    overflow: hidden;
+  }
+
+  .ai-product-review-photo-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-product-review-photo-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: {{ section.settings.placeholder_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-product-review-photo-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-product-review-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-product-review-content-{{ ai_gen_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-product-review-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ai-product-review-star-{{ ai_gen_id }} {
+    width: {{ section.settings.star_size }}px;
+    height: {{ section.settings.star_size }}px;
+    fill: var(--color-border, {{ section.settings.star_empty_color }});
+  }
+
+  .ai-product-review-star-{{ ai_gen_id }}.filled {
+    fill: var(--color-primary, {{ section.settings.star_filled_color }});
+  }
+
+  .ai-product-review-name-{{ ai_gen_id }} {
+    font-size: {{ section.settings.reviewer_name_size }}px;
+    font-weight: 600;
+    font-style: italic;
+    color: {{ text_c }};
+    margin: 8px 0 0 0;
+  }
+
+  .ai-product-review-text-{{ ai_gen_id }} {
+    font-size: {{ section.settings.review_text_size }}px;
+    line-height: 1.6;
+    color: {{ text_c }};
+    margin: 0;
+  }
+
+  .ai-product-review-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+    background-color: {{ btn_bg }};
+    color: {{ btn_txt }};
+    border: none;
+    border-radius: var(--style-border-radius-buttons-primary);
+    font-size: {{ section.settings.button_text_size }}px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-product-review-button-{{ ai_gen_id }}:hover {
+    background-color: {{ btn_hov }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-review-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-product-review-container-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-product-review-photo-{{ ai_gen_id }} {
+      width: 100%;
+      max-width: {{ section.settings.photo_width }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-product-review-{{ ai_gen_id }} color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="ai-product-review-container-{{ ai_gen_id }}">
+    {% if section.settings.show_photo %}
+      <div class="ai-product-review-photo-{{ ai_gen_id }}">
+        {% if section.settings.review_photo %}
+          <img
+            src="{{ section.settings.review_photo | image_url: width: 800 }}"
+            alt="Review photo"
+            loading="lazy"
+            width="{{ section.settings.review_photo.width }}"
+            height="{{ section.settings.review_photo.height }}"
+          >
+        {% else %}
+          <div class="ai-product-review-photo-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-product-review-empty-state-{{ ai_gen_id }}">
+              Next, add a review photo
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-product-review-content-{{ ai_gen_id }}">
+      <div class="ai-product-review-stars-{{ ai_gen_id }}">
+        {% for i in (1..5) %}
+          <svg
+            class="ai-product-review-star-{{ ai_gen_id }} {% if i <= section.settings.rating %}filled{% endif %}"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.review_text != blank %}
+        <p class="ai-product-review-text-{{ ai_gen_id }}">{{ section.settings.review_text }}</p>
+      {% endif %}
+
+      {% if section.settings.reviewer_name != blank %}
+        <p class="ai-product-review-name-{{ ai_gen_id }}">{{ section.settings.reviewer_name }}</p>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <div>
+          <a
+            href="{{ section.settings.button_link }}"
+            class="ai-product-review-button-{{ ai_gen_id }}"
+          >
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Focus product review",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_colors",
+      "label": "Use custom colors",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Rating"
+    },
+    {
+      "type": "range",
+      "id": "rating",
+      "label": "Star rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "label": "Star size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "star_filled_color",
+      "label": "Filled star color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "star_empty_color",
+      "label": "Empty star color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "header",
+      "content": "Review content"
+    },
+    {
+      "type": "text",
+      "id": "reviewer_name",
+      "label": "Reviewer name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "textarea",
+      "id": "review_text",
+      "label": "Review text",
+      "default": "This product exceeded my expectations! The quality is outstanding and it arrived quickly. Highly recommend to anyone looking for a reliable option."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_photo",
+      "label": "Show photo",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "review_photo",
+      "label": "Review photo"
+    },
+    {
+      "type": "range",
+      "id": "photo_width",
+      "label": "Photo width",
+      "min": 100,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "default": 200
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View product"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder color",
+      "default": "#F4F4F4"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "reviewer_name_size",
+      "label": "Reviewer name size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "review_text_size",
+      "label": "Review text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Focus product review"
+    }
+  ]
+}
+{% endschema %}

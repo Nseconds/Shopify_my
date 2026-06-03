@@ -1,0 +1,557 @@
+{% style %}
+  .hero-split-{{ section.id }} .stars-outer {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero-split-{{ section.id }} .stars-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .hero-split-{{ section.id }} .stars-outer::before,
+  .hero-split-{{ section.id }} .stars-inner::before {
+    content: "★★★★★";
+    font-family: "Arial", sans-serif;
+    font-size: {{ section.settings.stars_size }}px;
+    line-height: 1;
+    letter-spacing: 0;
+    font-weight: normal;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .hero-split-{{ section.id }} .stars-outer::before {
+    color: #d3d3d3;
+  }
+
+  .hero-split-{{ section.id }} .stars-inner::before {
+    color: var(--color-primary, {{ section.settings.stars_color }});
+  }
+
+  .hero-split-{{ section.id }} .hero-split__reviews-text {
+    font-size: {{ section.settings.reviews_text_size }}px;
+  }
+
+  .hero-split-{{ section.id }} .hero-split__reviews-text strong {
+    color: var(--color-primary, {{ section.settings.reviews_text_highlighted_color }}) !important;
+  }
+
+  .hero-split-{{ section.id }} .hero-split__grid {
+    {% if section.settings.image_height != 'default' %}
+      align-items: center;
+    {% endif %}
+  }
+
+  .hero-split-{{ section.id }} .hero-split__image-wrapper {
+    {% if section.settings.image_height == 'small' %}
+      max-height: 400px;
+      align-items: center;
+    {% elsif section.settings.image_height == 'medium' %}
+      max-height: 500px;
+      align-items: center;
+    {% elsif section.settings.image_height == 'large' %}
+      max-height: 700px;
+      align-items: center;
+    {% elsif section.settings.image_height == 'extra-large' %}
+      min-height: 900px;
+      align-items: center;
+    {% endif %}
+  }
+
+  .hero-split-{{ section.id }} .hero-split__image,
+  .hero-split-{{ section.id }} .hero-split__media,
+  .hero-split-{{ section.id }} .hero-split__video {
+    border-radius: var(--style-border-radius-images);
+    {% if section.settings.image_height != 'default' and section.settings.image_height != 'extra-large' %}
+      height: auto;
+      max-height: 100%;
+    {% endif %}
+  }
+
+  .hero-split-{{ section.id }} .hero-split__button {
+    border-radius: var(--style-border-radius-buttons-primary);
+    {% if section.settings.button_bold %}
+      font-weight: bold;
+    {% endif %}
+    {% if section.settings.button_italic %}
+      font-style: italic;
+    {% endif %}
+    {% if section.settings.button_text_transform != 'none' %}
+      text-transform: {{ section.settings.button_text_transform }};
+    {% endif %}
+  }
+
+  .hero-split-{{ section.id }} {
+    padding-block-start: {{ section.settings.padding-block-start }}px;
+    padding-block-end: {{ section.settings.padding-block-end }}px;
+  }
+{% endstyle %}
+
+<div class="hero-split hero-split-{{ section.id }} color-{{ section.settings.color_scheme }}">
+  <div class="hero-split__container">
+    <div class="hero-split__grid">
+
+      <!-- Image Side -->
+      <div class="hero-split__image-wrapper" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+        {% if section.settings.media_type == 'video' and section.settings.video != blank %}
+          <div class="hero-split__media">
+            {{ section.settings.video | video_tag: playsinline: true, autoplay: section.settings.video_autoplay, loop: section.settings.video_loop, muted: section.settings.video_muted, controls: section.settings.video_show_controls, class: 'hero-split__video' }}
+          </div>
+        {% elsif section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            class="hero-split__image"
+            loading="eager"
+            fetchpriority="high"
+            alt="{{ section.settings.image.alt | escape }}"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {% else %}
+          <div class="hero-split__placeholder">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'hero-split__placeholder-svg' }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Content Side -->
+      <div class="hero-split__content">
+        {% if section.settings.show_reviews %}
+          <div class="hero-split__reviews">
+            <div class="stars-outer">
+              {% assign rating_float = section.settings.product_rating | plus: 0.0 %}
+              {% assign rating_float = rating_float | divided_by: 1.0 %}
+              {% capture rating_float_rounded %}{{ rating_float | round: 2 }}{% endcapture %}
+              {% assign rating_float_final = rating_float_rounded | replace: ',', '.' %}
+
+              {% assign rating_percentage = rating_float_final | divided_by: 5 | times: 100 %}
+              <div class="stars-inner" style="width: {{ rating_percentage }}%"></div>
+            </div>
+            {% if section.settings.reviews_text != blank %}
+              <span class="hero-split__reviews-text">{{ section.settings.reviews_text }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <div class="hero-split__heading">{{ section.settings.heading }}</div>
+        {% endif %}
+
+        {% if section.settings.subheading != blank %}
+          <div class="hero-split__subheading">{{ section.settings.subheading }}</div>
+        {% endif %}
+
+        {% if section.settings.button_label != blank %}
+          <a
+            href="{{ section.settings.button_link }}"
+            class="button hero-split__button"
+            {% if section.settings.button_link == blank %}
+              role="link"
+              aria-disabled="true"
+            {% endif %}
+            {% if section.settings.open_in_new_tab %}
+              target="_blank"
+              rel="noopener"
+            {% endif %}
+          >
+            {{ section.settings.button_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .hero-split {
+    width: 100%;
+    position: relative;
+  }
+
+  .hero-split__container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero-split__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+    min-height: 600px;
+  }
+
+  .hero-split__image-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .hero-split__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-split__video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .hero-split__media {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-split__placeholder {
+    width: 100%;
+    aspect-ratio: 4/5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+  }
+
+  .hero-split__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    gap: 1.5rem;
+  }
+
+  .hero-split__reviews {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-foreground);
+  }
+
+  .hero-split__heading {
+    font-size: 3rem;
+    line-height: 1.2;
+    font-weight: bold;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .hero-split__subheading {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .hero-split__button {
+    width: fit-content;
+    margin-top: 0.5rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .hero-split__grid {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-split__image-wrapper {
+      min-height: 400px;
+    }
+
+    .hero-split__content {
+      padding: 2rem;
+    }
+
+    .hero-split__heading {
+      font-size: 2rem;
+    }
+
+    .hero-split__subheading {
+      font-size: 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero Split",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "visible_if": "{{ section.settings.media_type == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ section.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Image height",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default (stretch to content)"
+        },
+        {
+          "value": "small",
+          "label": "Small (400px)"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (500px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (700px)"
+        },
+        {
+          "value": "extra-large",
+          "label": "Extra Large (900px)"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay",
+      "label": "Autoplay video",
+      "default": true,
+      "visible_if": "{{ section.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_loop",
+      "label": "Loop video",
+      "default": true,
+      "visible_if": "{{ section.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_muted",
+      "label": "Mute video",
+      "default": true,
+      "visible_if": "{{ section.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_show_controls",
+      "label": "Show video controls",
+      "default": false,
+      "visible_if": "{{ section.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show reviews",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "product_rating",
+      "label": "Product rating",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 4.8,
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "text",
+      "id": "reviews_text",
+      "label": "Reviews text",
+      "default": "Rated 4.8 | 1,000+ Reviews",
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "range",
+      "id": "reviews_text_size",
+      "label": "Reviews text size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14,
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "range",
+      "id": "stars_size",
+      "label": "Stars size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "color",
+      "id": "stars_color",
+      "label": "Stars color",
+      "default": "#FFD700",
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "color",
+      "id": "reviews_text_highlighted_color",
+      "label": "Reviews text highlighted color",
+      "default": "#000000",
+      "visible_if": "{{ section.settings.show_reviews }}"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Transform Your Experience</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Discover the difference that quality makes in your everyday life.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Button Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_bold",
+      "label": "Bold text",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "button_italic",
+      "label": "Italic text",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "button_text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Border Radius"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Split"
+    }
+  ]
+}
+{% endschema %}

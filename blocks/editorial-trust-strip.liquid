@@ -1,0 +1,101 @@
+{% liquid
+  assign items = ''
+
+  if block.settings.item_1 != blank
+    assign items = block.settings.item_1
+  endif
+  if block.settings.item_2 != blank
+    assign items = items | append: '|' | append: block.settings.item_2
+  endif
+  if block.settings.item_3 != blank
+    assign items = items | append: '|' | append: block.settings.item_3
+  endif
+
+  assign item_array = items | split: '|'
+%}
+
+<div
+  class="editorial-trust-strip spacing-style"
+  {{ block.shopify_attributes }}
+>
+  <div class="editorial-trust-strip__inner">
+    {% for item in item_array %}
+      {% if item != blank %}
+        <div class="editorial-trust-strip__item">
+          <span class="editorial-trust-strip__text">{{ item }}</span>
+        </div>
+        {% unless forloop.last %}
+          <span class="editorial-trust-strip__separator" aria-hidden="true">|</span>
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .editorial-trust-strip {
+    padding-block: 16px;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin-top: 16px;
+  }
+
+  .editorial-trust-strip__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .editorial-trust-strip__item {
+    display: flex;
+    align-items: center;
+  }
+
+  .editorial-trust-strip__text {
+    font-family: var(--font-body--family);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .editorial-trust-strip__separator {
+    color: var(--color-border);
+    font-size: 11px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Editorial Trust Strip",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "item_1",
+      "label": "Item 1",
+      "default": "Free shipping on orders over $150"
+    },
+    {
+      "type": "text",
+      "id": "item_2",
+      "label": "Item 2",
+      "default": "14-day easy returns"
+    },
+    {
+      "type": "text",
+      "id": "item_3",
+      "label": "Item 3",
+      "default": "Secure checkout"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Trust Strip"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,644 @@
+{% doc %}
+  Delivery Information Block
+  
+  Shows dispatch countdown timer and delivery timeline.
+  Displays estimated shipping dates based on configurable processing and shipping times.
+{% enddoc %}
+
+{%- liquid
+  assign cutoff_hour = block.settings.cutoff_hour | default: 14
+  assign processing_days_min = block.settings.processing_days_min | default: 1
+  assign processing_days_max = block.settings.processing_days_max | default: 2
+  assign shipping_days_min = block.settings.shipping_days_min | default: 3
+  assign shipping_days_max = block.settings.shipping_days_max | default: 5
+  assign show_timeline = block.settings.show_timeline
+  assign include_weekends = block.settings.include_weekends
+  if block.settings.use_scheme_colors == false
+    assign border_color = block.settings.border_color | default: '#8B0000'
+    assign icon_color = block.settings.icon_color | default: '#8B0000'
+    assign text_color = block.settings.text_color | default: '#333333'
+    assign accent_color = block.settings.accent_color | default: '#DAA520'
+    assign icon_bg = block.settings.icon_bg_color | default: '#f5f5f5'
+    assign connector_color = block.settings.connector_color | default: '#e0e0e0'
+  else
+    assign border_color = 'var(--color-primary)'
+    assign icon_color = 'var(--color-primary)'
+    assign text_color = 'var(--color-foreground)'
+    assign accent_color = 'var(--color-primary)'
+    assign icon_bg = 'var(--color-background-secondary)'
+    assign connector_color = 'var(--color-border)'
+  endif
+-%}
+
+<div class="delivery-info" data-cutoff-hour="{{ cutoff_hour }}" data-processing-min="{{ processing_days_min }}" data-processing-max="{{ processing_days_max }}" data-shipping-min="{{ shipping_days_min }}" data-shipping-max="{{ shipping_days_max }}" data-include-weekends="{{ include_weekends }}">
+  <!-- Countdown Section -->
+  <div class="delivery-info__countdown-box">
+    <p class="delivery-info__dispatch">
+      {%- if block.settings.dispatch_emoji != blank -%}<span class="delivery-info__emoji">{{ block.settings.dispatch_emoji }}</span> {%- endif -%}{{ block.settings.dispatch_text | default: 'Order within the next' }} <span class="delivery-info__timer"><span data-hours>00</span> h, <span data-minutes>00</span> m, <span data-seconds>00</span> s</span> {{ block.settings.dispatch_suffix | default: 'for dispatch today' }}{%- if block.settings.dispatch_emoji != blank -%} <span class="delivery-info__emoji">{{ block.settings.dispatch_emoji }}</span>{%- endif -%}
+    </p>
+    <p class="delivery-info__delivery-estimate">
+      {%- if block.settings.delivery_emoji != blank -%}<span class="delivery-info__emoji-accent">{{ block.settings.delivery_emoji }}</span> {%- endif -%}{{ block.settings.delivery_text | default: "You'll receive your package between" }} <span class="delivery-info__dates" data-delivery-dates></span>{%- if block.settings.delivery_emoji != blank -%} <span class="delivery-info__emoji-accent">{{ block.settings.delivery_emoji }}</span>{%- endif -%}
+    </p>
+  </div>
+
+  {%- if show_timeline -%}
+    <!-- Timeline Section -->
+    <div class="delivery-info__timeline-box">
+      <div class="delivery-info__timeline">
+        <!-- Ordered -->
+        <div class="delivery-info__step">
+          <div class="delivery-info__icon-wrapper">
+            <svg class="delivery-info__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.17 14.75l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/>
+            </svg>
+          </div>
+          <div class="delivery-info__step-label">{{ block.settings.ordered_label | default: 'Ordered' }}</div>
+          <div class="delivery-info__step-date" data-ordered-date></div>
+        </div>
+
+        <!-- Connector Line -->
+        <div class="delivery-info__connector"></div>
+
+        <!-- Shipped -->
+        <div class="delivery-info__step">
+          <div class="delivery-info__icon-wrapper">
+            <svg class="delivery-info__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+            </svg>
+          </div>
+          <div class="delivery-info__step-label">{{ block.settings.shipped_label | default: 'Shipped' }}</div>
+          <div class="delivery-info__step-date" data-shipped-date></div>
+        </div>
+
+        <!-- Connector Line -->
+        <div class="delivery-info__connector"></div>
+
+        <!-- Delivered -->
+        <div class="delivery-info__step">
+          <div class="delivery-info__icon-wrapper">
+            <svg class="delivery-info__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </div>
+          <div class="delivery-info__step-label">{{ block.settings.delivered_label | default: 'Delivered' }}</div>
+          <div class="delivery-info__step-date" data-delivered-date></div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% style %}
+  #shopify-block-{{ block.id }} {
+    --delivery-border-color: {{ border_color }};
+    --delivery-icon-color: {{ icon_color }};
+    --delivery-text-color: {{ text_color }};
+    --delivery-accent-color: {{ accent_color }};
+    --delivery-icon-bg: {{ icon_bg }};
+    --delivery-connector-color: {{ connector_color }};
+    --dispatch-font-size-desktop: {{ block.settings.dispatch_font_size_desktop | default: 18 }}px;
+    --dispatch-font-size-mobile: {{ block.settings.dispatch_font_size_mobile | default: 15 }}px;
+    --delivery-font-size-desktop: {{ block.settings.delivery_font_size_desktop | default: 16 }}px;
+    --delivery-font-size-mobile: {{ block.settings.delivery_font_size_mobile | default: 13 }}px;
+  }
+{% endstyle %}
+
+{% stylesheet %}
+  .delivery-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .delivery-info__countdown-box {
+    border: 2px solid var(--delivery-border-color);
+    border-radius: 8px;
+    padding: 16px 20px;
+    background: var(--color-background);
+  }
+
+  .delivery-info__dispatch {
+    margin: 0;
+    font-size: var(--dispatch-font-size-desktop, 18px);
+    font-weight: 600;
+    color: var(--delivery-text-color);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .delivery-info__timer {
+    font-weight: 700;
+  }
+
+  .delivery-info__delivery-estimate {
+    margin: 12px 0 0 0;
+    font-size: var(--delivery-font-size-desktop, 16px);
+    color: var(--delivery-accent-color);
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .delivery-info__dates {
+    font-weight: 700;
+  }
+
+  .delivery-info__emoji,
+  .delivery-info__emoji-accent {
+    display: inline;
+  }
+
+  .delivery-info__timeline-box {
+    border: 2px solid var(--delivery-border-color);
+    border-radius: 8px;
+    padding: 24px 20px;
+    background: var(--color-background);
+  }
+
+  .delivery-info__timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .delivery-info__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 0 0 auto;
+    min-width: 100px;
+  }
+
+  .delivery-info__icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--delivery-icon-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .delivery-info__icon {
+    width: 28px;
+    height: 28px;
+    color: var(--delivery-icon-color);
+  }
+
+  .delivery-info__step-label {
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--delivery-text-color);
+  }
+
+  .delivery-info__step-date {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--color-foreground-muted, #666);
+  }
+
+  .delivery-info__connector {
+    flex: 1;
+    height: 3px;
+    background: var(--delivery-connector-color);
+    margin-top: 30px;
+    min-width: 40px;
+    max-width: 80px;
+  }
+
+  @media (max-width: 749px) {
+    .delivery-info__dispatch {
+      font-size: var(--dispatch-font-size-mobile, 15px);
+    }
+
+    .delivery-info__delivery-estimate {
+      font-size: var(--delivery-font-size-mobile, 13px);
+    }
+
+    .delivery-info__countdown-box {
+      padding: 14px 12px;
+    }
+
+    .delivery-info__timeline-box {
+      padding: 20px 12px;
+    }
+
+    .delivery-info__step {
+      min-width: 80px;
+    }
+
+    .delivery-info__icon-wrapper {
+      width: 52px;
+      height: 52px;
+    }
+
+    .delivery-info__icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .delivery-info__step-label {
+      font-size: 14px;
+    }
+
+    .delivery-info__step-date {
+      font-size: 12px;
+    }
+
+    .delivery-info__connector {
+      margin-top: 24px;
+      min-width: 20px;
+      max-width: 40px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class DeliveryInfo extends HTMLElement {
+    constructor() {
+      super();
+      const container = this.querySelector('.delivery-info');
+      const data = container ? container.dataset : this.dataset;
+      
+      this.cutoffHour = parseInt(data.cutoffHour) || 14;
+      this.processingMin = parseInt(data.processingMin) || 1;
+      this.processingMax = parseInt(data.processingMax) || 2;
+      this.shippingMin = parseInt(data.shippingMin) || 3;
+      this.shippingMax = parseInt(data.shippingMax) || 5;
+      this.includeWeekends = data.includeWeekends === 'true';
+      
+      this.hoursEl = this.querySelector('[data-hours]');
+      this.minutesEl = this.querySelector('[data-minutes]');
+      this.secondsEl = this.querySelector('[data-seconds]');
+      this.deliveryDatesEl = this.querySelector('[data-delivery-dates]');
+      this.orderedDateEl = this.querySelector('[data-ordered-date]');
+      this.shippedDateEl = this.querySelector('[data-shipped-date]');
+      this.deliveredDateEl = this.querySelector('[data-delivered-date]');
+      
+      this.init();
+    }
+
+    init() {
+      this.updateCountdown();
+      this.updateDates();
+      this.interval = setInterval(() => this.updateCountdown(), 1000);
+    }
+
+    updateCountdown() {
+      const now = new Date();
+      let cutoff = new Date();
+      cutoff.setHours(this.cutoffHour, 0, 0, 0);
+      
+      // If past cutoff, set to tomorrow
+      if (now >= cutoff) {
+        cutoff.setDate(cutoff.getDate() + 1);
+      }
+      
+      const diff = cutoff - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      if (this.hoursEl) this.hoursEl.textContent = this.pad(hours);
+      if (this.minutesEl) this.minutesEl.textContent = this.pad(minutes);
+      if (this.secondsEl) this.secondsEl.textContent = this.pad(seconds);
+    }
+
+    updateDates() {
+      const now = new Date();
+      const cutoff = new Date();
+      cutoff.setHours(this.cutoffHour, 0, 0, 0);
+      
+      // If past cutoff, order ships tomorrow
+      let orderDate = new Date(now);
+      if (now >= cutoff) {
+        orderDate.setDate(orderDate.getDate() + 1);
+      }
+      
+      // Shipped date range (after processing days)
+      // If processingMin is 0, it can ship on orderDate
+      let shippedStart = this.addBusinessDays(orderDate, this.processingMin);
+      let shippedEnd = this.addBusinessDays(orderDate, this.processingMax);
+
+      // Delivered date range (after shipping)
+      let deliveredStart = this.addBusinessDays(shippedStart, this.shippingMin);
+      let deliveredEnd = this.addBusinessDays(shippedEnd, this.shippingMax);
+      
+      // Update elements
+      if (this.deliveryDatesEl) {
+        this.deliveryDatesEl.textContent = `${this.formatDate(deliveredStart)} - ${this.formatDate(deliveredEnd)}`;
+      }
+      
+      if (this.orderedDateEl) {
+        this.orderedDateEl.textContent = this.formatDate(orderDate);
+      }
+      
+      if (this.shippedDateEl) {
+        // Show shipped date range
+        if (this.processingMin === this.processingMax) {
+          // Same day if processing range is single day
+          this.shippedDateEl.textContent = this.formatDate(shippedStart);
+        } else {
+          // Show range if processing days vary
+          this.shippedDateEl.textContent = `${this.formatDate(shippedStart)} - ${this.formatDate(shippedEnd)}`;
+        }
+      }
+      
+      if (this.deliveredDateEl) {
+        this.deliveredDateEl.textContent = `${this.formatDate(deliveredStart)} - ${this.formatDate(deliveredEnd)}`;
+      }
+    }
+
+    addBusinessDays(date, days) {
+      let result = new Date(date);
+      let added = 0;
+      while (added < days) {
+        result.setDate(result.getDate() + 1);
+        // Skip weekends only if includeWeekends is false (business days only)
+        if (this.includeWeekends || (result.getDay() !== 0 && result.getDay() !== 6)) {
+          added++;
+        }
+      }
+      return result;
+    }
+
+    formatDate(date) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${months[date.getMonth()]} ${date.getDate().toString().padStart(2, '0')}`;
+    }
+
+    pad(num) {
+      return num.toString().padStart(2, '0');
+    }
+
+    disconnectedCallback() {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+    }
+  }
+
+  customElements.define('delivery-info', DeliveryInfo);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Delivery Info",
+  "tag": "delivery-info",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Dispatch Settings"
+    },
+    {
+      "type": "range",
+      "id": "cutoff_hour",
+      "label": "Dispatch cutoff hour (24h)",
+      "min": 0,
+      "max": 23,
+      "step": 1,
+      "default": 14,
+      "info": "Orders before this hour ship same day (e.g., 14 = 2:00 PM)"
+    },
+    {
+      "type": "range",
+      "id": "processing_days_min",
+      "label": "Minimum processing days",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 1,
+      "info": "Minimum business days to process order before shipping"
+    },
+    {
+      "type": "range",
+      "id": "processing_days_max",
+      "label": "Maximum processing days",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 2,
+      "info": "Maximum business days to process order before shipping"
+    },
+    {
+      "type": "range",
+      "id": "shipping_days_min",
+      "label": "Minimum shipping days",
+      "min": 1,
+      "max": 14,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "shipping_days_max",
+      "label": "Maximum shipping days",
+      "min": 1,
+      "max": 21,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "include_weekends",
+      "label": "Include weekends in delivery calculation",
+      "default": false,
+      "info": "If checked, weekends will be included in processing and shipping days. If unchecked, only business days (Mon-Fri) will be counted."
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "dispatch_text",
+      "label": "Dispatch text",
+      "default": "Order within the next"
+    },
+    {
+      "type": "text",
+      "id": "dispatch_suffix",
+      "label": "Dispatch suffix",
+      "default": "for dispatch today"
+    },
+    {
+      "type": "text",
+      "id": "delivery_text",
+      "label": "Delivery estimate text",
+      "default": "You'll receive your package between"
+    },
+    {
+      "type": "header",
+      "content": "Emojis"
+    },
+    {
+      "type": "text",
+      "id": "dispatch_emoji",
+      "label": "Dispatch emoji",
+      "default": "⏳",
+      "info": "Leave empty to hide"
+    },
+    {
+      "type": "text",
+      "id": "delivery_emoji",
+      "label": "Delivery estimate emoji",
+      "default": "⚡",
+      "info": "Leave empty to hide"
+    },
+    {
+      "type": "header",
+      "content": "Font Size"
+    },
+    {
+      "type": "range",
+      "id": "dispatch_font_size_desktop",
+      "label": "Dispatch text - Desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "dispatch_font_size_mobile",
+      "label": "Dispatch text - Mobile",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "delivery_font_size_desktop",
+      "label": "Delivery estimate - Desktop",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "delivery_font_size_mobile",
+      "label": "Delivery estimate - Mobile",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Timeline"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timeline",
+      "label": "Show delivery timeline",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "ordered_label",
+      "label": "Ordered label",
+      "default": "Ordered"
+    },
+    {
+      "type": "text",
+      "id": "shipped_label",
+      "label": "Shipped label",
+      "default": "Shipped"
+    },
+    {
+      "type": "text",
+      "id": "delivered_label",
+      "label": "Delivered label",
+      "default": "Delivered"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_scheme_colors",
+      "label": "Use theme color scheme",
+      "default": true,
+      "info": "When enabled, uses primary brand colors. Disable to set custom colors."
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#8B0000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (delivery estimate)",
+      "default": "#DAA520"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#8B0000"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "connector_color",
+      "label": "Timeline connector color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Delivery Info",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+

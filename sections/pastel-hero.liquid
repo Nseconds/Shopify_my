@@ -1,0 +1,372 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign social_proof = section.settings.social_proof
+  assign primary_button = section.settings.primary_button
+  assign primary_link = section.settings.primary_link
+  assign secondary_button = section.settings.secondary_button
+  assign secondary_link = section.settings.secondary_link
+  assign hero_image = section.settings.hero_image
+  assign hero_image_url = section.settings.hero_image_url
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-hero section color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-hero__grid">
+    <div class="pastel-hero__content">
+      {% if heading != blank %}
+        <h1 class="pastel-hero__heading">{{ heading }}</h1>
+      {% endif %}
+
+      {% if subheading != blank %}
+        <p class="pastel-hero__subheading">{{ subheading }}</p>
+      {% endif %}
+
+      {% if benefit_blocks.size > 0 %}
+        <ul class="pastel-hero__pills">
+          {% for block in benefit_blocks %}
+            <li class="pastel-hero__pill" {{ block.shopify_attributes }}>
+              <span class="pastel-hero__pill-icon" aria-hidden="true">✓</span>
+              {{ block.settings.text }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if social_proof != blank %}
+        <p class="pastel-hero__social-proof">{{ social_proof }}</p>
+      {% endif %}
+
+      <div class="pastel-hero__buttons">
+        {% if primary_button != blank %}
+          <a href="{{ primary_link | default: '#' }}" class="pastel-hero__btn pastel-hero__btn--primary">
+            {{ primary_button }}
+          </a>
+        {% endif %}
+        {% if secondary_button != blank %}
+          <a href="{{ secondary_link | default: '#' }}" class="pastel-hero__btn pastel-hero__btn--secondary">
+            {{ secondary_button }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="pastel-hero__media">
+      {% if hero_image != blank %}
+        <img
+          src="{{ hero_image | image_url: width: 800 }}"
+          alt="{{ heading | default: 'Hero' }}"
+          width="400"
+          height="400"
+          loading="eager"
+          class="pastel-hero__image"
+        >
+      {% elsif hero_image_url != blank %}
+        {% # theme-check-disable RemoteAsset %}
+        <img
+          src="{{ hero_image_url }}"
+          alt="{{ heading | default: 'Hero' }}"
+          width="400"
+          height="400"
+          loading="eager"
+          class="pastel-hero__image"
+        >
+        {% # theme-check-enable RemoteAsset %}
+      {% else %}
+        <div class="pastel-hero__placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'pastel-hero__placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-hero {
+    padding: 48px 24px 64px;
+    background: var(--color-background);
+    overflow: hidden;
+  }
+
+  .pastel-hero__grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .pastel-hero__content {
+    text-align: left;
+  }
+
+  .pastel-hero__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading);
+    margin: 0 0 16px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .pastel-hero__subheading {
+    font-family: var(--font-body--family);
+    font-size: 18px;
+    color: var(--color-foreground-muted);
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+
+  .pastel-hero__pills {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pastel-hero__pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-body--family);
+    font-size: 15px;
+    color: var(--color-foreground);
+    font-weight: 500;
+  }
+
+  .pastel-hero__pill-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-primary-button-text);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .pastel-hero__social-proof {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    color: var(--color-foreground-muted);
+    margin: 0 0 24px;
+  }
+
+  .pastel-hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pastel-hero__btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: var(--style-border-radius-buttons-primary, 4px);
+    font-family: var(--font-heading--family);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .pastel-hero__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .pastel-hero__btn--primary {
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+  }
+
+  .pastel-hero__btn--primary:hover {
+    background: var(--color-primary-button-hover-background);
+  }
+
+  .pastel-hero__btn--secondary {
+    background: transparent;
+    color: var(--color-foreground);
+    border: 2px solid var(--color-foreground);
+  }
+
+  .pastel-hero__media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pastel-hero__image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--style-border-radius-images, 24px);
+    object-fit: contain;
+  }
+
+  .pastel-hero__placeholder {
+    aspect-ratio: 1;
+    max-width: 400px;
+    width: 100%;
+    background: var(--color-background-secondary);
+    border-radius: var(--style-border-radius-images, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pastel-hero__placeholder-svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.4;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pastel-hero__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      text-align: center;
+    }
+
+    .pastel-hero__content {
+      text-align: center;
+    }
+
+    .pastel-hero__pills {
+      align-items: center;
+    }
+
+    .pastel-hero__buttons {
+      justify-content: center;
+    }
+
+    .pastel-hero__media {
+      order: -1;
+    }
+
+    .pastel-hero__image,
+    .pastel-hero__placeholder {
+      max-width: 280px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-hero {
+      padding: 32px 16px 48px;
+    }
+
+    .pastel-hero__heading {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+    }
+
+    .pastel-hero__buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .pastel-hero__btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image",
+      "info": "Product shot or lifestyle image for right side"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_url",
+      "label": "Hero image URL (fallback)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "DEEP SLEEP STARTS HERE"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Fall Asleep Fast. Stay Asleep. Wake Up Refreshed"
+    },
+    {
+      "type": "text",
+      "id": "social_proof",
+      "label": "Social proof text",
+      "default": "75k+ happy customers"
+    },
+    {
+      "type": "text",
+      "id": "primary_button",
+      "label": "Primary button",
+      "default": "SHOP SLEEP"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button",
+      "label": "Secondary button",
+      "default": "SHOP ALL"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit checklist",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Cannabinoids & calming botanicals"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        { "type": "benefit", "settings": { "text": "Cannabinoids & calming botanicals for deep sleep" } },
+        { "type": "benefit", "settings": { "text": "Melatonin-Free" } },
+        { "type": "benefit", "settings": { "text": "Fast Acting" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

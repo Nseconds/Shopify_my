@@ -1,0 +1,606 @@
+{%- liquid
+  assign blocks = section.blocks
+
+  if section.settings.use_custom_colors
+    assign hp_accent       = section.settings.anchor_blue_1
+    assign hp_accent2      = section.settings.anchor_blue_2
+    assign hp_card_bg      = section.settings.card_bg
+    assign hp_benefit_bg   = section.settings.benefit_bg
+    assign hp_benefit_brd  = section.settings.benefit_border
+    assign hp_benefit_text = section.settings.benefit_text_color
+    assign hp_btn_bg       = section.settings.button_bg
+    assign hp_btn_hover    = section.settings.button_bg_hover
+    assign hp_btn_text     = section.settings.button_text
+    assign hp_stars        = section.settings.stars_color
+    assign hp_rev_text     = section.settings.reviews_text_color
+    assign hp_rev_hl       = section.settings.reviews_text_highlighted_color
+  elsif settings.style_mode == 'gradient'
+    assign hp_accent       = 'var(--color-gradient-1)'
+    assign hp_accent2      = 'var(--color-gradient-2)'
+    assign hp_card_bg      = 'var(--color-card-gradient)'
+    assign hp_benefit_bg   = 'var(--color-background)'
+    assign hp_benefit_brd  = 'rgba(255,255,255,0.12)'
+    assign hp_benefit_text = 'var(--color-foreground)'
+    assign hp_btn_bg       = 'var(--color-gradient-1)'
+    assign hp_btn_hover    = 'var(--color-gradient-3)'
+    assign hp_btn_text     = 'var(--color-gradient-text)'
+    assign hp_stars        = 'var(--color-gradient-text)'
+    assign hp_rev_text     = 'var(--color-gradient-text)'
+    assign hp_rev_hl       = 'var(--color-gradient-text)'
+  else
+    assign hp_accent       = 'var(--color-primary)'
+    assign hp_accent2      = 'var(--color-primary)'
+    assign hp_card_bg      = 'var(--color-background)'
+    assign hp_benefit_bg   = 'var(--color-background)'
+    assign hp_benefit_brd  = 'var(--color-primary)'
+    assign hp_benefit_text = 'var(--color-foreground)'
+    assign hp_btn_bg       = 'var(--color-primary)'
+    assign hp_btn_hover    = 'var(--color-primary)'
+    assign hp_btn_text     = 'var(--color-background)'
+    assign hp_stars        = 'var(--color-primary)'
+    assign hp_rev_text     = 'var(--color-foreground)'
+    assign hp_rev_hl       = 'var(--color-primary)'
+  endif
+
+  assign media_style = ''
+  if section.settings.image_height != 'auto'
+    assign media_style = media_style | append: 'height: ' | append: section.settings.image_height | append: 'px;'
+  endif
+  assign media_style = media_style | append: '--media-object-fit: ' | append: section.settings.image_fit | append: ';'
+-%}
+
+  {% style %}
+    /* =========================================================
+       Scoped styles (no bleed)
+       ========================================================= */
+    .wave-product-features-{{ section.id }}{
+      --hp-blue-1: {{ hp_accent }};
+      --hp-blue-2: {{ hp_accent2 }};
+
+      --hp-card-bg: {{ hp_card_bg }};
+      --hp-card-border: {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}transparent{% else %}{{ section.settings.card_border }}{% endif %};
+      --hp-card-shadow: {{ section.settings.card_shadow }};
+
+      --hp-benefit-bg: {{ hp_benefit_bg }};
+      --hp-benefit-border: {{ hp_benefit_brd }};
+      --hp-benefit-text: {{ hp_benefit_text }};
+
+      --hp-btn-bg: {{ hp_btn_bg }};
+      --hp-btn-bg-hover: {{ hp_btn_hover }};
+      --hp-btn-text: {{ hp_btn_text }};
+
+      --hp-radius: var(--style-border-radius-cards);
+    }
+
+    /* Stars */
+    .wave-product-features-{{ section.id }} .stars-outer {
+      position: relative;
+      display: inline-block;
+    }
+    .wave-product-features-{{ section.id }} .stars-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .wave-product-features-{{ section.id }} .stars-outer::before,
+    .wave-product-features-{{ section.id }} .stars-inner::before {
+      content: "★★★★★";
+      font-family: "Arial", sans-serif;
+      font-size: {{ section.settings.stars_size }}px;
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: normal;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .wave-product-features-{{ section.id }} .stars-outer::before { color: rgba(128,128,128,.25); }
+    .wave-product-features-{{ section.id }} .stars-inner::before { color: {{ hp_stars }}; }
+
+    .wave-product-features-{{ section.id }} .wave-product-features__reviews-text strong {
+      color: {{ hp_rev_hl }} !important;
+    }
+
+    {% if settings.style_mode == 'gradient' and section.settings.use_custom_colors == false %}
+      .wave-product-features-{{ section.id }} .wave-product-features__heading {
+        color: var(--color-gradient-text) !important;
+      }
+      .wave-product-features-{{ section.id }} .wave-product-features__subtext {
+        color: var(--color-gradient-text) !important;
+      }
+      .wave-product-features-{{ section.id }} .wave-product-features__reviews-text {
+        color: var(--color-gradient-text);
+      }
+      .wave-product-features-{{ section.id }} .wave-product-features__reviews-text strong {
+        color: var(--color-gradient-text) !important;
+      }
+      .wave-product-features-{{ section.id }} .wave-product-features__image-wrapper {
+        border-right: none;
+      }
+    {% endif %}
+
+    /* =========================================================
+       Layout
+       ========================================================= */
+    .wave-product-features-{{ section.id }}.wave-product-features{
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+      background: rgb(var(--color-background-rgb));
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__container{
+      width: 100%;
+    }
+  
+    /* The "card" wrapper (this is where the huge shadow used to feel heavy) */
+    .wave-product-features-{{ section.id }} .wave-product-features__grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: stretch;
+  
+      background: var(--hp-card-bg);
+      border: 1px solid var(--hp-card-border);
+      border-radius: var(--hp-radius);
+  
+      /* Controlled shadow (set to none by default in schema) */
+      box-shadow: var(--hp-card-shadow);
+  
+      overflow: hidden; /* keeps everything clean */
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__grid--right .wave-product-features__image-wrapper{ order: 2; }
+    .wave-product-features-{{ section.id }} .wave-product-features__grid--right .wave-product-features__content{ order: 1; }
+  
+    /* Image side */
+    .wave-product-features-{{ section.id }} .wave-product-features__image-wrapper{
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-right: 1px solid rgba(2, 6, 23, 0.06);
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__image{
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__video{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: var(--media-object-fit, cover);
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__media{
+      width: 100%;
+      height: 100%;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__placeholder{
+      width: 100%;
+      aspect-ratio: 4/5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-border, #f3f3f3);
+      overflow: hidden;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__placeholder-svg{
+      width: 50%;
+      height: auto;
+      opacity: 0.5;
+    }
+  
+    /* Content side */
+    .wave-product-features-{{ section.id }} .wave-product-features__content{
+      padding: 42px 42px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__reviews{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__reviews-text{
+      line-height: 1.4;
+      font-weight: 600;
+      opacity: .95;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__heading{
+      font-weight: 900;
+      line-height: 1.08;
+      margin: 0;
+      letter-spacing: -0.02em;
+      color: rgb(var(--color-foreground-heading-rgb));
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__subtext{
+      line-height: 1.65;
+      margin: 0;
+      color: rgb(var(--color-foreground-rgb));
+      opacity: .9;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__subtext p{ margin: 0 0 0.5em 0; }
+    .wave-product-features-{{ section.id }} .wave-product-features__subtext p:last-child{ margin-bottom: 0; }
+  
+    /* =========================================================
+       Benefit boxes (FAQ-style)
+       ========================================================= */
+    .wave-product-features-{{ section.id }} .wave-product-features__benefits{
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__benefit{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+  
+      background: var(--hp-benefit-bg);
+      border: 1px solid var(--hp-benefit-border);
+      border-radius: var(--style-border-radius-global);
+  
+      padding: 14px 16px;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__benefit-icon{
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      color: var(--hp-blue-1);
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__benefit-icon svg{
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__benefit-text{
+      font-weight: 800;
+      line-height: 1.35;
+      color: var(--hp-benefit-text);
+    }
+  
+    /* =========================================================
+       Button (custom colors)
+       ========================================================= */
+    .wave-product-features-{{ section.id }} .wave-product-features__button-wrapper{
+      margin-top: 10px;
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__button{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+  
+      text-decoration: none;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+  
+      border: 0;
+      cursor: pointer;
+      text-align: center;
+  
+      background: var(--hp-btn-bg);
+      color: var(--hp-btn-text);
+  
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.14);
+    }
+  
+    .wave-product-features-{{ section.id }} .wave-product-features__button:hover{
+      transform: translateY(-1px);
+      background: var(--hp-btn-bg-hover);
+      box-shadow: 0 14px 30px rgba(2, 6, 23, 0.18);
+    }
+  
+    /* =========================================================
+       Responsive
+       ========================================================= */
+    @media screen and (max-width: 989px){
+      .wave-product-features-{{ section.id }} .wave-product-features__grid{
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+  
+      .wave-product-features-{{ section.id }} .wave-product-features__image-wrapper{
+        border-right: 0;
+        border-bottom: 1px solid rgba(2, 6, 23, 0.06);
+      }
+  
+      .wave-product-features-{{ section.id }} .wave-product-features__content{
+        padding: 28px 22px;
+      }
+  
+      .wave-product-features-{{ section.id }} .wave-product-features__button{
+        width: 100%;
+      }
+    }
+
+  {% endstyle %}
+  
+  <div class="wave-product-features wave-product-features-{{ section.id }} color-{{ section.settings.color_scheme }}">
+    <div class="wave-product-features__container page-width">
+      <div class="wave-product-features__grid wave-product-features__grid--{{ section.settings.image_position }}">
+  
+        <!-- Image Side -->
+        <div class="wave-product-features__image-wrapper" data-forge-slot-id="image"{% if section.settings.image == blank %} data-forge-slot-blank="true"{% endif %}>
+          {% if section.settings.media_type == 'video' and section.settings.video != blank %}
+            <div class="wave-product-features__media" style="{{ media_style }}">
+              {{ section.settings.video | video_tag: playsinline: true, autoplay: section.settings.video_autoplay, loop: section.settings.video_loop, muted: section.settings.video_muted, controls: section.settings.video_show_controls, class: 'wave-product-features__video' }}
+            </div>
+          {% elsif section.settings.image != blank %}
+            <img
+              src="{{ section.settings.image | image_url: width: 1400 }}"
+              class="wave-product-features__image"
+              loading="eager"
+              fetchpriority="high"
+              style="
+                {% if section.settings.image_height != 'auto' %}
+                  height: {{ section.settings.image_height }}px;
+                  object-fit: {{ section.settings.image_fit }};
+                {% endif %}
+              "
+              alt="{{ section.settings.image.alt | escape }}"
+              width="{{ section.settings.image.width }}"
+              height="{% if section.settings.image_height == 'auto' %}{{ section.settings.image.height }}{% else %}{{ section.settings.image_height }}{% endif %}"
+            >
+          {% else %}
+            <div class="wave-product-features__placeholder" style="{{ media_style }}">
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'wave-product-features__placeholder-svg' }}
+            </div>
+          {% endif %}
+        </div>
+  
+        <!-- Content Side -->
+        <div class="wave-product-features__content">
+          {% if section.settings.show_reviews %}
+            <div class="wave-product-features__reviews" style="justify-content: {{ section.settings.reviews_alignment }};">
+              <div class="stars-outer">
+                {% assign rating_float = section.settings.product_rating | plus: 0.0 %}
+                {% assign rating_float = rating_float | divided_by: 1.0 %}
+                {% capture rating_float_rounded %}{{ rating_float | round: 2 }}{% endcapture %}
+                {% assign rating_float_final = rating_float_rounded | replace: ',', '.' %}
+                {% assign rating_percentage = rating_float_final | divided_by: 5 | times: 100 %}
+                <div class="stars-inner" style="width: {{ rating_percentage }}%"></div>
+              </div>
+  
+              {% if section.settings.reviews_text != blank %}
+                <span
+                  class="wave-product-features__reviews-text"
+                  style="font-size: {{ section.settings.reviews_text_size }}px; color: {{ hp_rev_text }};"
+                >
+                  {{ section.settings.reviews_text }}
+                </span>
+              {% endif %}
+            </div>
+          {% endif %}
+  
+          {% if section.settings.heading != blank %}
+            <h1 class="wave-product-features__heading" style="font-size: {{ section.settings.heading_size }}px;">
+              {{ section.settings.heading }}
+            </h1>
+          {% endif %}
+  
+          {% if section.settings.subtext != blank %}
+            <div class="wave-product-features__subtext" style="font-size: {{ section.settings.subtext_size }}px;">
+              {{ section.settings.subtext }}
+            </div>
+          {% endif %}
+  
+          {% if blocks.size > 0 %}
+            <ul class="wave-product-features__benefits">
+              {% for block in blocks %}
+                {% if block.type == 'benefit' %}
+                  <li class="wave-product-features__benefit" {{ block.shopify_attributes }}>
+                    <span class="wave-product-features__benefit-icon">
+                      {% if block.settings.icon != blank %}
+                        {{ block.settings.icon }}
+                      {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                      {% endif %}
+                    </span>
+                    <span class="wave-product-features__benefit-text" style="font-size: {{ block.settings.text_size }}px;">
+                      {{ block.settings.text }}
+                    </span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+  
+          {% if section.settings.button_label != blank %}
+            <div class="wave-product-features__button-wrapper">
+              <a
+                href="{{ section.settings.button_link }}"
+                class="wave-product-features__button"
+                style="
+                  border-radius: var(--style-border-radius-buttons-primary);
+                  font-size: {{ section.settings.button_text_size }}px;
+                  padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+                "
+              >
+                {{ section.settings.button_label }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
+  {% schema %}
+  {
+    "name": "Wave Product Features",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "select",
+        "id": "image_position",
+        "label": "Image position",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "right", "label": "Right" }
+        ],
+        "default": "left"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1"
+      },
+  
+      { "type": "header", "content": "Spacing" },
+      { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 },
+      { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 },
+  
+      { "type": "header", "content": "Media" },
+      {
+        "type": "select",
+        "id": "media_type",
+        "label": "Media type",
+        "options": [
+          { "value": "image", "label": "Image" },
+          { "value": "video", "label": "Video" }
+        ],
+        "default": "image"
+      },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "video", "id": "video", "label": "Video file" },
+      { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay (muted)", "default": true },
+      { "type": "checkbox", "id": "video_loop", "label": "Loop video", "default": true },
+      { "type": "checkbox", "id": "video_show_controls", "label": "Show controls", "default": true },
+      { "type": "checkbox", "id": "video_muted", "label": "Start muted", "default": true },
+      { "type": "text", "id": "image_height", "label": "Image height", "default": "auto", "info": "Enter height in pixels (e.g., 600) or 'auto' for automatic" },
+      {
+        "type": "select",
+        "id": "image_fit",
+        "label": "Image fit",
+        "options": [
+          { "value": "cover", "label": "Cover (fill area)" },
+          { "value": "contain", "label": "Contain (fit inside)" },
+          { "value": "fill", "label": "Fill (stretch)" }
+        ],
+        "default": "cover"
+      },
+  
+      { "type": "header", "content": "Reviews" },
+      { "type": "checkbox", "id": "show_reviews", "label": "Show reviews", "default": true },
+      { "type": "range", "id": "product_rating", "min": 0, "max": 5, "step": 0.1, "label": "Rating", "default": 5 },
+      { "type": "inline_richtext", "id": "reviews_text", "label": "Reviews text", "default": "Trusted by <strong>500,000+</strong> Happy Customers" },
+      {
+        "type": "select",
+        "id": "reviews_alignment",
+        "options": [
+          { "value": "flex-start", "label": "Left" },
+          { "value": "center", "label": "Center" },
+          { "value": "flex-end", "label": "Right" }
+        ],
+        "default": "flex-start",
+        "label": "Alignment"
+      },
+      { "type": "range", "id": "stars_size", "label": "Stars size", "min": 15, "max": 40, "step": 1, "unit": "px", "default": 18 },
+      { "type": "range", "id": "reviews_text_size", "min": 10, "max": 24, "step": 1, "unit": "px", "label": "Reviews text size", "default": 14 },
+      { "type": "color", "id": "reviews_text_color", "label": "Reviews text color", "default": "#111111" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+      { "type": "color", "id": "reviews_text_highlighted_color", "label": "Bolded text color", "default": "#6366F1" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+      { "type": "color", "id": "stars_color", "label": "Star color", "default": "#FFD700" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+  
+      { "type": "header", "content": "Heading" },
+      { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Discover Your Perfect Fit</p>" },
+      { "type": "range", "id": "heading_size", "label": "Heading size", "min": 24, "max": 72, "step": 2, "unit": "px", "default": 44 },
+      { "type": "header", "content": "Subtext" },
+      { "type": "richtext", "id": "subtext", "label": "Subtext", "default": "<p>Find innovative solutions for every lifestyle. From securing your glasses during adventure to enhancing everyday comfort, our curated selection has you covered.</p>" },
+      { "type": "range", "id": "subtext_size", "label": "Subtext size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 },
+  
+      { "type": "header", "content": "Button" },
+      { "type": "text", "id": "button_label", "label": "Button label", "default": "SHOP NOW" },
+      { "type": "url", "id": "button_link", "label": "Button link" },
+
+      { "type": "header", "content": "Colors" },
+      { "type": "checkbox", "id": "use_custom_colors", "label": "Override theme colors", "info": "When off, uses the theme color scheme automatically", "default": false },
+
+      { "type": "color", "id": "anchor_blue_1", "label": "Accent color (icons)", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "anchor_blue_2", "label": "Accent color (secondary)", "default": "#4F46E5", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "card_bg", "label": "Card background", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "card_border", "label": "Card border", "default": "rgba(0,0,0,0.08)" ,
+      "visible_if": "{{ section.settings.use_custom_colors }}"
+    },
+      {
+        "type": "text",
+        "id": "card_shadow",
+        "label": "Card shadow (CSS)",
+        "default": "none",
+        "info": "Use 'none' to remove shadow. Example: 0 18px 55px rgba(0,0,0,0.10)"
+      },
+      { "type": "range", "id": "card_radius", "label": "Card corner radius", "min": 8, "max": 32, "step": 2, "unit": "px", "default": 18 },
+
+      { "type": "color", "id": "benefit_bg", "label": "Benefit box background", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "benefit_border", "label": "Benefit box border", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "benefit_text_color", "label": "Benefit text color", "default": "#111111", "visible_if": "{{ section.settings.use_custom_colors }}" },
+
+      { "type": "color", "id": "button_bg", "label": "Button background", "default": "#6366F1", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_bg_hover", "label": "Button hover background", "default": "#4F46E5", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "color", "id": "button_text", "label": "Button text", "default": "#FFFFFF", "visible_if": "{{ section.settings.use_custom_colors }}" },
+      { "type": "range", "id": "button_border_radius", "label": "Button border radius", "min": 0, "max": 50, "step": 1, "unit": "px", "default": 12 },
+      { "type": "range", "id": "button_text_size", "label": "Button text size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 15 },
+      { "type": "range", "id": "button_padding_vertical", "label": "Button vertical padding", "min": 8, "max": 32, "step": 2, "unit": "px", "default": 16 },
+      { "type": "range", "id": "button_padding_horizontal", "label": "Button horizontal padding", "min": 16, "max": 64, "step": 4, "unit": "px", "default": 40 }
+    ],
+    "blocks": [
+      {
+        "type": "benefit",
+        "name": "Benefit",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "icon",
+            "label": "SVG Icon",
+            "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z\"/></svg>",
+            "info": "Paste SVG code here"
+          },
+          { "type": "text", "id": "text", "label": "Text", "default": "Slip-resistant design keeps glasses secure during movement" },
+          { "type": "range", "id": "text_size", "label": "Text size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Hero Wave Product Features",
+        "blocks": [
+          { "type": "benefit" },
+          { "type": "benefit" },
+          { "type": "benefit" }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
+  

@@ -1,0 +1,118 @@
+{% liquid
+  assign specs = ''
+  assign spec_count = 0
+
+  if block.settings.spec_1 != blank
+    assign specs = block.settings.spec_1
+    assign spec_count = 1
+  endif
+  if block.settings.spec_2 != blank
+    if spec_count > 0
+      assign specs = specs | append: '|' | append: block.settings.spec_2
+    else
+      assign specs = block.settings.spec_2
+    endif
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_3 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_3
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_4 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_4
+    assign spec_count = spec_count | plus: 1
+  endif
+  if block.settings.spec_5 != blank
+    assign specs = specs | append: '|' | append: block.settings.spec_5
+    assign spec_count = spec_count | plus: 1
+  endif
+
+  assign spec_array = specs | split: '|'
+%}
+
+<div class="pastel-specs-strip spacing-style" {{ block.shopify_attributes }}>
+  <div class="pastel-specs-strip__inner">
+    {% for spec in spec_array %}
+      {% if spec != blank %}
+        <span class="pastel-specs-strip__item">{{ spec }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .pastel-specs-strip {
+    display: inline-block;
+    max-width: 100%;
+    padding-block: 6px 10px;
+  }
+
+  .pastel-specs-strip__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 14px 18px;
+    background: color-mix(in srgb, var(--color-foreground) 12%, var(--color-background));
+    border-radius: 18px;
+  }
+
+  .pastel-specs-strip__item {
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+  }
+
+  .pastel-specs-strip__item + .pastel-specs-strip__item::before {
+    content: "•";
+    margin-inline-end: 12px;
+    color: var(--color-foreground-muted);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Specs strip",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "spec_1",
+      "label": "Spec 1",
+      "default": "30 gummies"
+    },
+    {
+      "type": "text",
+      "id": "spec_2",
+      "label": "Spec 2",
+      "default": "10mg Delta-9 THC"
+    },
+    {
+      "type": "text",
+      "id": "spec_3",
+      "label": "Spec 3",
+      "default": "10mg CBD"
+    },
+    {
+      "type": "text",
+      "id": "spec_4",
+      "label": "Spec 4",
+      "default": "5mg CBN"
+    },
+    {
+      "type": "text",
+      "id": "spec_5",
+      "label": "Spec 5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Specs strip"
+    }
+  ]
+}
+{% endschema %}

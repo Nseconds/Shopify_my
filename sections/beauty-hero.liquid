@@ -1,0 +1,483 @@
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  assign heading = section.settings.heading
+  assign primary_button = section.settings.primary_button
+  assign primary_link = section.settings.primary_link
+  assign secondary_button = section.settings.secondary_button
+  assign secondary_link = section.settings.secondary_link
+  assign hero_image = section.settings.hero_image
+  assign hero_image_url = section.settings.hero_image_url
+  assign mobile_hero_image = section.settings.mobile_hero_image
+  assign mobile_hero_image_url = section.settings.mobile_hero_image_url
+  assign has_mobile_image = false
+  if mobile_hero_image != blank or mobile_hero_image_url != blank
+    assign has_mobile_image = true
+  endif
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="beauty-hero section section--full-width color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="beauty-hero__media" aria-hidden="true">
+    {% if hero_image != blank %}
+      <img
+        src="{{ hero_image | image_url: width: 2400 }}"
+        alt=""
+        width="2400"
+        height="1350"
+        loading="eager"
+        class="beauty-hero__bg{% if has_mobile_image %} beauty-hero__bg--hide-on-mobile{% endif %}"
+      >
+    {% elsif hero_image_url != blank %}
+      {% # theme-check-disable RemoteAsset %}
+      <img
+        src="{{ hero_image_url }}"
+        alt=""
+        width="2400"
+        height="1350"
+        loading="eager"
+        class="beauty-hero__bg{% if has_mobile_image %} beauty-hero__bg--hide-on-mobile{% endif %}"
+      >
+      {% # theme-check-enable RemoteAsset %}
+    {% endif %}
+
+    {% if has_mobile_image %}
+      {% if mobile_hero_image != blank %}
+        <img
+          src="{{ mobile_hero_image | image_url: width: 1200 }}"
+          alt=""
+          width="1200"
+          height="1600"
+          loading="eager"
+          class="beauty-hero__bg beauty-hero__bg--mobile"
+        >
+      {% elsif mobile_hero_image_url != blank %}
+        {% # theme-check-disable RemoteAsset %}
+        <img
+          src="{{ mobile_hero_image_url }}"
+          alt=""
+          width="1200"
+          height="1600"
+          loading="eager"
+          class="beauty-hero__bg beauty-hero__bg--mobile"
+        >
+        {% # theme-check-enable RemoteAsset %}
+      {% endif %}
+    {% endif %}
+
+    <div class="beauty-hero__overlay"></div>
+  </div>
+
+  <div class="beauty-hero__inner">
+    <div class="beauty-hero__content">
+      {% if eyebrow != blank %}
+        <p class="beauty-hero__eyebrow">{{ eyebrow }}</p>
+      {% endif %}
+
+      {% if heading != blank %}
+        <h1 class="beauty-hero__heading">{{ heading }}</h1>
+      {% endif %}
+
+      {% if benefit_blocks.size > 0 %}
+        <ul class="beauty-hero__pills">
+          {% for block in benefit_blocks limit: 4 %}
+            <li class="beauty-hero__pill" {{ block.shopify_attributes }}>
+              <span class="beauty-hero__pill-mark" aria-hidden="true"></span>
+              <span class="beauty-hero__pill-text{% if block.settings.bold %} beauty-hero__pill-text--bold{% endif %}">{{ block.settings.text }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <div class="beauty-hero__buttons">
+        {% if primary_button != blank %}
+          <a href="{{ primary_link | default: '#' }}" class="beauty-hero__btn beauty-hero__btn--primary">
+            {{ primary_button }}
+          </a>
+        {% endif %}
+        {% if secondary_button != blank %}
+          <a href="{{ secondary_link | default: '#' }}" class="beauty-hero__btn beauty-hero__btn--secondary">
+            {{ secondary_button }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .beauty-hero {
+    grid-column: 1 / -1;
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 16 / 9;
+    min-height: 460px;
+    max-height: min(80vh, 760px);
+    overflow: hidden;
+    background: var(--color-background);
+    /* Force flat button color even when the theme runs in gradient mode -
+       a gradient primary button reads as noisy/casual against the refined beauty look. */
+    --color-primary-button-background: var(--color-primary);
+  }
+
+  .beauty-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .beauty-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .beauty-hero__bg--mobile {
+    display: none;
+  }
+
+  .beauty-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      var(--color-background) 0%,
+      color-mix(in srgb, var(--color-background) 55%, transparent) 35%,
+      transparent 65%
+    );
+    opacity: 0.72;
+  }
+
+  .beauty-hero__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-block: 64px;
+    padding-inline: var(--page-margin, 24px);
+    box-sizing: border-box;
+  }
+
+  .beauty-hero__content {
+    max-width: 520px;
+    text-align: left;
+  }
+
+  .beauty-hero__eyebrow {
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.78;
+  }
+
+  .beauty-hero__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(2.5rem, 5.5vw, 4rem);
+    font-weight: 500;
+    color: var(--color-foreground-heading);
+    margin: 0 0 24px;
+    line-height: 1.1;
+    letter-spacing: 0.005em;
+  }
+
+  .beauty-hero__pills {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .beauty-hero__pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body--family);
+    font-size: 15px;
+    color: var(--color-foreground);
+    font-weight: 400;
+  }
+
+  .beauty-hero__pill-mark {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--color-primary);
+    transform: rotate(45deg);
+    display: inline-block;
+  }
+
+  .beauty-hero__pill-text {
+    line-height: 1.3;
+  }
+
+  .beauty-hero__pill-text--bold {
+    font-weight: 600;
+  }
+
+  .beauty-hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .beauty-hero__btn {
+    font-family: var(--font-heading--family);
+    font-size: 14px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition: opacity 0.2s, transform 0.2s, background 0.2s;
+  }
+
+  .beauty-hero__btn--primary {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 9999px;
+    font-weight: 700;
+    background: var(--color-primary-button-background);
+    color: var(--color-primary-button-text);
+    border: 2px solid transparent;
+  }
+
+  .beauty-hero__btn--primary:hover {
+    background: var(--color-primary-button-hover-background);
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+
+  .beauty-hero__btn--secondary {
+    /* Refined editorial text link - intentionally NOT a pill, to differentiate from pastel-hero-2. */
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-foreground);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+
+  .beauty-hero__btn--secondary:hover {
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 989px) {
+    .beauty-hero {
+      aspect-ratio: 16 / 10;
+      min-height: 480px;
+    }
+
+    .beauty-hero__overlay {
+      background: linear-gradient(
+        to bottom,
+        var(--color-background) 0%,
+        color-mix(in srgb, var(--color-background) 45%, transparent) 50%,
+        var(--color-background) 100%
+      );
+      opacity: 0.72;
+    }
+
+    .beauty-hero__content {
+      max-width: 100%;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .beauty-hero__pills {
+      justify-content: center;
+    }
+
+    .beauty-hero__buttons {
+      justify-content: center;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .beauty-hero__bg--hide-on-mobile {
+      display: none;
+    }
+
+    .beauty-hero__bg--mobile {
+      display: block;
+    }
+
+    .beauty-hero {
+      aspect-ratio: auto;
+      min-height: max(640px, 80vh);
+    }
+
+    .beauty-hero__overlay {
+      background: linear-gradient(
+        to bottom,
+        var(--color-background) 0%,
+        var(--color-background) 18%,
+        transparent 36%,
+        transparent 60%,
+        color-mix(in srgb, var(--color-background) 70%, transparent) 80%,
+        var(--color-background) 100%
+      );
+      opacity: 0.85;
+    }
+
+    .beauty-hero__inner {
+      padding-block: 32px;
+      display: flex;
+      min-height: inherit;
+      box-sizing: border-box;
+    }
+
+    .beauty-hero__content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+    }
+
+    .beauty-hero__heading {
+      font-size: clamp(2rem, 7vw, 2.75rem);
+      margin-bottom: 0;
+    }
+
+    .beauty-hero__pills {
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+
+    .beauty-hero__buttons {
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 16px;
+    }
+
+    .beauty-hero__btn--primary {
+      width: 100%;
+      text-align: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.beauty_hero.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "t:sections.beauty_hero.settings.hero_image",
+      "info": "t:sections.beauty_hero.settings.hero_image_info"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_url",
+      "label": "t:sections.beauty_hero.settings.hero_image_url"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_hero_image",
+      "label": "t:sections.beauty_hero.settings.mobile_hero_image",
+      "info": "t:sections.beauty_hero.settings.mobile_hero_image_info"
+    },
+    {
+      "type": "text",
+      "id": "mobile_hero_image_url",
+      "label": "t:sections.beauty_hero.settings.mobile_hero_image_url"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:sections.beauty_hero.settings.eyebrow",
+      "info": "t:sections.beauty_hero.settings.eyebrow_info",
+      "default": "THE NEW EDIT"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:names.heading",
+      "default": "Glow every day, naturally."
+    },
+    {
+      "type": "text",
+      "id": "primary_button",
+      "label": "t:names.primary_button",
+      "default": "SHOP BESTSELLERS"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "t:sections.beauty_hero.settings.primary_link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button",
+      "label": "t:names.secondary_button",
+      "default": "EXPLORE ALL"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "t:sections.beauty_hero.settings.secondary_link"
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "t:sections.beauty_hero.blocks.benefit.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:names.text",
+          "default": "Dermatologist tested."
+        },
+        {
+          "type": "checkbox",
+          "id": "bold",
+          "label": "t:sections.beauty_hero.blocks.benefit.settings.bold",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.beauty_hero.name",
+      "settings": {
+        "eyebrow": "THE NEW EDIT",
+        "heading": "Glow every day, naturally."
+      },
+      "blocks": [
+        { "type": "benefit", "settings": { "text": "Dermatologist tested." } },
+        { "type": "benefit", "settings": { "text": "Clean, vegan ingredients." } },
+        { "type": "benefit", "settings": { "text": "Free shipping over $50." } },
+        { "type": "benefit", "settings": { "text": "Cruelty-free." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

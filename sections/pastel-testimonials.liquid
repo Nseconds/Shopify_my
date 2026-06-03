@@ -1,0 +1,545 @@
+{% render 'pastel-scalloped' %}
+{% liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign total_rating = section.settings.total_rating
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="pastel-testimonials section section--full-width color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+  <div class="pastel-testimonials__inner">
+    {% if heading != blank %}
+      <h2 class="pastel-testimonials__heading">{{ heading }}</h2>
+    {% endif %}
+
+    {% if subheading != blank %}
+      <p class="pastel-testimonials__subheading">{{ subheading }}</p>
+    {% endif %}
+
+    {% if total_rating != blank %}
+      <p class="pastel-testimonials__rating">{{ total_rating }}</p>
+    {% endif %}
+  </div>
+
+  {% if section.blocks.size > 0 %}
+    <div class="pastel-testimonials__marquee" role="region" aria-label="{{ heading | default: 'Testimonials' }}">
+      <div class="pastel-testimonials__track">
+        {% assign text_color_index = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'testimonial' %}
+            {% assign mod = text_color_index | modulo: 3 %}
+            <article class="pastel-testimonials__card pastel-testimonials__card--text pastel-testimonials__card--text-{{ mod }}" {{ block.shopify_attributes }}>
+              <div class="pastel-testimonials__card-body">
+                {% if block.settings.quirky_title != blank %}
+                  <h3 class="pastel-testimonials__quirky">{{ block.settings.quirky_title }}</h3>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <blockquote class="pastel-testimonials__text rte">{{ block.settings.text }}</blockquote>
+                {% endif %}
+                {% if block.settings.author != blank %}
+                  <cite class="pastel-testimonials__author">- {{ block.settings.author }}</cite>
+                {% endif %}
+              </div>
+            </article>
+            {% assign text_color_index = text_color_index | plus: 1 %}
+          {% elsif block.type == 'testimonial_image' %}
+            <div class="pastel-testimonials__card pastel-testimonials__card--image" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.image.alt | default: 'Customer photo' }}" width="600" height="750" loading="lazy" class="pastel-testimonials__card-image">
+              {% elsif block.settings.image_url != blank %}
+                {% # theme-check-disable RemoteAsset %}
+                <img src="{{ block.settings.image_url }}" alt="{{ block.settings.caption | default: 'Customer photo' }}" width="600" height="750" loading="lazy" class="pastel-testimonials__card-image">
+                {% # theme-check-enable RemoteAsset %}
+              {% else %}
+                <div class="pastel-testimonials__card-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {% comment %}Duplicate set - hidden from screen readers, enables seamless loop{% endcomment %}
+        {% assign text_color_index = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'testimonial' %}
+            {% assign mod = text_color_index | modulo: 3 %}
+            <article class="pastel-testimonials__card pastel-testimonials__card--text pastel-testimonials__card--text-{{ mod }}" aria-hidden="true">
+              <div class="pastel-testimonials__card-body">
+                {% if block.settings.quirky_title != blank %}<h3 class="pastel-testimonials__quirky">{{ block.settings.quirky_title }}</h3>{% endif %}
+                {% if block.settings.text != blank %}<blockquote class="pastel-testimonials__text rte">{{ block.settings.text }}</blockquote>{% endif %}
+                {% if block.settings.author != blank %}<cite class="pastel-testimonials__author">- {{ block.settings.author }}</cite>{% endif %}
+              </div>
+            </article>
+            {% assign text_color_index = text_color_index | plus: 1 %}
+          {% elsif block.type == 'testimonial_image' %}
+            <div class="pastel-testimonials__card pastel-testimonials__card--image" aria-hidden="true">
+              {% if block.settings.image != blank %}
+                <img src="{{ block.settings.image | image_url: width: 800 }}" alt="" width="600" height="750" loading="lazy" class="pastel-testimonials__card-image">
+              {% elsif block.settings.image_url != blank %}
+                {% # theme-check-disable RemoteAsset %}
+                <img src="{{ block.settings.image_url }}" alt="" width="600" height="750" loading="lazy" class="pastel-testimonials__card-image">
+                {% # theme-check-enable RemoteAsset %}
+              {% else %}
+                <div class="pastel-testimonials__card-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .pastel-testimonials {
+    padding: 56px 0 64px;
+    background: var(--color-background);
+  }
+
+  .pastel-testimonials__inner {
+    max-width: var(--page-width, 1280px);
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 var(--page-margin, 24px) 32px;
+  }
+
+  .pastel-testimonials__heading {
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    font-weight: 800;
+    color: var(--color-primary);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .pastel-testimonials__subheading {
+    font-family: var(--font-body--family);
+    font-size: 16px;
+    color: var(--color-foreground-muted);
+    margin: 0 0 12px;
+  }
+
+  .pastel-testimonials__rating {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  /* Marquee wrapper - clips the single track that contains 2x cards */
+  .pastel-testimonials__marquee {
+    overflow: hidden;
+    width: 100%;
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-y;
+  }
+
+  .pastel-testimonials__marquee--dragging {
+    cursor: grabbing;
+  }
+
+  .pastel-testimonials__marquee:hover .pastel-testimonials__track,
+  .pastel-testimonials__marquee:focus-within .pastel-testimonials__track {
+    animation-play-state: paused;
+  }
+
+  .pastel-testimonials__track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    padding-inline: 8px;
+    animation: pastel-marquee 60s linear infinite;
+    will-change: transform;
+  }
+
+  .pastel-testimonials__card-image {
+    -webkit-user-drag: none;
+  }
+
+  /* -50% = exactly one set of cards (track has 2 identical sets) */
+  @keyframes pastel-marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pastel-testimonials__marquee {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pastel-testimonials__track {
+      animation: none;
+    }
+    .pastel-testimonials__card[aria-hidden="true"] {
+      display: none;
+    }
+  }
+
+  .pastel-testimonials__card {
+    flex: 0 0 auto;
+    width: clamp(280px, 28vw, 380px);
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: var(--style-shadow-card);
+  }
+
+  /* Text card variants - solid pastel fills, rotating per text-card index */
+  .pastel-testimonials__card--text {
+    background: var(--card-bg, color-mix(in srgb, var(--color-gradient-1, var(--color-primary)) 70%, white));
+    padding: 32px 28px;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-foreground);
+  }
+
+  .pastel-testimonials__card--text-0 {
+    --card-bg: color-mix(in srgb, var(--color-gradient-1, #c9a8e8) 70%, white);
+  }
+
+  .pastel-testimonials__card--text-1 {
+    --card-bg: color-mix(in srgb, var(--color-gradient-2, #b6dca0) 70%, white);
+  }
+
+  .pastel-testimonials__card--text-2 {
+    --card-bg: color-mix(in srgb, var(--color-gradient-3, #f5b8c0) 70%, white);
+  }
+
+  .pastel-testimonials__card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .pastel-testimonials__quirky {
+    font-family: var(--font-heading--family, var(--font-body--family));
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    font-weight: 800;
+    color: var(--color-foreground-heading, currentColor);
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+  }
+
+  .pastel-testimonials__text {
+    font-family: var(--font-body--family);
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    color: var(--color-foreground);
+    line-height: 1.5;
+    margin: 0;
+    font-style: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pastel-testimonials__author {
+    font-family: var(--font-body--family);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    font-style: normal;
+    opacity: 0.85;
+  }
+
+  /* Image cards - full-bleed UGC photo */
+  .pastel-testimonials__card--image {
+    padding: 0;
+    background: var(--color-background-secondary);
+  }
+
+  .pastel-testimonials__card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pastel-testimonials__card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background-secondary);
+  }
+
+  .pastel-testimonials__card-placeholder svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pastel-testimonials__card {
+      width: clamp(260px, 60vw, 340px);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pastel-testimonials {
+      padding: 40px 0 48px;
+    }
+
+    .pastel-testimonials__inner {
+      padding: 0 16px 24px;
+    }
+
+    .pastel-testimonials__card {
+      width: clamp(240px, 78vw, 320px);
+    }
+
+    .pastel-testimonials__card--text {
+      padding: 24px 22px;
+    }
+
+    .pastel-testimonials__track {
+      animation-duration: 45s;
+      gap: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var marquees = document.querySelectorAll('.pastel-testimonials__marquee');
+    if (!marquees.length) return;
+
+    marquees.forEach(function (marquee) {
+      var track = marquee.querySelector('.pastel-testimonials__track');
+      if (!track) return;
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var baseVelocity = 40;
+      var offset = 0;
+      var halfWidth = 0;
+      var lastTime = 0;
+      var paused = false;
+      var dragging = false;
+      var pointerStartX = 0;
+      var lastPointerX = 0;
+      var lastPointerTime = 0;
+      var offsetAtPointerDown = 0;
+      var inertiaVelocity = 0;
+      var dragDistance = 0;
+      var suppressClick = false;
+
+      track.style.animation = 'none';
+      track.style.transform = 'translateX(0px)';
+
+      function measure() {
+        halfWidth = track.scrollWidth / 2;
+      }
+
+      function wrap(value) {
+        if (halfWidth <= 0) return 0;
+        return ((value % halfWidth) + halfWidth) % halfWidth;
+      }
+
+      function frame(time) {
+        var dt = lastTime ? (time - lastTime) / 1000 : 0;
+        lastTime = time;
+
+        if (!dragging) {
+          if (Math.abs(inertiaVelocity) > 2) {
+            offset += inertiaVelocity * dt;
+            inertiaVelocity *= 0.92;
+          } else if (!paused && !reduceMotion) {
+            inertiaVelocity = 0;
+            offset += baseVelocity * dt;
+          }
+        }
+
+        offset = wrap(offset);
+        track.style.transform = 'translateX(' + -offset + 'px)';
+        requestAnimationFrame(frame);
+      }
+
+      measure();
+      track.querySelectorAll('img').forEach(function (img) {
+        if (!img.complete) img.addEventListener('load', measure, { once: true });
+      });
+      window.addEventListener('resize', measure);
+
+      marquee.addEventListener('mouseenter', function () { paused = true; });
+      marquee.addEventListener('mouseleave', function () { paused = false; });
+      marquee.addEventListener('focusin', function () { paused = true; });
+      marquee.addEventListener('focusout', function () { paused = false; });
+
+      marquee.addEventListener('pointerdown', function (e) {
+        dragging = true;
+        dragDistance = 0;
+        pointerStartX = e.clientX;
+        lastPointerX = e.clientX;
+        lastPointerTime = performance.now();
+        offsetAtPointerDown = offset;
+        inertiaVelocity = 0;
+        marquee.classList.add('pastel-testimonials__marquee--dragging');
+        try { marquee.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+
+      marquee.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - pointerStartX;
+        dragDistance = Math.abs(dx);
+        offset = wrap(offsetAtPointerDown - dx);
+        var now = performance.now();
+        var dt = (now - lastPointerTime) / 1000;
+        if (dt > 0.005) {
+          inertiaVelocity = -(e.clientX - lastPointerX) / dt;
+        }
+        lastPointerX = e.clientX;
+        lastPointerTime = now;
+      });
+
+      function endDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        suppressClick = dragDistance > 5;
+        marquee.classList.remove('pastel-testimonials__marquee--dragging');
+        try { marquee.releasePointerCapture(e.pointerId); } catch (_) {}
+      }
+      marquee.addEventListener('pointerup', endDrag);
+      marquee.addEventListener('pointercancel', endDrag);
+
+      marquee.addEventListener('click', function (e) {
+        if (suppressClick) {
+          e.preventDefault();
+          e.stopPropagation();
+          suppressClick = false;
+        }
+      }, true);
+
+      requestAnimationFrame(frame);
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "YOU'RE MAKING US BLUSH"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "total_rating",
+      "label": "Total rating"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "text",
+          "id": "quirky_title",
+          "label": "Quirky title",
+          "default": "Insomnia Relief!"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Review text"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "label": "Star rating"
+        }
+      ]
+    },
+    {
+      "type": "testimonial_image",
+      "name": "Lifestyle photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        { "type": "testimonial_image", "settings": { "image_url": "" } },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quirky_title": "Insomnia Relief!",
+            "text": "<p>I've been suffering on and off with insomnia for some time now. I was reluctant to try these but I had tried everything else and was desperate. I'm so glad I did! I slept for 10 hours! Highly recommend!</p>",
+            "author": "Lauren D."
+          }
+        },
+        { "type": "testimonial_image", "settings": { "image_url": "" } },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quirky_title": "Natural Relief Is A Gummy Away",
+            "text": "<p>Never in my wildest dreams would I think that this would alleviate my anxiety and do it so quickly. I am one that prefers to do things naturally and was so glad to find these! Thank you! Thank you!</p>",
+            "author": "Elizabeth F."
+          }
+        },
+        { "type": "testimonial_image", "settings": { "image_url": "" } },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quirky_title": "Love it all over again",
+            "text": "<p>Gentle, effective, and tastes great. My whole family uses them now and we've never slept better.</p>",
+            "author": "Jen K."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

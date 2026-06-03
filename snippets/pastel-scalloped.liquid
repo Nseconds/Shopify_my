@@ -1,0 +1,58 @@
+{%- comment -%}
+  Playful pastel scalloped/wavy shapes and rounded typography.
+  Include once per page. Use classes: pastel-scalloped-bottom, pastel-scalloped-top, pastel-cloud, pastel-scalloped-frame
+{%- endcomment -%}
+{% style %}
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+  /* Scalloped bottom edge - waves at bottom of section */
+  .pastel-scalloped-bottom {
+    position: relative;
+  }
+  .pastel-scalloped-bottom::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: var(--scallop-fill, var(--color-background));
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 48' preserveAspectRatio='none'%3E%3Cpath d='M0 24 Q50 0 100 24 Q150 48 200 24 Q250 0 300 24 Q350 48 400 24 L400 48 L0 48 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 48' preserveAspectRatio='none'%3E%3Cpath d='M0 24 Q50 0 100 24 Q150 48 200 24 Q250 0 300 24 Q350 48 400 24 L400 48 L0 48 Z' fill='black'/%3E%3C/svg%3E");
+    mask-size: 100% 100%;
+    -webkit-mask-size: 100% 100%;
+    mask-repeat: repeat-x;
+    -webkit-mask-repeat: repeat-x;
+  }
+
+  /* Scalloped top edge */
+  .pastel-scalloped-top {
+    position: relative;
+  }
+  .pastel-scalloped-top::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: var(--scallop-fill, var(--color-background));
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 48' preserveAspectRatio='none'%3E%3Cpath d='M0 24 Q50 48 100 24 Q150 0 200 24 Q250 48 300 24 Q350 0 400 24 L400 0 L0 0 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 48' preserveAspectRatio='none'%3E%3Cpath d='M0 24 Q50 48 100 24 Q150 0 200 24 Q250 48 300 24 Q350 0 400 24 L400 0 L0 0 Z' fill='black'/%3E%3C/svg%3E");
+    mask-size: 100% 100%;
+    -webkit-mask-size: 100% 100%;
+    mask-repeat: repeat-x;
+    -webkit-mask-repeat: repeat-x;
+  }
+
+  /* Cloud/blob shape for mission blocks - organic rounded shape */
+  .pastel-cloud {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    padding: 48px 40px;
+  }
+
+  /* Scalloped frame around images */
+  .pastel-scalloped-frame {
+    border-radius: 45% 55% 55% 45% / 55% 45% 55% 45%;
+    overflow: hidden;
+  }
+{% endstyle %}

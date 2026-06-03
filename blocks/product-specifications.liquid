@@ -1,0 +1,399 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .product-specs-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .product-specs__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product-specs__divider-{{ ai_gen_id }} {
+    height: 1px;
+    background-color: var(--color-border, {{ block.settings.divider_color }});
+    margin: 8px 0;
+  }
+
+  .product-specs__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: {{ block.settings.spec_spacing }}px 24px;
+  }
+
+  .product-specs__label-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: var(--color-foreground, {{ block.settings.spec_label_color }});
+    font-weight: 600;
+  }
+
+  .product-specs__value-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: var(--color-foreground-muted, var(--color-foreground, {{ block.settings.spec_value_color }}));
+  }
+
+  .product-specs__show-more-{{ ai_gen_id }} {
+    margin-top: 12px;
+  }
+
+  .product-specs__show-more-link-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: var(--color-foreground-muted, {{ block.settings.show_more_color }});
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .product-specs__show-more-link-{{ ai_gen_id }}:hover {
+    opacity: 0.8;
+  }
+
+  .product-specs__hidden-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .product-specs__hidden-{{ ai_gen_id }}.active {
+    display: contents;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-specs__grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .product-specs__label-{{ ai_gen_id }} {
+      font-weight: 600;
+    }
+
+    .product-specs__value-{{ ai_gen_id }} {
+      margin-bottom: 8px;
+    }
+  }
+{% endstyle %}
+
+<product-specifications class="product-specs-{{ ai_gen_id }}" data-show-more-text="{{ block.settings.show_more_text }}" data-show-less-text="{{ block.settings.show_less_text }}" {{ block.shopify_attributes }}>
+  <div class="product-specs__container-{{ ai_gen_id }}">
+    {% if block.settings.show_divider %}
+      <div class="product-specs__divider-{{ ai_gen_id }}"></div>
+    {% endif %}
+
+    <div class="product-specs__grid-{{ ai_gen_id }}">
+      {% if block.settings.spec_1_label != blank %}
+        <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_1_label }}</div>
+        <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_1_value }}</div>
+      {% endif %}
+
+      {% if block.settings.spec_2_label != blank %}
+        <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_2_label }}</div>
+        <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_2_value }}</div>
+      {% endif %}
+
+      {% if block.settings.spec_3_label != blank %}
+        <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_3_label }}</div>
+        <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_3_value }}</div>
+      {% endif %}
+
+      {% if block.settings.spec_4_label != blank %}
+        <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_4_label }}</div>
+        <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_4_value }}</div>
+      {% endif %}
+
+      <div class="product-specs__hidden-{{ ai_gen_id }}">
+        {% if block.settings.spec_5_label != blank %}
+          <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_5_label }}</div>
+          <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_5_value }}</div>
+        {% endif %}
+
+        {% if block.settings.spec_6_label != blank %}
+          <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_6_label }}</div>
+          <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_6_value }}</div>
+        {% endif %}
+
+        {% if block.settings.spec_7_label != blank %}
+          <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_7_label }}</div>
+          <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_7_value }}</div>
+        {% endif %}
+
+        {% if block.settings.spec_8_label != blank %}
+          <div class="product-specs__label-{{ ai_gen_id }}">{{ block.settings.spec_8_label }}</div>
+          <div class="product-specs__value-{{ ai_gen_id }}">{{ block.settings.spec_8_value }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% assign has_hidden_specs = false %}
+    {% if block.settings.spec_5_label != blank or block.settings.spec_6_label != blank or block.settings.spec_7_label != blank or block.settings.spec_8_label != blank %}
+      {% assign has_hidden_specs = true %}
+    {% endif %}
+
+    {% if has_hidden_specs and block.settings.show_more_enabled %}
+      <div class="product-specs__show-more-{{ ai_gen_id }}">
+        <button class="product-specs__show-more-link-{{ ai_gen_id }}" data-show-more data-specs-show-more>
+          {{ block.settings.show_more_text }}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</product-specifications>
+
+<script>
+  (function() {
+    if (customElements.get('product-specifications')) return;
+
+    class ProductSpecifications extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.showMoreButton = this.querySelector('[data-specs-show-more]');
+        this.hiddenSpecs = this.querySelector('[class*="product-specs__hidden-"]');
+        this.showMoreText = this.dataset.showMoreText || 'Show More';
+        this.showLessText = this.dataset.showLessText || 'Show Less';
+
+        if (this.showMoreButton && this.hiddenSpecs) {
+          this.showMoreButton.addEventListener('click', this.toggleSpecs.bind(this));
+        }
+      }
+
+      toggleSpecs() {
+        const isExpanded = this.hiddenSpecs.classList.contains('active');
+
+        if (isExpanded) {
+          this.hiddenSpecs.classList.remove('active');
+          this.showMoreButton.textContent = this.showMoreText;
+        } else {
+          this.hiddenSpecs.classList.add('active');
+          this.showMoreButton.textContent = this.showLessText;
+        }
+      }
+    }
+
+    customElements.define('product-specifications', ProductSpecifications);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product specifications",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Divider"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "header",
+      "content": "Specifications"
+    },
+    {
+      "type": "range",
+      "id": "spec_spacing",
+      "label": "Vertical spacing",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "spec_label_color",
+      "label": "Label color",
+      "default": "#141414"
+    },
+    {
+      "type": "color",
+      "id": "spec_value_color",
+      "label": "Value color",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "header",
+      "content": "Specification 1"
+    },
+    {
+      "type": "text",
+      "id": "spec_1_label",
+      "label": "Label",
+      "default": "Outlet Type"
+    },
+    {
+      "type": "text",
+      "id": "spec_1_value",
+      "label": "Value",
+      "default": "Flush Mount"
+    },
+    {
+      "type": "header",
+      "content": "Specification 2"
+    },
+    {
+      "type": "text",
+      "id": "spec_2_label",
+      "label": "Label",
+      "default": "Frame Type"
+    },
+    {
+      "type": "text",
+      "id": "spec_2_value",
+      "label": "Value",
+      "default": "Framed"
+    },
+    {
+      "type": "header",
+      "content": "Specification 3"
+    },
+    {
+      "type": "text",
+      "id": "spec_3_label",
+      "label": "Label",
+      "default": "Color"
+    },
+    {
+      "type": "text",
+      "id": "spec_3_value",
+      "label": "Value",
+      "default": "Black"
+    },
+    {
+      "type": "header",
+      "content": "Specification 4"
+    },
+    {
+      "type": "text",
+      "id": "spec_4_label",
+      "label": "Label",
+      "default": "Material"
+    },
+    {
+      "type": "text",
+      "id": "spec_4_value",
+      "label": "Value",
+      "default": "Plastic"
+    },
+    {
+      "type": "header",
+      "content": "Specification 5"
+    },
+    {
+      "type": "text",
+      "id": "spec_5_label",
+      "label": "Label"
+    },
+    {
+      "type": "text",
+      "id": "spec_5_value",
+      "label": "Value"
+    },
+    {
+      "type": "header",
+      "content": "Specification 6"
+    },
+    {
+      "type": "text",
+      "id": "spec_6_label",
+      "label": "Label"
+    },
+    {
+      "type": "text",
+      "id": "spec_6_value",
+      "label": "Value"
+    },
+    {
+      "type": "header",
+      "content": "Specification 7"
+    },
+    {
+      "type": "text",
+      "id": "spec_7_label",
+      "label": "Label"
+    },
+    {
+      "type": "text",
+      "id": "spec_7_value",
+      "label": "Value"
+    },
+    {
+      "type": "header",
+      "content": "Specification 8"
+    },
+    {
+      "type": "text",
+      "id": "spec_8_label",
+      "label": "Label"
+    },
+    {
+      "type": "text",
+      "id": "spec_8_value",
+      "label": "Value"
+    },
+    {
+      "type": "header",
+      "content": "Show more"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_more_enabled",
+      "label": "Enable show more",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "show_more_text",
+      "label": "Show more text",
+      "default": "Show More"
+    },
+    {
+      "type": "text",
+      "id": "show_less_text",
+      "label": "Show less text",
+      "default": "Show Less"
+    },
+    {
+      "type": "color",
+      "id": "show_more_color",
+      "label": "Link color",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product specifications"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,895 @@
+
+
+{% liquid
+  assign product = closest.product
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+
+  assign variant = product.selected_or_first_available_variant
+  assign inventory_quantity = variant.inventory_quantity
+  assign inventory_policy = variant.inventory_policy
+
+  if variant.inventory_management == 'shopify'
+    assign inventory_managed = true
+  endif
+
+  if variant.quantity_rule.min > variant.inventory_quantity and inventory_managed and inventory_policy == 'deny'
+    assign quantity_rule_soldout = true
+  endif
+
+  if inventory_managed
+    if inventory_quantity <= 0 and inventory_policy == 'deny' or quantity_rule_soldout
+      assign can_buy_now = false
+    else
+      assign can_buy_now = true
+    endif
+  else
+    if product.selected_or_first_available_variant != null
+      assign can_buy_now = true
+    else
+      assign can_buy_now = false
+    endif
+  endif
+
+  assign price = variant.price | money
+%}
+
+<style>
+  [data-block-id="{{ block.id }}"] .buy-now-with-price__button {
+    {% if block.settings.use_custom_border_radius %}border-radius: {{ block.settings.border_radius }}px !important;{% endif %}
+    {% if block.settings.button_background_color != blank %}
+      --button-background-color: {{ block.settings.button_background_color }} !important;
+      background-color: {{ block.settings.button_background_color }} !important;
+    {% endif %}
+    {% if block.settings.button_text_color != blank %}
+      --button-color: {{ block.settings.button_text_color }} !important;
+      color: {{ block.settings.button_text_color }} !important;
+    {% endif %}
+  }
+  
+  {% if block.settings.button_hover_background_color != blank %}
+  [data-block-id="{{ block.id }}"] .buy-now-with-price__button:hover:not(:disabled) {
+    background-color: {{ block.settings.button_hover_background_color }} !important;
+  }
+  {% endif %}
+  
+  {% if block.settings.button_hover_text_color != blank %}
+  [data-block-id="{{ block.id }}"] .buy-now-with-price__button:hover:not(:disabled) {
+    color: {{ block.settings.button_hover_text_color }} !important;
+  }
+  {% endif %}
+  
+  @media screen and (max-width: 749px) {
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__content,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__text,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__price {
+      font-size: {{ block.settings.mobile_font_size }}px !important;
+    }
+    
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button {
+      padding: {{ block.settings.mobile_padding_vertical }}px {{ block.settings.mobile_padding_horizontal }}px !important;
+      min-height: calc({{ block.settings.mobile_padding_vertical }}px * 2 + 1em) !important;
+    }
+  }
+  
+  @media screen and (min-width: 750px) {
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__content,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__text,
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button .buy-now-with-price__price {
+      font-size: {{ block.settings.desktop_font_size }}px !important;
+    }
+    
+    [data-block-id="{{ block.id }}"] .buy-now-with-price__button {
+      padding: {{ block.settings.desktop_padding_vertical }}px {{ block.settings.desktop_padding_horizontal }}px !important;
+      min-height: calc({{ block.settings.desktop_padding_vertical }}px * 2 + 1em) !important;
+    }
+  }
+
+  /* Wiggle animation */
+  {% if block.settings.enable_hover_wiggle or block.settings.auto_wiggle_interval != 'off' %}
+  {% assign wiggle_intensity = block.settings.wiggle_intensity | default: 'normal' %}
+  
+  {% if wiggle_intensity == 'subtle' %}
+    /* Subtle wiggle - minimal movement */
+    @keyframes gentle-wiggle-{{ block.id }} {
+      0%, 100% { transform: rotate(0deg) translateY(-1px); }
+      25% { transform: rotate(-0.25deg) translateY(-1.5px); }
+      50% { transform: rotate(0deg) translateY(-1px); }
+      75% { transform: rotate(0.25deg) translateY(-1.5px); }
+    }
+  {% elsif wiggle_intensity == 'pronounced' %}
+    /* Pronounced wiggle - more movement */
+    @keyframes gentle-wiggle-{{ block.id }} {
+      0%, 100% { transform: rotate(0deg) translateY(-1px); }
+      25% { transform: rotate(-1.5deg) translateY(-3px); }
+      50% { transform: rotate(0deg) translateY(-1px); }
+      75% { transform: rotate(1.5deg) translateY(-3px); }
+    }
+  {% else %}
+    /* Normal wiggle - balanced movement */
+    @keyframes gentle-wiggle-{{ block.id }} {
+      0%, 100% { transform: rotate(0deg) translateY(-1px); }
+      25% { transform: rotate(-0.5deg) translateY(-2px); }
+      50% { transform: rotate(0deg) translateY(-1px); }
+      75% { transform: rotate(0.5deg) translateY(-2px); }
+    }
+  {% endif %}
+
+  {% if block.settings.enable_hover_wiggle %}
+  [data-block-id="{{ block.id }}"].buy-now-with-price-wrapper--wiggle .buy-now-with-price__button:hover:not(:disabled) {
+    animation: gentle-wiggle-{{ block.id }} 0.6s ease-in-out;
+  }
+  {% endif %}
+
+  [data-block-id="{{ block.id }}"] .buy-now-with-price__button.auto-wiggle:not(:disabled) {
+    animation: gentle-wiggle-{{ block.id }} 0.6s ease-in-out;
+  }
+  {% endif %}
+</style>
+
+<span
+  class="buy-now-with-price-block"
+  {{ block.shopify_attributes }}
+>
+  {%- if product != blank -%}
+    {%- assign product_form_id = 'BuyNowWithPrice-ProductForm-' | append: block.id -%}
+    <product-form-component
+      data-section-id="{{ section.id }}"
+      data-product-id="{{ product.id }}"
+      data-product-url="{{ product.url }}"
+      on:submit="/handleSubmit"
+      data-quantity-default="{% if variant.quantity_rule.min %}{{ variant.quantity_rule.min }}{% else %}1{% endif %}"
+    >
+      <div
+        class="visually-hidden"
+        aria-live="assertive"
+        role="status"
+        aria-atomic="true"
+        ref="liveRegion"
+      ></div>
+      {%- form 'product', product, id: product_form_id -%}
+        <input
+          type="hidden"
+          name="id"
+          ref="variantId"
+          value="{{ variant.id }}"
+        >
+        <div class="buy-now-with-price-wrapper{% if block.settings.enable_hover_wiggle %} buy-now-with-price-wrapper--wiggle{% endif %}" data-block-id="{{ block.id }}">
+          <buy-now-with-price-button data-auto-wiggle-interval="{{ block.settings.auto_wiggle_interval }}">
+            <button
+              type="button"
+              name="buy_now"
+              ref="buyNowButton"
+              class="buy-now-with-price__button color-{{ block.settings.color_scheme }}"
+              {% unless can_buy_now %}
+                disabled
+              {% endunless %}
+            >
+              <span class="buy-now-with-price__content">
+                <span class="buy-now-with-price__text">{{ block.settings.button_text }}</span>
+                {% if block.settings.show_price %}
+                  <span class="buy-now-with-price__separator">{{ block.settings.separator }}</span>
+                  <span class="buy-now-with-price__price" ref="buttonPrice">{{ price }}</span>
+                {% endif %}
+                {% if block.settings.icon_type == 'arrow' %}
+                  <svg class="buy-now-with-price__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                {% elsif block.settings.icon_type == 'custom' and block.settings.custom_icon != blank %}
+                  <span class="buy-now-with-price__icon buy-now-with-price__icon--custom">{{ block.settings.custom_icon }}</span>
+                {% endif %}
+              </span>
+            </button>
+          </buy-now-with-price-button>
+        </div>
+      {%- endform -%}
+    </product-form-component>
+  {%- else -%}
+    <div class="buy-now-with-price-wrapper{% if block.settings.enable_hover_wiggle %} buy-now-with-price-wrapper--wiggle{% endif %}" data-block-id="{{ block.id }}">
+      <button
+        type="button"
+        name="buy_now"
+        class="buy-now-with-price__button color-{{ block.settings.color_scheme }}"
+        disabled
+      >
+        <span class="buy-now-with-price__content">
+          <span class="buy-now-with-price__text">{{ block.settings.button_text }}</span>
+        </span>
+      </button>
+    </div>
+  {%- endif -%}
+</span>
+
+{% stylesheet %}
+  .buy-now-with-price-block,
+  .buy-now-with-price-wrapper,
+  buy-now-with-price-button {
+    width: 100%;
+    display: block;
+  }
+
+  .buy-now-with-price__button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: var(--style-border-radius-buttons-primary);
+    background: var(--button-background-color);
+    color: var(--button-color);
+  }
+
+  .buy-now-with-price__button[class*="color-"] {
+    --button-color: var(--color-primary-button-text);
+    --button-background-color: var(--color-primary-button-background);
+    --button-border-color: var(--color-primary-button-border);
+  }
+  
+  .buy-now-with-price__button p {
+    margin: 0;
+    padding: 0;
+    display: inline;
+  }
+
+  .buy-now-with-price__button[class*="color-"]:hover:not(:disabled) {
+    --button-color: var(--color-primary-button-hover-text);
+    --button-background-color: var(--color-primary-button-hover-background);
+    --button-border-color: var(--color-primary-button-hover-border);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .buy-now-with-price__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .buy-now-with-price__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .buy-now-with-price__text {
+    white-space: nowrap;
+  }
+
+  .buy-now-with-price__separator {
+    opacity: 0.6;
+  }
+
+  .buy-now-with-price__price {
+    font-weight: 700;
+  }
+
+  .buy-now-with-price__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .buy-now-with-price__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .buy-now-with-price__icon--custom {
+    color: currentColor;
+  }
+
+  .buy-now-with-price__icon--custom svg {
+    fill: currentColor;
+  }
+
+  .buy-now-with-price__button:hover:not(:disabled) .buy-now-with-price__icon {
+    transform: translateX(4px);
+  }
+
+  /* Inline layout when both add-to-cart and buy-now buttons are present */
+  .add-to-cart-with-price-block + .buy-now-with-price-block,
+  .buy-now-with-price-block + .add-to-cart-with-price-block {
+    margin-top: 12px;
+  }
+
+  @media screen and (min-width: 750px) {
+    /* Side by side layout on desktop */
+    .add-to-cart-with-price-block:has(+ .buy-now-with-price-block),
+    .buy-now-with-price-block:has(+ .add-to-cart-with-price-block) {
+      display: inline-block;
+      width: calc(50% - 6px);
+    }
+
+    .add-to-cart-with-price-block + .buy-now-with-price-block {
+      margin-top: 0;
+      margin-left: 12px;
+    }
+
+    .buy-now-with-price-block + .add-to-cart-with-price-block {
+      margin-top: 0;
+      margin-left: 12px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .buy-now-with-price__content {
+      gap: 6px;
+    }
+
+    .buy-now-with-price__icon,
+    .buy-now-with-price__icon svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  // Fallback money formatter if Shopify.formatMoney is not available
+  function formatMoneyBuyNow(cents, format) {
+    if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
+      try {
+        return Shopify.formatMoney(cents, format);
+      } catch(e) {
+        console.warn('Shopify.formatMoney failed:', e);
+      }
+    }
+    
+    // Simple fallback formatter
+    const amount = (cents / 100).toFixed(2);
+    const amountNoDecimals = Math.round(cents / 100).toString();
+    const amountWithComma = amount.replace('.', ',');
+    
+    // Use format if provided, otherwise try to detect currency
+    let result = format || amount;
+    
+    if (format) {
+      result = format
+        .replace(/\{\{\s*amount\s*\}\}/g, amount)
+        .replace(/\{\{\s*amount_no_decimals\s*\}\}/g, amountNoDecimals)
+        .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/g, amountWithComma);
+    }
+    
+    // If result is just the number (no currency symbol), try to get currency from page
+    if (!result.match(/[^\d\s.,]/)) {
+      let currencySymbol = null;
+      
+      // Try Shopify currency object
+      if (typeof Shopify !== 'undefined' && Shopify.currency && Shopify.currency.active) {
+        const currencyMap = {
+          'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CAD': 'C$', 'AUD': '$',
+          'CHF': 'CHF', 'CNY': '¥', 'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł',
+          'RUB': '₽', 'INR': '₹', 'BRL': 'R$', 'ZAR': 'R', 'MXN': '$', 'KRW': '₩'
+        };
+        currencySymbol = currencyMap[Shopify.currency.active] || Shopify.currency.active;
+      }
+      
+      // Try to extract from existing price on page
+      if (!currencySymbol) {
+        const existingPrice = document.querySelector('.price:not(.forge-bundle-price-display .price), .price-item, .product__price');
+        if (existingPrice && existingPrice.textContent) {
+          const priceText = existingPrice.textContent.trim();
+          const currencyMatch = priceText.match(/^([^\d\s.,]+)|([^\d\s.,]+)$/);
+          if (currencyMatch) {
+            currencySymbol = currencyMatch[1] || currencyMatch[2];
+          }
+        }
+      }
+      
+      if (currencySymbol) {
+        result = currencySymbol + result;
+      }
+    }
+    
+    return result;
+  }
+
+  class BuyNowWithPriceButton extends HTMLElement {
+    constructor() {
+      super();
+      this.bundleQuantity = null;
+      this.originalPrice = null;
+    }
+
+    connectedCallback() {
+      const button = this.querySelector('[ref="buyNowButton"]');
+      if (!button) return;
+
+      button.addEventListener('click', this.handleBuyNow.bind(this));
+
+      // Listen for variant changes to update price
+      const closestSection = this.closest('.shopify-section');
+      if (closestSection) {
+        closestSection.addEventListener('variant:update', this.updatePrice);
+      }
+
+      // Listen for bundle selection events
+      document.addEventListener('forge:bundleSelected', this.handleBundleSelection);
+
+      // Store original price for reference
+      const priceElement = this.querySelector('[ref="buttonPrice"]');
+      if (priceElement) {
+        this.originalPrice = priceElement.textContent;
+      }
+
+      // Check if there's already a bundle selection
+      if (window.forgeBundleSelection) {
+        this.handleBundleSelection({ detail: window.forgeBundleSelection });
+      }
+
+      // Setup auto-wiggle if enabled
+      setTimeout(() => {
+        this.setupAutoWiggle();
+      }, 0);
+    }
+
+    disconnectedCallback() {
+      const closestSection = this.closest('.shopify-section');
+      if (closestSection) {
+        closestSection.removeEventListener('variant:update', this.updatePrice);
+      }
+      document.removeEventListener('forge:bundleSelected', this.handleBundleSelection);
+
+      // Clear auto-wiggle interval
+      if (this.wiggleInterval) {
+        clearInterval(this.wiggleInterval);
+      }
+    }
+
+    setupAutoWiggle() {
+      const autoWiggleInterval = this.getAttribute('data-auto-wiggle-interval');
+      
+      if (!autoWiggleInterval || autoWiggleInterval === 'off') return;
+
+      const intervalSeconds = parseInt(autoWiggleInterval);
+      if (Number.isNaN(intervalSeconds)) return;
+
+      // Start the auto-wiggle interval
+      this.wiggleInterval = setInterval(() => {
+        const button = this.querySelector('.buy-now-with-price__button');
+        if (!button || button.hasAttribute('disabled') || button.disabled) return;
+        
+        // Force reflow
+        button.classList.remove('auto-wiggle');
+        void button.offsetWidth;
+        button.classList.add('auto-wiggle');
+        
+        // Remove the class after animation completes (600ms)
+        setTimeout(() => {
+          if (button) button.classList.remove('auto-wiggle');
+        }, 600);
+      }, intervalSeconds * 1000);
+    }
+
+    handleBundleSelection = (event) => {
+      const { quantity, discountedTotal } = event.detail;
+      
+      // Store bundle quantity
+      this.bundleQuantity = quantity;
+
+      // Update displayed price to bundle total (use >= 0 to handle free items)
+      const priceElement = this.querySelector('[ref="buttonPrice"]');
+      if (priceElement && typeof discountedTotal === 'number' && discountedTotal >= 0) {
+        const moneyFormat = window.theme && window.theme.moneyFormat ? window.theme.moneyFormat : null;
+        const formattedPrice = formatMoneyBuyNow(discountedTotal, moneyFormat);
+        priceElement.textContent = formattedPrice;
+        
+        // Add visual indicator that this is a bundle price
+        priceElement.classList.add('bundle-price-active');
+      }
+
+      // Store bundle data as data attributes on the button
+      const button = this.querySelector('.buy-now-with-price__button');
+      if (button) {
+        button.dataset.bundleQuantity = quantity;
+        button.dataset.bundlePrice = discountedTotal;
+        button.dataset.bundleActive = 'true';
+      }
+    };
+
+    handleBuyNow(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const button = event.currentTarget;
+      if (button.disabled) return;
+
+      // Get the variant ID from the form
+      const form = this.closest('form');
+      if (!form) return;
+      
+      const variantIdInput = form.querySelector('[name="id"]');
+      const variantId = variantIdInput ? variantIdInput.value : null;
+
+      if (!variantId) {
+        console.error('No variant ID found');
+        return;
+      }
+
+      // Priority order for getting quantity:
+      // 1. Bundle selection (from our bundle block)
+      // 2. Data attribute on button (set by bundle selection)
+      // 3. Global bundle selection object
+      // 4. Form quantity input
+      // 5. External quantity inputs
+      // 6. Default to 1
+      
+      let quantity = 1;
+      
+      // Check bundle selection first (highest priority)
+      if (this.bundleQuantity && this.bundleQuantity > 0) {
+        quantity = this.bundleQuantity;
+      } else if (button.dataset.bundleQuantity) {
+        quantity = parseInt(button.dataset.bundleQuantity) || 1;
+      } else if (window.forgeBundleSelection && window.forgeBundleSelection.quantity) {
+        quantity = window.forgeBundleSelection.quantity;
+      } else {
+        // Fall back to traditional quantity input discovery
+        const quantitySelectors = [
+          '[name="quantity"]',
+          '.quantity-selector input',
+          '.quantity__input',
+          '[data-quantity-input]',
+          '.product-form__quantity input'
+        ];
+        
+        // Try current form first
+        for (const selector of quantitySelectors) {
+          const input = form.querySelector(selector);
+          if (input && input.value) {
+            quantity = parseInt(input.value) || 1;
+            break;
+          }
+        }
+        
+        // If still 1, try broader search
+        if (quantity === 1) {
+          const mainProductForm = document.querySelector('form[id^="BuyButtons-ProductForm-"]');
+          if (mainProductForm) {
+            const mainQuantityInput = mainProductForm.querySelector('input[name="quantity"]');
+            if (mainQuantityInput) {
+              quantity = parseInt(mainQuantityInput.value) || 1;
+            }
+          }
+        }
+        
+        // Final fallback: any quantity input on page
+        if (quantity === 1) {
+          for (const selector of quantitySelectors) {
+            const input = document.querySelector(selector);
+            if (input && input.value) {
+              quantity = parseInt(input.value) || 1;
+              break;
+            }
+          }
+        }
+        
+        // Check bundle wrapper data attributes as last resort
+        if (quantity === 1) {
+          const bundleWrapper = document.querySelector('.forge-bundle-wrapper');
+          if (bundleWrapper && bundleWrapper.dataset.selectedQuantity) {
+            quantity = parseInt(bundleWrapper.dataset.selectedQuantity) || 1;
+          }
+        }
+      }
+
+      // Disable button and show loading state
+      button.disabled = true;
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span class="buy-now-with-price__content">Processing...</span>';
+
+      // Add item to cart via AJAX, then redirect to checkout
+      const formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', quantity);
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Redirect to checkout
+          window.location.href = '/checkout';
+        })
+        .catch(error => {
+          console.error('Error adding to cart:', error);
+          // Re-enable button on error
+          button.disabled = false;
+          button.innerHTML = originalText;
+          alert('Unable to add item to cart. Please try again.');
+        });
+    }
+
+    updatePrice = (event) => {
+      if (event.detail.data?.newProduct) {
+        const productFormComponent = this.closest('product-form-component');
+        if (productFormComponent) productFormComponent.dataset.productId = event.detail.data.newProduct.id;
+      } else {
+        const productFormComponent = this.closest('product-form-component');
+        if (productFormComponent && event.detail.data?.productId !== productFormComponent.dataset.productId) return;
+      }
+
+      // Skip if we have an active bundle selection
+      if (this.bundleQuantity && window.forgeBundleSelection) {
+        // Recalculate bundle price with new variant price
+        const newVariantPrice = event.detail?.resource?.price;
+        if (newVariantPrice && window.forgeBundleSelection) {
+          const bundle = window.forgeBundleSelection;
+          // Update unit price and recalculate
+          const newDiscountedTotal = (newVariantPrice / bundle.unitPrice) * bundle.discountedTotal;
+          
+          const priceElement = this.querySelector('[ref="buttonPrice"]');
+          if (priceElement) {
+            const moneyFormat = window.theme && window.theme.moneyFormat ? window.theme.moneyFormat : null;
+            priceElement.textContent = formatMoneyBuyNow(newDiscountedTotal, moneyFormat);
+          }
+        }
+        return;
+      }
+
+      const priceElement = this.querySelector('[ref="buttonPrice"]');
+      if (!priceElement) return;
+
+      // Get the new price from the variant
+      if (event.detail && event.detail.resource && event.detail.resource.price) {
+        const moneyFormat = window.theme && window.theme.moneyFormat ? window.theme.moneyFormat : null;
+        const newPrice = formatMoneyBuyNow(event.detail.resource.price, moneyFormat);
+        priceElement.textContent = newPrice;
+      }
+    };
+  }
+
+  if (!customElements.get('buy-now-with-price-button')) {
+    customElements.define('buy-now-with-price-button', BuyNowWithPriceButton);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Buy Now with Price",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button Text"
+    },
+    {
+      "type": "richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "<p>BUY NOW</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price on button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator",
+      "default": "•",
+      "info": "Character between text and price"
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "arrow",
+          "label": "Arrow"
+        },
+        {
+          "value": "custom",
+          "label": "Custom SVG"
+        }
+      ],
+      "default": "arrow"
+    },
+    {
+      "type": "html",
+      "id": "custom_icon",
+      "label": "Custom SVG code",
+      "info": "Paste your SVG code here. Get icons from [Google Material Icons](https://fonts.google.com/icons)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_wiggle",
+      "label": "Enable hover wiggle animation",
+      "default": false,
+      "info": "Adds a gentle wiggle effect when hovering over the button"
+    },
+    {
+      "type": "select",
+      "id": "auto_wiggle_interval",
+      "label": "Auto wiggle interval",
+      "options": [
+        {
+          "value": "off",
+          "label": "Off"
+        },
+        {
+          "value": "5",
+          "label": "Every 5 seconds"
+        },
+        {
+          "value": "10",
+          "label": "Every 10 seconds"
+        }
+      ],
+      "default": "off",
+      "info": "Automatically wiggle the button at regular intervals to grab attention"
+    },
+    {
+      "type": "select",
+      "id": "wiggle_intensity",
+      "label": "Wiggle intensity",
+      "options": [
+        {
+          "value": "subtle",
+          "label": "Subtle (Less movement)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "pronounced",
+          "label": "Pronounced (More movement)"
+        }
+      ],
+      "default": "normal",
+      "info": "Controls how much the button moves during wiggle animation"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Background color",
+      "info": "Uses color scheme if not set"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "info": "Uses color scheme if not set"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background_color",
+      "label": "Hover background color",
+      "info": "Uses color scheme if not set"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "info": "Uses color scheme if not set"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_border_radius",
+      "label": "Use custom border radius",
+      "default": false,
+      "info": "If disabled, border radius will inherit from parent settings"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Button Size"
+    },
+    {
+      "type": "paragraph",
+      "content": "Mobile Settings"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Mobile font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_vertical",
+      "label": "Mobile vertical padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_horizontal",
+      "label": "Mobile horizontal padding",
+      "min": 12,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "paragraph",
+      "content": "Desktop Settings"
+    },
+    {
+      "type": "range",
+      "id": "desktop_font_size",
+      "label": "Desktop font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_vertical",
+      "label": "Desktop vertical padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_horizontal",
+      "label": "Desktop horizontal padding",
+      "min": 12,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+  ],
+  "presets": [
+    {
+      "name": "Buy Now with Price",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
+
