@@ -304,10 +304,6 @@
   animation: btnAppearCenter 0.15s ease-in-out forwards;
 }
 
-/* Add bottom padding to body when sticky ATC is active to prevent content from being covered */
-body:has(.sticky-atc--active) {
-  padding-bottom: 100px;
-}
 
 .quick-add-modal__content .sticky-atc {
   display: none;
@@ -342,10 +338,6 @@ button.sticky-atc-close:before {
     width: 100% !important;
   }
 
-  /* Add bottom padding to body when sticky ATC is active to prevent content from being covered */
-  body:has(.sticky-atc--active) {
-    padding-bottom: 160px;
-  }
 
   .sticky-atc-container {
     padding: 12px !important;
