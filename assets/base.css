@@ -4353,3 +4353,54 @@ text-component {
 body:has(._rsi-buy-now-button-floating){
   padding-bottom: 80px;
 }
+
+/* PawSafe product conversion layout */
+.pawsafe-product-conversion .pawsafe-product-conversion__header,
+.pawsafe-product-conversion .pawsafe-product-conversion__trust,
+.pawsafe-product-conversion .pawsafe-product-conversion__grid {
+  box-sizing: border-box;
+  width: min(100%, 1100px);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 28px;
+  padding-left: 28px;
+}
+
+.pawsafe-product-conversion .pawsafe-product-conversion__header {
+  max-width: none;
+}
+
+.pawsafe-product-conversion .pawsafe-product-conversion__header h2,
+.pawsafe-product-conversion .pawsafe-product-conversion__header p {
+  max-width: 760px;
+}
+
+.pawsafe-product-conversion .pawsafe-product-conversion__faq,
+.pawsafe-product-conversion .pawsafe-product-conversion__reviews {
+  box-sizing: border-box;
+  width: min(100%, 980px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.pawsafe-product-conversion .pawsafe-product-conversion__faq {
+  padding: 18px 28px 8px;
+}
+
+.pawsafe-product-conversion .pawsafe-product-conversion__reviews {
+  margin-top: 34px;
+}
+
+@media screen and (max-width: 749px) {
+  .pawsafe-product-conversion .pawsafe-product-conversion__header,
+  .pawsafe-product-conversion .pawsafe-product-conversion__trust,
+  .pawsafe-product-conversion .pawsafe-product-conversion__grid {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .pawsafe-product-conversion .pawsafe-product-conversion__faq {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}

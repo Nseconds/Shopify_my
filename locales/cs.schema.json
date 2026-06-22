@@ -505,7 +505,7 @@
     "media_fit": "Přizpůsobení multimédií",
     "scroll_speed": "Čas do dalšího oznámení",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "Zobrazit „Powered by Forge AI on Shopify“",
+    "show_powered_by_shopify": "Zobrazit „Powered by PawSafe Store on Shopify“",
     "gift_card_form": "Formulář dárkové karty",
     "seller_note_open_by_default": "Otevřít poznámku pro prodejce ve výchozím nastavení",
     "add_to_cart_animation": "Přidat do košíku",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

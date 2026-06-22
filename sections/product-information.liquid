@@ -30,12 +30,10 @@
     endif
   endif
 
-  case section.settings.content_width
-    when 'content-center-aligned'
-      assign content_width = 'page-width'
-    when 'content-full-width'
-      assign content_width = 'full-width'
-  endcase
+  assign content_width = 'page-width'
+  if section.settings.content_width == 'content-full-width' or section.settings.content_width == 'full-width'
+    assign content_width = 'full-width'
+  endif
 %}
 
 <script type="application/ld+json">
@@ -123,6 +121,7 @@
     order: 0;
     width: 0;
     min-width: 100%;
+    overflow: hidden;
   }
 
   /* Mobile styles */

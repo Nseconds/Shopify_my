@@ -1,7 +1,7 @@
 
 {%- doc -%}
   Displays payment method icons with an optional security icon and heading.
-  Perfect for showing supported payment methods and building trust.
+  Use Shopify mode for admin-enabled methods, or custom mode to promote PayPal only.
 {%- enddoc -%}
 
 {% liquid
@@ -58,10 +58,6 @@
           {% if block.settings.show_amex %}{{ 'american_express' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
           {% if block.settings.show_discover %}{{ 'discover' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
           {% if block.settings.show_paypal %}{{ 'paypal' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
-          {% if block.settings.show_apple_pay %}{{ 'apple_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
-          {% if block.settings.show_google_pay %}{{ 'google_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
-          {% if block.settings.show_shop_pay %}{{ 'shopify_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
-          {% if block.settings.show_amazon_pay %}{{ 'amazon_pay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
           {% if block.settings.show_klarna %}{{ 'klarna' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
           {% if block.settings.show_afterpay %}{{ 'afterpay' | payment_type_svg_tag: class: 'payment-icons__icon' }}{% endif %}
         </div>
@@ -176,19 +172,19 @@
       "type": "checkbox",
       "id": "show_visa",
       "label": "Visa",
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
       "id": "show_mastercard",
       "label": "Mastercard",
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
       "id": "show_amex",
       "label": "American Express",
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
@@ -201,30 +197,6 @@
       "id": "show_paypal",
       "label": "PayPal",
       "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_apple_pay",
-      "label": "Apple Pay",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_google_pay",
-      "label": "Google Pay",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_shop_pay",
-      "label": "Shop Pay",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_amazon_pay",
-      "label": "Amazon Pay",
-      "default": false
     },
     {
       "type": "checkbox",
@@ -247,7 +219,7 @@
     {
       "type": "richtext",
       "id": "heading",
-      "label": "Heading text",
+      "label": "Heading text"
     },
     {
       "type": "checkbox",
@@ -348,4 +320,3 @@
   ]
 }
 {% endschema %}
-

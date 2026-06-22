@@ -1,127 +1,93 @@
-<div class="custom-announcement-wrapper" style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+{% liquid
+  assign promo_product = collections.all.products.first
+  assign promo_shop_url = routes.all_products_collection_url
+  if promo_product != blank
+    assign promo_shop_url = promo_product.url
+  endif
+%}
+
+<div class="custom-announcement-wrapper" style="color: {{ section.settings.text_color }};">
   <div class="custom-announcement-container">
-    
-    <!-- Left Text & Icon -->
-    <span class="announcement-text-left">
-      <span class="announcement-icon">🐾</span> 
-      {{ section.settings.text_left }}
+    <span class="announcement-text-center">
+      10% off your first order with code WELCOME10
     </span>
-
-    <!-- Countdown Timer Box -->
-    <div class="announcement-timer" id="announcement-countdown" style="background-color: {{ section.settings.timer_bg_color }};">
-      00:00:00
-    </div>
-
-    <!-- Right Text -->
-    <span class="announcement-text-right">
-      {{ section.settings.text_right }}
-    </span>
-    
+    <span class="custom-announcement-divider" aria-hidden="true">|</span>
+    <a class="custom-announcement-link" href="{{ promo_shop_url }}">Shop Now</a>
   </div>
 </div>
 
 <style>
   .custom-announcement-wrapper {
     width: 100%;
-    padding: 10px 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 10px 16px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 800;
     text-align: center;
+    letter-spacing: .02em;
+    background: linear-gradient(90deg, #10281f, #1f4a3d);
   }
   .custom-announcement-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
   }
-  .announcement-icon {
-    margin-right: 5px;
-    font-size: 16px;
+  .announcement-text-center {
+    display: inline-block;
+    max-width: 100%;
+    line-height: 1.35;
+    white-space: normal;
   }
-  .announcement-timer {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-variant-numeric: tabular-nums;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+  .custom-announcement-divider {
+    display: inline-block;
+    margin: 0 8px;
+    color: rgba(255, 255, 255, 0.58);
+  }
+  .custom-announcement-link {
+    color: #f7cf7a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+  .custom-announcement-link:hover {
+    color: #ffe5a6;
   }
   @media (max-width: 768px) {
-    .custom-announcement-container {
-      gap: 8px;
-      font-size: 12px;
-    }
-    .announcement-timer {
+    .custom-announcement-wrapper {
       font-size: 11px;
+      padding: 8px 10px;
+    }
+    .custom-announcement-container {
+      flex-wrap: wrap;
+      gap: 0 6px;
+      row-gap: 2px;
+    }
+    .announcement-text-center {
+      flex: 1 1 100%;
+    }
+    .custom-announcement-divider {
+      display: none;
     }
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    function updateTimer() {
-      const now = new Date();
-      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      const diff = tomorrow - now;
-
-      if (diff <= 0) {
-        document.getElementById('announcement-countdown').innerHTML = "00:00:00";
-        return;
-      }
-
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      const displayHours = hours < 10 ? '0' + hours : hours;
-      const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
-      const displaySeconds = seconds < 10 ? '0' + seconds : seconds;
-
-      document.getElementById('announcement-countdown').innerHTML = `${displayHours}:${displayMinutes}:${displaySeconds}`;
-    }
-
-    updateTimer();
-    setInterval(updateTimer, 1000);
-  });
-</script>
 
 {% schema %}
 {
   "name": "Custom Announcement Bar",
   "settings": [
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background Color",
-      "default": "#1e7145"
+      "type": "textarea",
+      "id": "announcement_text",
+      "label": "Announcement Text",
+      "default": "10% off your first order with code WELCOME10 | Shop Now"
     },
     {
       "type": "color",
       "id": "text_color",
       "label": "Text Color",
       "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "timer_bg_color",
-      "label": "Timer Background",
-      "default": "#144d2f"
-    },
-    {
-      "type": "text",
-      "id": "text_left",
-      "label": "Left Text",
-      "default": "Keep your pet safe on every journey"
-    },
-    {
-      "type": "text",
-      "id": "text_right",
-      "label": "Right Text",
-      "default": "Free worldwide shipping on all orders"
     }
   ],
   "presets": [

@@ -1,26 +1,38 @@
-<div class="pawsafe-details-wrapper">
-  <!-- 1. Eyebrow Category -->
+{% liquid
+  assign default_variant = product.selected_or_first_available_variant
+  assign default_color = default_variant.option1 | default: default_variant.title
+  assign single_total = 1999
+  assign duo_total = 2999
+  assign family_total = 3999
+%}
+
+<div
+  class="pawsafe-details-wrapper"
+  data-pawsafe-product
+  data-money-format="{{ shop.money_format | escape }}"
+>
   <div class="pawsafe-eyebrow-row">
     <span class="pawsafe-eyebrow">Pet Safety Essentials</span>
   </div>
 
-  <!-- 2. Main Title -->
-  <h1 class="pawsafe-main-title">Premium Car Safety Harness</h1>
+  <h1 class="pawsafe-main-title">Adjustable Pet Car Seat Belt for Dogs &amp; Cats</h1>
 
-  <!-- Rating Stars -->
-  <div class="pawsafe-rating-row">
-    <span class="pawsafe-stars">★★★★★</span>
-    <span class="pawsafe-reviews-count">4.9 (999+ REVIEWS)</span>
+  <div class="pawsafe-review-badge-container">
+    {% if product.metafields.judgeme.badge %}
+      <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">{{ product.metafields.judgeme.badge }}</div>
+    {% else %}
+      <div class="pawsafe-static-stars">
+        <span class="pawsafe-stars-gold">★★★★★</span>
+        <span class="pawsafe-stars-count">5.0 (3 reviews)</span>
+      </div>
+    {% endif %}
   </div>
 
-  <!-- 3. Pricing Display -->
   <div class="pawsafe-price-row">
-    <span class="pawsafe-price-current">$24.99</span>
-    <span class="pawsafe-price-compare">$39.99</span>
-    <span class="pawsafe-save-badge">SAVE 38%</span>
+    <span class="pawsafe-price-current">{{ default_variant.price | money }}</span>
+    <span class="pawsafe-price-note">Single belt price</span>
   </div>
 
-  <!-- Custom form component wrapper -->
   <product-form-component
     data-section-id="{{ section.id }}"
     data-product-id="{{ product.id }}"
@@ -28,426 +40,721 @@
     data-quantity-default="1"
   >
     <div class="visually-hidden" ref="liveRegion" role="status"></div>
-    
+
     {%- form 'product', product, id: 'pawsafe-product-form', class: 'pawsafe-form-element', data-type: 'add-to-cart-form' -%}
-      {% liquid
-        assign first_variant = product.selected_or_first_available_variant
-        assign default_variant = first_variant
-        for v in product.variants
-          assign title_down = v.title | downcase
-          if title_down contains 'army' or title_down contains 'green'
-            assign default_variant = v
-          endif
-        endfor
-      %}
-      
       <input type="hidden" name="id" ref="variantId" id="pawsafe-variant-id" value="{{ default_variant.id }}">
-      <input type="hidden" name="properties[Size]" id="pawsafe-size-property" value="S (0-5kg)">
-      <input type="hidden" name="quantity" value="1">
+      <input type="hidden" name="quantity" id="pawsafe-quantity" value="1">
 
-      <!-- Size pill selector -->
       <div class="pawsafe-selector-group">
-        <label class="pawsafe-selector-label">Size</label>
-        <div class="pawsafe-pills-row">
-          <button type="button" class="pawsafe-size-pill selected" data-value="S (0-5kg)">S (0-5kg)</button>
-          <button type="button" class="pawsafe-size-pill" data-value="M (5-15kg)">M (5-15kg)</button>
-          <button type="button" class="pawsafe-size-pill" data-value="L (15-30kg)">L (15-30kg)</button>
-          <button type="button" class="pawsafe-size-pill" data-value="XL (30kg+)">XL (30kg+)</button>
-        </div>
-      </div>
-
-      <!-- Color pill selector -->
-      <div class="pawsafe-selector-group">
-        <label class="pawsafe-selector-label">Color — <span id="selected-color-text" class="pawsafe-selected-color-name">Army Green</span></label>
+        <label class="pawsafe-selector-label">
+          Choose Color:
+          <span id="selected-color-text" class="pawsafe-selected-color-name">{{ default_color }}</span>
+        </label>
         <div class="pawsafe-color-swatches-row">
-          <button type="button" class="pawsafe-swatch-btn selected" data-value="Army Green" title="Army Green" style="background-color: #3c4f39;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Black" title="Black" style="background-color: #000000;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Navy" title="Navy" style="background-color: #1a2b4c;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Green" title="Green" style="background-color: #2da15f;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Pink" title="Pink" style="background-color: #ffb6c1;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Red" title="Red" style="background-color: #e60000;"></button>
-          <button type="button" class="pawsafe-swatch-btn" data-value="Blue" title="Blue" style="background-color: #0066cc;"></button>
+          {% for variant in product.variants %}
+            {% liquid
+              assign color_name = variant.option1 | default: variant.title
+              assign color_down = color_name | downcase
+              assign swatch_color = '#d9d9d9'
+              assign fallback_image = ''
+
+              if color_down contains 'army'
+                assign swatch_color = '#3c4f39'
+                assign fallback_image = 'green.jpg' | asset_url
+              elsif color_down == 'black'
+                assign swatch_color = '#000000'
+                assign fallback_image = 'black.jpg' | asset_url
+              elsif color_down == 'blue'
+                assign swatch_color = '#0066cc'
+                assign fallback_image = 'blue.jpg' | asset_url
+              elsif color_down contains 'sky'
+                assign swatch_color = '#62c7f3'
+                assign fallback_image = 'blue.jpg' | asset_url
+              elsif color_down == 'green'
+                assign swatch_color = '#2da15f'
+                assign fallback_image = 'green.jpg' | asset_url
+              elsif color_down == 'pink'
+                assign swatch_color = '#ffb6c1'
+                assign fallback_image = 'pink.jpg' | asset_url
+              elsif color_down == 'red'
+                assign swatch_color = '#e60000'
+                assign fallback_image = 'red.jpg' | asset_url
+              endif
+
+              assign variant_image = fallback_image
+              if variant.featured_media.preview_image != blank
+                assign variant_image = variant.featured_media.preview_image | image_url: width: 900
+              elsif variant.featured_image != blank
+                assign variant_image = variant.featured_image | image_url: width: 900
+              endif
+            %}
+            <button
+              type="button"
+              class="pawsafe-swatch-btn{% if variant.id == default_variant.id %} selected{% endif %}{% unless variant.available %} unavailable{% endunless %}"
+              data-value="{{ color_name | escape }}"
+              data-color-key="{{ color_name | handleize }}"
+              data-variant-id="{{ variant.id }}"
+              data-variant-image="{{ variant_image }}"
+              title="{{ color_name | escape }}{% unless variant.available %} - Sold out{% endunless %}"
+              aria-label="{{ color_name | escape }}{% unless variant.available %} - Sold out{% endunless %}"
+              {% unless variant.available %}aria-disabled="true"{% endunless %}
+            >
+              <span class="pawsafe-swatch-dot" style="background-color: {{ swatch_color }};"></span>
+              <span class="pawsafe-swatch-name">{{ color_name | escape }}</span>
+            </button>
+          {% endfor %}
         </div>
       </div>
 
-      <!-- Editorial Benefit highlights -->
-      <div class="pawsafe-benefits-list">
-        <div class="pawsafe-benefit-item">
-          <span class="pawsafe-benefit-icon">
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>Zinc alloy swivel snap — rust-proof</span>
+      <section class="pawsafe-pack-section" aria-labelledby="pawsafe-pack-heading">
+        <div class="pawsafe-pack-heading-row">
+          <h2 id="pawsafe-pack-heading">Choose Your Pack</h2>
+          <span id="selected-pack-text" class="pawsafe-pack-selected">Single Pack selected</span>
         </div>
-        <div class="pawsafe-benefit-item">
-          <span class="pawsafe-benefit-icon">
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>Universal seat belt clip — fits all cars</span>
+        <div class="pawsafe-pack-grid" role="radiogroup" aria-label="Choose quantity pack">
+          <button type="button" class="pawsafe-pack-card selected" data-pack-name="Single Pack" data-pack-qty="1" data-pack-total="{{ single_total }}">
+            <span class="pawsafe-pack-title">Single Pack</span>
+            <span class="pawsafe-pack-subtitle">1 belt</span>
+            <span class="pawsafe-pack-price">$19.99</span>
+          </button>
+          <button type="button" class="pawsafe-pack-card" data-pack-name="Duo Pack" data-pack-qty="2" data-pack-total="{{ duo_total }}">
+            <span class="pawsafe-pack-badge">Best Value</span>
+            <span class="pawsafe-pack-title">Duo Pack</span>
+            <span class="pawsafe-pack-subtitle">2 belts</span>
+            <span class="pawsafe-pack-price">$29.99</span>
+          </button>
+          <button type="button" class="pawsafe-pack-card" data-pack-name="Family Pack" data-pack-qty="3" data-pack-total="{{ family_total }}">
+            <span class="pawsafe-pack-badge">Maximum Savings</span>
+            <span class="pawsafe-pack-title">Family Pack</span>
+            <span class="pawsafe-pack-subtitle">3 belts</span>
+            <span class="pawsafe-pack-price">$39.99</span>
+          </button>
         </div>
-        <div class="pawsafe-benefit-item">
-          <span class="pawsafe-benefit-icon">
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>Adjustable for dogs & cats</span>
-        </div>
-        <div class="pawsafe-benefit-item">
-          <span class="pawsafe-benefit-icon">
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5l4 4L13 1" stroke="#c9a961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>Reinforced nylon — crash tested</span>
-        </div>
+      </section>
+
+      <div class="pawsafe-benefits-list" aria-label="Product benefits">
+        <div class="pawsafe-benefit-item"><span aria-hidden="true">&#10003;</span><span>Adjustable fit for dogs and cats</span></div>
+        <div class="pawsafe-benefit-item"><span aria-hidden="true">&#10003;</span><span>Easy clip-on seat belt design</span></div>
+        <div class="pawsafe-benefit-item"><span aria-hidden="true">&#10003;</span><span>Helps reduce unsafe movement during car rides</span></div>
+        <div class="pawsafe-benefit-item"><span aria-hidden="true">&#10003;</span><span>Multiple colors available</span></div>
+        <div class="pawsafe-benefit-item"><span aria-hidden="true">&#10003;</span><span>Lightweight and travel-friendly</span></div>
       </div>
 
-      <!-- Button Blocks -->
       <div class="pawsafe-buttons-group">
-        <!-- Add to cart button wrapper -->
         <add-to-cart-component ref="addToCartButtonContainer" data-add-to-cart-animation="false">
           <button type="submit" ref="addToCartButton" class="pawsafe-btn-atc">
-            ADD TO CART — $24.99
+            ADD TO CART - <span id="pawsafe-button-total">$19.99</span>
           </button>
         </add-to-cart-component>
-        
-        <!-- Buy it now button -->
-        <button type="button" id="pawsafe-buy-now-btn" class="pawsafe-btn-bin">
-          BUY IT NOW
-        </button>
+      </div>
+
+      <div class="pawsafe-payment-line">Secure checkout with PayPal.</div>
+
+      <div class="pawsafe-compact-trust-badges" aria-label="Store trust badges">
+        <div class="pawsafe-trust-badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Secure PayPal Checkout</span>
+        </div>
+        <div class="pawsafe-trust-badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Free Worldwide Shipping</span>
+        </div>
+        <div class="pawsafe-trust-badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>30-Day Returns</span>
+        </div>
+        <div class="pawsafe-trust-badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Customer Support</span>
+        </div>
       </div>
     {%- endform -%}
   </product-form-component>
 </div>
 
 <style>
+  .pawsafe-review-badge-container {
+    margin-top: -8px;
+    margin-bottom: -4px;
+  }
+  .pawsafe-static-stars {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+  .pawsafe-stars-gold {
+    color: #c9a961;
+    letter-spacing: 2px;
+  }
+  .pawsafe-stars-count {
+    color: #68716c;
+    font-weight: 700;
+  }
+
   .pawsafe-details-wrapper {
     display: flex;
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    color: #2d2d2d;
-    background-color: transparent;
+    color: #202020;
     font-family: var(--font-body--family), sans-serif;
   }
 
-  /* Eyebrow Label */
-  .pawsafe-eyebrow-row {
-    margin-bottom: -4px;
-  }
+  .pawsafe-eyebrow-row { margin-bottom: -4px; }
   .pawsafe-eyebrow {
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #c9a961;
+    color: #9a7428;
   }
 
-  /* Serif Title */
   .pawsafe-main-title {
     font-family: Georgia, serif;
-    font-size: 2.2rem;
+    font-size: 2.15rem;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.16;
     color: #1c1c1c !important;
     margin: 0;
   }
 
-  /* Rating Row */
-  .pawsafe-rating-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: -6px;
-  }
-  .pawsafe-stars {
-    color: #c9a961;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-  }
-  .pawsafe-reviews-count {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: #767676;
-    text-transform: uppercase;
-  }
-
-  /* Pricing Row */
   .pawsafe-price-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 2px 0 4px;
   }
+
   .pawsafe-price-current {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 600;
     font-family: Georgia, serif;
     color: #1c1c1c !important;
   }
-  .pawsafe-price-compare {
-    font-size: 1.25rem;
-    font-family: Georgia, serif;
-    color: #a3a3a3;
-    text-decoration: line-through;
-  }
-  .pawsafe-save-badge {
-    background-color: #c9a961;
-    color: #ffffff;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
+
+  .pawsafe-price-note {
+    color: #68716c;
+    font-size: 0.85rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
   }
 
-  /* Selectors */
-  .pawsafe-selector-group {
+  .pawsafe-selector-group,
+  .pawsafe-pack-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 16px;
   }
-  .pawsafe-selector-label {
-    font-size: 0.8rem;
-    font-weight: 700;
+
+  .pawsafe-selector-label,
+  .pawsafe-pack-heading-row h2 {
+    font-size: 0.82rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #1c1c1c;
-  }
-  .pawsafe-selected-color-name {
-    color: #767676;
-    font-weight: 400;
-    text-transform: uppercase;
+    margin: 0;
   }
 
-  /* Size Pills */
-  .pawsafe-pills-row {
-    display: flex;
-    flex-wrap: wrap;
+  .pawsafe-selected-color-name,
+  .pawsafe-pack-selected {
+    color: #4e5d56;
+    font-weight: 800;
+  }
+
+  .pawsafe-color-swatches-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
     gap: 8px;
   }
-  .pawsafe-size-pill {
-    background-color: #ffffff;
-    border: 1px solid #dcdcdc;
-    color: #1c1c1c;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .pawsafe-size-pill:hover {
-    border-color: #1c1c1c;
-  }
-  .pawsafe-size-pill.selected {
-    border-color: #1c1c1c;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 1px #1c1c1c;
-  }
 
-  /* Color Swatches Row */
-  .pawsafe-color-swatches-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
   .pawsafe-swatch-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.15);
+    min-height: 46px;
+    border-radius: 6px;
+    border: 1px solid #d8d3ca;
+    background: #ffffff;
+    color: #1c1c1c;
     cursor: pointer;
-    position: relative;
-    padding: 0;
-    transition: all 0.2s ease;
+    padding: 8px 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     box-sizing: border-box;
-  }
-  .pawsafe-swatch-btn:hover {
-    transform: scale(1.08);
-  }
-  .pawsafe-swatch-btn.selected::after {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    border-radius: 50%;
-    border: 1.5px solid #c9a961;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-align: left;
   }
 
-  /* Benefits checklist */
-  .pawsafe-benefits-list {
+  .pawsafe-swatch-btn:hover { border-color: #1c1c1c; }
+  .pawsafe-swatch-btn.unavailable { opacity: 0.35; cursor: not-allowed; }
+  .pawsafe-swatch-btn.selected {
+    border-color: #1c1c1c;
+    box-shadow: 0 0 0 2px #1c1c1c;
+  }
+
+  .pawsafe-swatch-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.18);
+    flex: 0 0 auto;
+  }
+
+  .pawsafe-swatch-name { min-width: 0; overflow-wrap: anywhere; }
+
+  .pawsafe-pack-heading-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .pawsafe-pack-selected {
+    font-size: 0.78rem;
+    color: #6d5a33;
+  }
+
+  .pawsafe-pack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .pawsafe-pack-card {
+    position: relative;
+    min-height: 122px;
+    border: 1px solid #ded8ce;
+    border-radius: 8px;
+    background: #fffdf8;
+    color: #1f1f1f;
+    padding: 14px 12px;
+    cursor: pointer;
+    text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 16px 0;
-    padding: 8px 0;
+    justify-content: flex-end;
+    gap: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   }
+
+  .pawsafe-pack-card:hover { transform: translateY(-1px); }
+  .pawsafe-pack-card.selected {
+    border-color: #1c1c1c;
+    box-shadow: 0 0 0 2px #1c1c1c;
+    background: #ffffff;
+  }
+
+  .pawsafe-pack-title {
+    font-size: 0.96rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-pack-subtitle {
+    color: #666;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .pawsafe-pack-price {
+    margin-top: 6px;
+    font-family: Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+
+  .pawsafe-pack-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    width: fit-content;
+    max-width: calc(100% - 16px);
+    border-radius: 999px;
+    background: #1c1c1c;
+    color: #ffffff;
+    padding: 4px 8px;
+    font-size: 0.62rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .pawsafe-benefits-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 2px 0;
+  }
+
+  .pawsafe-benefit-item,
+  .pawsafe-trust-card {
+    border: 1px solid #e6e0d7;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #343f39;
+  }
+
   .pawsafe-benefit-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
-    color: #4a4a4a;
-  }
-  .pawsafe-benefit-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    gap: 9px;
+    padding: 10px;
+    font-size: 0.84rem;
+    font-weight: 800;
   }
 
-  /* Buttons */
+  .pawsafe-benefit-item span:first-child {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f4eadc;
+    color: #8a6a22;
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+  }
+
   .pawsafe-buttons-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 16px;
+    margin-top: 4px;
   }
-  .pawsafe-btn-atc,
-  .pawsafe-btn-bin {
+
+  .pawsafe-btn-atc {
     width: 100%;
-    padding: 14px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    min-height: 54px;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #1c1c1c;
+    background-color: #1c1c1c;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     box-sizing: border-box;
     text-align: center;
     display: block;
     text-transform: uppercase;
   }
-  .pawsafe-btn-atc {
-    background-color: #ffffff;
-    border: 1px solid #1c1c1c;
-    color: #1c1c1c;
-  }
-  .pawsafe-btn-atc:hover {
-    background-color: #fafafa;
-  }
-  .pawsafe-btn-bin {
-    background-color: #1c1c1c;
-    border: 1px solid #1c1c1c;
-    color: #ffffff;
-  }
-  .pawsafe-btn-bin:hover {
-    background-color: #2c2c2c;
+
+  .pawsafe-btn-atc:hover { background-color: #2c2c2c; transform: translateY(-1px); }
+
+  .pawsafe-payment-line {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #f4f8f5;
+    color: #214b3d;
+    font-size: 0.86rem;
+    font-weight: 900;
+    text-align: center;
   }
 
-  /* Mobile adjustments */
-  @media screen and (max-width: 749px) {
-    .pawsafe-main-title {
-      font-size: 1.8rem;
+  .pawsafe-compact-trust-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 16px 0 8px;
+    padding: 14px 18px;
+    background: #fbfaf7;
+    border: 1px solid #e5dfd5;
+    border-radius: 8px;
+  }
+
+  .pawsafe-trust-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #10281d;
+  }
+
+  .pawsafe-trust-badge-item svg {
+    width: 14px;
+    height: 14px;
+    stroke: #c9a961;
+    fill: none;
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 480px) {
+    .pawsafe-compact-trust-badges {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px 14px;
     }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pawsafe-main-title { font-size: 1.75rem; }
+    .pawsafe-price-current { font-size: 1.8rem; }
+    .pawsafe-color-swatches-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pawsafe-pack-card { min-height: 96px; padding-top: 36px; }
+    .pawsafe-benefits-list,
+    .pawsafe-trust-section { grid-template-columns: 1fr; }
+  }
+
+  @media screen and (max-width: 900px) {
+    .pawsafe-pack-grid { grid-template-columns: 1fr; }
+  }
+
+  @media screen and (max-width: 360px) {
+    .pawsafe-color-swatches-row { grid-template-columns: 1fr; }
+    .pawsafe-btn-atc { font-size: 0.78rem; letter-spacing: 0.04em; }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Size Selectors Logic
-    const sizePills = document.querySelectorAll('.pawsafe-size-pill');
-    const sizeInput = document.getElementById('pawsafe-size-property');
-    sizePills.forEach(pill => {
-      pill.addEventListener('click', (e) => {
-        e.preventDefault();
-        sizePills.forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
-        if (sizeInput) {
-          sizeInput.value = pill.getAttribute('data-value');
-        }
-      });
+    const root = document.querySelector('[data-pawsafe-product]');
+    if (!root) return;
+
+    const colorSwatches = root.querySelectorAll('.pawsafe-swatch-btn');
+    const packCards = root.querySelectorAll('.pawsafe-pack-card');
+    const colorInput = document.getElementById('pawsafe-variant-id');
+    const quantityInput = document.getElementById('pawsafe-quantity');
+    const colorText = document.getElementById('selected-color-text');
+    const packText = document.getElementById('selected-pack-text');
+    const buttonTotal = document.getElementById('pawsafe-button-total');
+    const productForm = document.getElementById('pawsafe-product-form');
+
+    const productData = {{ product | json }};
+    const variantsById = {};
+    productData.variants.forEach((variant) => {
+      variantsById[String(variant.id)] = variant;
     });
 
-    // Color Swatches Logic
-    const colorSwatches = document.querySelectorAll('.pawsafe-swatch-btn');
-    const colorInput = document.getElementById('pawsafe-variant-id');
-    const colorText = document.getElementById('selected-color-text');
-    
-    // Dynamic variant mapping from Liquid
-    const colorVariantMap = {
-      {% for v in product.variants %}
-        "{{ v.title | escape }}": {{ v.id }},
-      {% endfor %}
+    let selectedColor = colorText ? colorText.textContent.trim() : '';
+    let selectedPack = { name: 'Single Pack', quantity: 1, total: 1999 };
+
+    const formatMoney = (cents) => {
+      const value = Number(cents || 0) / 100;
+      return '$' + value.toFixed(2);
     };
 
-    colorSwatches.forEach(swatch => {
-      swatch.addEventListener('click', (e) => {
-        e.preventDefault();
-        colorSwatches.forEach(s => s.classList.remove('selected'));
-        swatch.classList.add('selected');
-        const colorName = swatch.getAttribute('data-value');
-        if (colorText) {
-          colorText.textContent = colorName;
-        }
-        
-        // Find variant ID in mapping
-        // Support partial matching because titles can be e.g. "S / Army Green"
-        let variantId = null;
-        for (const [key, val] of Object.entries(colorVariantMap)) {
-          if (key.toLowerCase().includes(colorName.toLowerCase())) {
-            variantId = val;
-            break;
-          }
-        }
-        
-        if (variantId && colorInput) {
-          colorInput.value = variantId;
-          
-          // Trigger variant:update event to let other theme components know of the shift
-          const event = new CustomEvent('variant:update', {
-            detail: {
-              resource: {
-                id: variantId,
-                price: 2499,
-                available: true
-              }
-            }
-          });
-          const shopifySection = document.querySelector('.shopify-section');
-          if (shopifySection) {
-            shopifySection.dispatchEvent(event);
-          }
-        }
+    const resizeImage = (src, width = 900) => {
+      if (!src) return '';
+      try {
+        const url = new URL(src, window.location.origin);
+        url.searchParams.set('width', String(width));
+        return url.toString();
+      } catch (_) {
+        return src;
+      }
+    };
+
+    const updateImageElement = (img, src) => {
+      if (!img || !src) return;
+      const sized = resizeImage(src);
+      img.src = sized;
+      img.srcset = sized;
+    };
+
+    const updateProductImages = (src) => {
+      if (!src) return;
+      const galleryImg = document.querySelector('media-gallery img.product-media__image, media-gallery img[src], .product-information__media img[src]');
+      updateImageElement(galleryImg, src);
+
+      const stickyImg = document.querySelector('.sticky-atc__image img');
+      updateImageElement(stickyImg, src);
+    };
+
+    const ensureStickyMeta = () => {
+      const sticky = document.querySelector('.sticky-atc');
+      if (!sticky) return null;
+      let meta = sticky.querySelector('.pawsafe-sticky-meta');
+      if (!meta) {
+        meta = document.createElement('div');
+        meta.className = 'pawsafe-sticky-meta';
+        const content = sticky.querySelector('.sticky-atc__content') || sticky.querySelector('.sticky-atc-container') || sticky;
+        content.appendChild(meta);
+      }
+      return meta;
+    };
+
+    const updateStickyDetails = () => {
+      const meta = ensureStickyMeta();
+      if (meta) {
+        meta.textContent = selectedColor + ' | ' + selectedPack.name + ' | Qty ' + selectedPack.quantity + ' | Est. ' + formatMoney(selectedPack.total);
+      }
+
+      const badge = document.querySelector('.sticky-atc__quantity-badge');
+      if (badge) {
+        badge.hidden = false;
+        badge.textContent = selectedPack.quantity + 'x';
+      }
+    };
+
+    const publishBundleSelection = () => {
+      window.forgeBundleSelection = {
+        name: selectedPack.name,
+        quantity: selectedPack.quantity,
+        unitPrice: {{ default_variant.price | default: 1999 }},
+        discountedTotal: selectedPack.total
+      };
+      document.dispatchEvent(new CustomEvent('forge:bundleSelected', { detail: window.forgeBundleSelection }));
+    };
+
+    const updatePackUi = () => {
+      if (quantityInput) {
+        quantityInput.value = String(selectedPack.quantity);
+        quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (packText) packText.textContent = selectedPack.name + ' selected';
+      if (buttonTotal) buttonTotal.textContent = formatMoney(selectedPack.total);
+      publishBundleSelection();
+      updateStickyDetails();
+    };
+
+    packCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        packCards.forEach((item) => item.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedPack = {
+          name: card.dataset.packName || 'Single Pack',
+          quantity: Number(card.dataset.packQty || 1),
+          total: Number(card.dataset.packTotal || 1999)
+        };
+        updatePackUi();
       });
     });
 
-    // Buy it now redirect logic
-    const buyNowBtn = document.getElementById('pawsafe-buy-now-btn');
-    if (buyNowBtn) {
-      buyNowBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const variantId = colorInput ? colorInput.value : '';
-        const sizeVal = sizeInput ? sizeInput.value : 'S (0-5kg)';
-        
-        // Add to cart via AJAX and then redirect to checkout
-        const formData = new FormData();
-        formData.append('id', variantId);
-        formData.append('properties[Size]', sizeVal);
-        formData.append('quantity', '1');
-        
-        fetch('/cart/add.js', {
-          method: 'POST',
-          body: formData
-        })
-        .then(() => {
-          window.location.href = '/checkout';
-        })
-        .catch(err => {
-          console.error('Bypassed error during quick checkout, redirecting directly to checkout page:', err);
-          window.location.href = '/checkout';
-        });
+    const selectColor = (colorName, updateSlideshow = true) => {
+      const swatch = Array.from(colorSwatches).find(s => s.dataset.value.toLowerCase() === colorName.toLowerCase());
+      if (!swatch) return;
+
+      colorSwatches.forEach((item) => item.classList.remove('selected'));
+      swatch.classList.add('selected');
+
+      selectedColor = swatch.dataset.value || '';
+      const variantId = String(swatch.dataset.variantId || '');
+      const variant = variantsById[variantId];
+
+      if (!variant) return;
+      if (colorInput) colorInput.value = variantId;
+      if (colorText) colorText.textContent = selectedColor;
+
+      const imageSrc = swatch.dataset.variantImage || (variant.featured_image && variant.featured_image.src);
+      updateProductImages(imageSrc);
+      updateStickyDetails();
+
+      if (updateSlideshow && imageSrc) {
+        const mediaGallery = document.querySelector('media-gallery');
+        if (mediaGallery && mediaGallery.slideshow) {
+          const getFilenameBaseForSlideshow = (url) => {
+            if (!url) return '';
+            try {
+              const cleanUrl = url.split('?')[0];
+              const filename = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
+              return filename.split('_')[0].split('.')[0].toLowerCase();
+            } catch (_) {
+              return '';
+            }
+          };
+          const swatchFile = getFilenameBaseForSlideshow(imageSrc);
+          if (swatchFile) {
+            const slides = Array.from(mediaGallery.slideshow.querySelectorAll('slideshow-slide, [ref="slides[]"]'));
+            const targetIndex = slides.findIndex(slide => {
+              const img = slide.querySelector('img');
+              return img && getFilenameBaseForSlideshow(img.src).includes(swatchFile);
+            });
+            if (targetIndex !== -1) {
+              mediaGallery.slideshow.select(targetIndex);
+            }
+          }
+        }
+      }
+
+      const variantEventDetail = {
+        resource: variant,
+        data: {
+          productId: String(productData.id),
+          html: null
+        }
+      };
+      const variantEvent = new CustomEvent('variant:update', {
+        bubbles: true,
+        detail: variantEventDetail
+      });
+      document.dispatchEvent(variantEvent);
+      const sectionNode = document.getElementById('shopify-section-{{ section.id }}');
+      if (sectionNode) {
+        sectionNode.dispatchEvent(new CustomEvent('variant:update', {
+          bubbles: true,
+          detail: variantEventDetail
+        }));
+      }
+    };
+
+    colorSwatches.forEach((swatch) => {
+      swatch.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (swatch.getAttribute('aria-disabled') === 'true') return;
+        selectColor(swatch.dataset.value, true);
+      });
+    });
+
+    // Listen for slideshow slide selections (e.g. clicking thumbnail or dragging)
+    document.addEventListener('slideshow:select', (event) => {
+      const slide = event.detail.slide;
+      if (!slide) return;
+      const img = slide.querySelector('img');
+      if (!img) return;
+      const src = img.getAttribute('src');
+      if (!src) return;
+      
+      const getFilenameBaseForSelect = (url) => {
+        if (!url) return '';
+        try {
+          const cleanUrl = url.split('?')[0];
+          const filename = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
+          return filename.split('_')[0].split('.')[0].toLowerCase();
+        } catch (_) {
+          return '';
+        }
+      };
+      
+      const filename = getFilenameBaseForSelect(src);
+      let color = null;
+      if (filename.includes('1618642315252')) color = 'Army Green';
+      else if (filename.includes('1618642315251')) color = 'Black';
+      else if (filename.includes('1618642315248')) color = 'Blue';
+      else if (filename.includes('1618642315249')) color = 'Green';
+      else if (filename.includes('1618642315540')) color = 'Pink';
+      else if (filename.includes('1618642315544')) color = 'Red';
+      else if (filename.includes('1618642315543')) color = 'Sky Blue';
+      else if (filename.includes('1618642315250')) color = 'Army Green'; // Default featured image is green/army green
+      
+      if (color && selectedColor !== color) {
+        selectColor(color, false);
+      }
+    });
+
+    if (productForm) {
+      productForm.addEventListener('submit', () => {
+        if (quantityInput) quantityInput.value = String(selectedPack.quantity);
       });
     }
+
+    updatePackUi();
   });
 </script>

@@ -339,6 +339,9 @@
 {% javascript %}
   // Fallback money formatter if Shopify.formatMoney is not available
   function formatMoneyBuyNow(cents, format) {
+    cents = Number(cents);
+    if (!Number.isFinite(cents)) cents = 0;
+
     if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
       try {
         return Shopify.formatMoney(cents, format);
@@ -475,15 +478,16 @@
 
     handleBundleSelection = (event) => {
       const { quantity, discountedTotal } = event.detail;
+      const safeDiscountedTotal = Number(discountedTotal);
       
       // Store bundle quantity
       this.bundleQuantity = quantity;
 
       // Update displayed price to bundle total (use >= 0 to handle free items)
       const priceElement = this.querySelector('[ref="buttonPrice"]');
-      if (priceElement && typeof discountedTotal === 'number' && discountedTotal >= 0) {
+      if (priceElement && Number.isFinite(safeDiscountedTotal) && safeDiscountedTotal >= 0) {
         const moneyFormat = window.theme && window.theme.moneyFormat ? window.theme.moneyFormat : null;
-        const formattedPrice = formatMoneyBuyNow(discountedTotal, moneyFormat);
+        const formattedPrice = formatMoneyBuyNow(safeDiscountedTotal, moneyFormat);
         priceElement.textContent = formattedPrice;
         
         // Add visual indicator that this is a bundle price
@@ -494,7 +498,7 @@
       const button = this.querySelector('.buy-now-with-price__button');
       if (button) {
         button.dataset.bundleQuantity = quantity;
-        button.dataset.bundlePrice = discountedTotal;
+        button.dataset.bundlePrice = Number.isFinite(safeDiscountedTotal) ? safeDiscountedTotal : '';
         button.dataset.bundleActive = 'true';
       }
     };
@@ -599,7 +603,13 @@
         method: 'POST',
         body: formData
       })
-        .then(response => response.json())
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok || data.status) {
+            throw new Error(data.description || data.message || 'Unable to add item to cart.');
+          }
+          return data;
+        })
         .then(data => {
           // Redirect to checkout
           window.location.href = '/checkout';
@@ -625,11 +635,14 @@
       // Skip if we have an active bundle selection
       if (this.bundleQuantity && window.forgeBundleSelection) {
         // Recalculate bundle price with new variant price
-        const newVariantPrice = event.detail?.resource?.price;
-        if (newVariantPrice && window.forgeBundleSelection) {
+        const newVariantPrice = Number(event.detail?.resource?.price);
+        if (Number.isFinite(newVariantPrice) && newVariantPrice > 0 && window.forgeBundleSelection) {
           const bundle = window.forgeBundleSelection;
+          const bundleUnitPrice = Number(bundle.unitPrice);
+          const bundleDiscountedTotal = Number(bundle.discountedTotal);
+          if (!Number.isFinite(bundleUnitPrice) || bundleUnitPrice <= 0 || !Number.isFinite(bundleDiscountedTotal)) return;
           // Update unit price and recalculate
-          const newDiscountedTotal = (newVariantPrice / bundle.unitPrice) * bundle.discountedTotal;
+          const newDiscountedTotal = (newVariantPrice / bundleUnitPrice) * bundleDiscountedTotal;
           
           const priceElement = this.querySelector('[ref="buttonPrice"]');
           if (priceElement) {
@@ -892,4 +905,3 @@
   ]
 }
 {% endschema %}
-

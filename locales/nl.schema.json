@@ -503,7 +503,7 @@
     "media_fit": "Mediafit",
     "scroll_speed": "Tijd tot de volgende aankondiging",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "'Powered by Forge AI on Shopify' weergeven",
+    "show_powered_by_shopify": "'Powered by PawSafe Store on Shopify' weergeven",
     "seller_note_open_by_default": "Notitie aan verkoper standaard openen",
     "gift_card_form": "Cadeaubonformulier",
     "add_to_cart_animation": "Toevoegen aan winkelwagen",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

@@ -25,7 +25,24 @@
 
 {% capture children %}
   {% liquid
-    assign custom_links = "Home|/,Shop|/collections/all,About|/pages/about-us,FAQ|/pages/faq,Track Order|/pages/track-order" | split: ","
+    assign pawsafe_product_url = "/products/dog-car-seat-belt"
+    if request.page_type == 'index'
+      assign home_link = "#"
+      assign shop_link = "#bundles"
+      assign faq_link = "#faq"
+    else
+      assign home_link = "/"
+      if request.path contains pawsafe_product_url or request.path contains "/products/"
+        assign shop_link = "#MainContent"
+        assign faq_link = "#faq"
+      else
+        assign shop_link = pawsafe_product_url
+        assign faq_link = pawsafe_product_url | append: "#faq"
+      endif
+    endif
+    assign track_link = "https://h6g7rjzw.aftership.com/"
+
+    assign custom_links = "Home|" | append: home_link | append: ",Shop|" | append: shop_link | append: ",Track Order|" | append: track_link | append: ",FAQ|" | append: faq_link | split: ","
   %}
   {% for item in custom_links %}
     {% liquid
@@ -83,3 +100,23 @@
     {% render 'overflow-list', class: class, ref: 'overflowMenu', children: children, minimum-items: 2, defer: true %}
   </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href.length > 1 && href.startsWith('#')) {
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (href === '#') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  });
+});
+</script>

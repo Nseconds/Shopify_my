@@ -503,7 +503,7 @@
     "media_fit": "適合したメディア",
     "scroll_speed": "次の発表までの時間",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "「Powered by Forge AI on Shopify」を表示",
+    "show_powered_by_shopify": "「Powered by PawSafe Store on Shopify」を表示",
     "seller_note_open_by_default": "デフォルトで販売者へのメモを開く",
     "gift_card_form": "ギフトカード形式",
     "add_to_cart_animation": "カートに追加する",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

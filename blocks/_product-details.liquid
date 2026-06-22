@@ -16,7 +16,7 @@
   {% endif %}
 >
   {% capture children %}
-    {% if product.handle == 'adjustable-pet-cat-dog-car-seat-belt-pet-seat-vehicle-dog-harness-lead-clip-safety-lever-traction-dog-collars-dogs-accessoires-pets-products' %}
+    {% if product.handle == 'adjustable-pet-cat-dog-car-seat-belt-pet-seat-vehicle-dog-harness-lead-clip-safety-lever-traction-dog-collars-dogs-accessoires-pets-products' or product.handle == 'dog-car-seat-belt' %}
       {% render 'pawsafe-custom-product-details', product: product, section: section, block: block %}
     {% else %}
       <div class="view-product-title">

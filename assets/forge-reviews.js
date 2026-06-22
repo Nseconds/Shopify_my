@@ -152,11 +152,11 @@
     return n.toFixed(1);
   }
 
-  // Sample data shown when a block has data-sample="1" (preview mode in the
+  // Preview data shown when a block has data-sample="1" (preview mode in the
   // theme editor). Keeps the storefront from ever rendering fake reviews to
   // real shoppers.
-  const SAMPLE_AGGREGATE = { rating: 4.7, count: 128 };
-  const SAMPLE_REVIEWS = [
+  const EDITOR_PREVIEW_AGGREGATE = { rating: 4.7, count: 128 };
+  const EDITOR_PREVIEW_REVIEWS = [
     {
       rating: 5,
       title: "Exactly what I was looking for",
@@ -186,7 +186,7 @@
       country: "GB",
     },
   ];
-  const SAMPLE_SUMMARY = {
+  const EDITOR_PREVIEW_SUMMARY = {
     summary:
       "Customers love the build quality, packaging, and fast shipping. A few mention they would prefer more color options.",
     pros: ["Premium feel and finish", "Fast delivery", "Helpful customer service"],
@@ -310,8 +310,8 @@
       let rating = Number(this.dataset.rating || 0);
       let count = Number(this.dataset.count || 0);
       if (this.sample) {
-        rating = SAMPLE_AGGREGATE.rating;
-        count = SAMPLE_AGGREGATE.count;
+        rating = EDITOR_PREVIEW_AGGREGATE.rating;
+        count = EDITOR_PREVIEW_AGGREGATE.count;
       }
       const inlineText = this.starsInlineTextHtml
         ? `<span class="forge-reviews__stars-inline">${this.starsInlineTextHtml}</span>`
@@ -321,7 +321,7 @@
 
     async renderSummary() {
       if (this.sample) {
-        this.renderSummaryFromData(SAMPLE_SUMMARY);
+        this.renderSummaryFromData(EDITOR_PREVIEW_SUMMARY);
         return;
       }
       const url = `${this.apiBase}/api/reviews/summary?shop=${encodeURIComponent(this.shop)}&product=${encodeURIComponent(this.product)}&locale=${encodeURIComponent(this.locale)}`;
@@ -532,11 +532,11 @@
     async fetchPage(page) {
       if (this.sample) {
         return {
-          aggregate: SAMPLE_AGGREGATE,
-          reviews: SAMPLE_REVIEWS,
+          aggregate: EDITOR_PREVIEW_AGGREGATE,
+          reviews: EDITOR_PREVIEW_REVIEWS,
           page: 1,
-          per_page: SAMPLE_REVIEWS.length,
-          total: SAMPLE_REVIEWS.length,
+          per_page: EDITOR_PREVIEW_REVIEWS.length,
+          total: EDITOR_PREVIEW_REVIEWS.length,
         };
       }
 

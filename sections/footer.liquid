@@ -1,94 +1,326 @@
-
-
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
->
-  {% liquid
-    assign total_blocks = section.blocks.size
-
-    # Grid layout calculations
-    assign grid_columns = total_blocks | at_most: 4
-
-    # Calculate last row counts using modulo arithmetic
-    # last_row_count = (total_blocks - 1) % N + 1
-    assign last_row_count = total_blocks | minus: 1 | modulo: 4 | plus: 1
-    assign tablet_last_row_count = total_blocks | minus: 1 | modulo: 3 | plus: 1
-
-    # Check if there are orphaned elements (single item in last row)
-    assign has_isolated_grid_item_desktop = false
-    assign has_isolated_grid_item_tablet = false
-
-    if total_blocks > 4 and last_row_count == 1
-      assign has_isolated_grid_item_desktop = true
-    endif
-
-    if total_blocks > 3 and tablet_last_row_count == 1
-      assign has_isolated_grid_item_tablet = true
-    endif
-  %}
-  <div
-    class="
-      footer-content
-      spacing-style
-      {% if has_isolated_grid_item_desktop %}footer-content--isolated-grid-item-desktop{% endif %}
-      {% if has_isolated_grid_item_tablet %}footer-content--isolated-grid-item-tablet{% endif %}
-    "
-    style="
-      {%  render 'spacing-style', settings: section.settings %}
-      --footer-gap: {{ section.settings.gap }}px;
-      --grid-columns: {{ grid_columns }};
-      --last-row-count: {{ last_row_count }};
-      --tablet-last-row-count: {{ tablet_last_row_count }};
-    "
-  >
-    {% content_for 'blocks' %}
+<footer class="pawsafe-footer" role="contentinfo">
+  <div class="pawsafe-footer__trust" aria-label="PawSafe trust highlights">
+    <div class="pawsafe-footer__trust-inner">
+      <span>Free Worldwide Shipping</span>
+      <span>Secure PayPal Checkout</span>
+      <span>30-Day Returns</span>
+      <span>Customer Support</span>
+    </div>
   </div>
-</div>
 
-{% style %}
-  @media screen and (max-width: 749px) {
-    #shopify-section-{{ section.id }} .footer-content {
-      grid-template-columns: repeat({{ section.settings.mobile_columns }}, 1fr);
-    }
-    #shopify-section-{{ section.id }} .footer-content .divider,
-    #shopify-section-{{ section.id }} .footer-content .social-icons__wrapper,
-    #shopify-section-{{ section.id }} .footer-content .logo-block {
-      grid-column: 1 / -1;
-    }
-  }
-{% endstyle %}
+  <div class="pawsafe-footer__main">
+    <div class="pawsafe-footer__grid">
+      <div class="pawsafe-footer__brand">
+        <img class="pawsafe-footer__logo" src="{{ 'pawsafe-logo-lockup.jpg' | asset_url }}" alt="PawSafe" width="220" height="216" loading="lazy">
+        <p>Helping pet owners travel safely with their dogs and cats.</p>
+        <p>Secure pet travel products designed for comfort, convenience, and everyday adventures.</p>
+        <div class="pawsafe-footer__email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pawsafe-footer__email-icon" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <a href="mailto:help.pawsafestore@gmail.com">help.pawsafestore@gmail.com</a>
+        </div>
+        <div class="pawsafe-footer__socials" aria-label="Social media links">
+          <a href="https://facebook.com" class="pawsafe-social-icon" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a href="https://instagram.com" class="pawsafe-social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </a>
+          <a href="https://tiktok.com" class="pawsafe-social-icon" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <nav class="pawsafe-footer__column" aria-label="Quick links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="{{ routes.root_url }}">Home</a></li>
+          <li><a href="/products/dog-car-seat-belt">Shop</a></li>
+          <li><a href="https://h6g7rjzw.aftership.com/">Track Order</a></li>
+          <li><a href="/pages/contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <nav class="pawsafe-footer__column" aria-label="Customer care">
+        <h3>Customer Care</h3>
+        <ul>
+          <li><a href="/pages/faq">FAQ</a></li>
+          <li><a href="/policies/shipping-policy">Shipping Policy</a></li>
+          <li><a href="/policies/refund-policy">Refund Policy</a></li>
+          <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/policies/terms-of-service">Terms of Service</a></li>
+        </ul>
+      </nav>
+
+      <div class="pawsafe-footer__column pawsafe-footer__security">
+        <h3>Trust &amp; Security</h3>
+        <ul>
+          <li>Secure PayPal Checkout</li>
+          <li>Free Worldwide Shipping</li>
+          <li>30-Day Return Support</li>
+          <li>Customer Support Available</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pawsafe-footer__bottom">
+      <span>&copy; {{ 'now' | date: '%Y' }} PawSafe Store</span>
+      <span>Safe Travel For Happy Pets.</span>
+    </div>
+  </div>
+</footer>
 
 {% stylesheet %}
-  /* Mobile: single column default */
-  .footer-content {
+  .pawsafe-footer {
+    background: #10281d;
+    color: #f7f3ea;
+  }
+
+  .pawsafe-footer__trust {
+    border-top: 1px solid rgba(201, 169, 97, 0.26);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.26);
+    background: #173925;
+  }
+
+  .pawsafe-footer__trust-inner {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--footer-gap);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 12px 28px;
   }
 
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .footer-content {
-      grid-template-columns: repeat(min(var(--grid-columns), 3), 1fr);
-      grid-auto-flow: row;
+  .pawsafe-footer__trust-inner span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff8e8;
+    font-size: 0.83rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .pawsafe-footer__trust-inner span::before,
+  .pawsafe-footer__security li::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c9a961;
+    box-shadow: 0 0 0 4px rgba(201, 169, 97, 0.14);
+  }
+
+  .pawsafe-footer__main {
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 30px 28px 18px;
+  }
+
+  .pawsafe-footer__grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.35fr) repeat(3, minmax(160px, 0.75fr));
+    gap: 30px;
+    align-items: start;
+  }
+
+  .pawsafe-footer h2,
+  .pawsafe-footer h3,
+  .pawsafe-footer p {
+    margin-top: 0;
+  }
+
+  .pawsafe-footer h2 {
+    margin-bottom: 14px;
+    color: #ffffff;
+    font-family: Georgia, serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    line-height: 1;
+  }
+
+  .pawsafe-footer__logo {
+    width: min(220px, 70vw);
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 18px;
+    background: #f7f1e7;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
+  }
+
+  .pawsafe-footer h3 {
+    margin-bottom: 16px;
+    color: #c9a961;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-footer p {
+    max-width: 390px;
+    margin-bottom: 12px;
+    color: rgba(247, 243, 234, 0.78);
+    line-height: 1.65;
+  }
+
+  .pawsafe-footer__email {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    color: rgba(247, 243, 234, 0.82);
+  }
+
+  .pawsafe-footer__email-icon {
+    width: 16px;
+    height: 16px;
+    stroke: #c9a961;
+    fill: none;
+    flex-shrink: 0;
+  }
+
+  .pawsafe-footer__socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .pawsafe-social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201, 169, 97, 0.3);
+    color: #c9a961 !important;
+    background: transparent;
+    transition: all 0.2s ease;
+  }
+
+  .pawsafe-social-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+  }
+
+  .pawsafe-social-icon:hover {
+    background: #c9a961;
+    color: #10281d !important;
+    border-color: #c9a961;
+    transform: translateY(-2px);
+  }
+
+  /* Reset margin at the page bottom */
+  .shopify-section-group-footer-group {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .pawsafe-footer a {
+    color: rgba(247, 243, 234, 0.86);
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  .pawsafe-footer a:hover,
+  .pawsafe-footer a:focus-visible {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .pawsafe-footer ul {
+    display: grid;
+    gap: 11px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pawsafe-footer li {
+    color: rgba(247, 243, 234, 0.78);
+    line-height: 1.45;
+  }
+
+  .pawsafe-footer__security li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pawsafe-footer__security li::before {
+    width: 7px;
+    height: 7px;
+  }
+
+  .pawsafe-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(247, 243, 234, 0.12);
+    color: rgba(247, 243, 234, 0.68);
+    font-size: 0.86rem;
+  }
+
+  @media screen and (max-width: 989px) {
+    .pawsafe-footer__trust-inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .footer-content--isolated-grid-item-tablet > :last-child {
+
+    .pawsafe-footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px 28px;
+    }
+
+    .pawsafe-footer__brand {
       grid-column: 1 / -1;
     }
   }
 
-  @media screen and (min-width: 990px) {
-    .footer-content {
-      grid-template-columns: repeat(var(--grid-columns), 1fr);
+  @media screen and (max-width: 749px) {
+    .pawsafe-footer__trust-inner,
+    .pawsafe-footer__grid {
+      grid-template-columns: 1fr;
     }
 
-    /* Single item centered */
-    .footer-content[style*='--grid-columns: 1'] {
-      justify-items: center;
+    .pawsafe-footer__trust-inner {
+      gap: 12px;
+      padding: 12px 18px;
     }
 
-    .footer-content--isolated-grid-item-desktop > :last-child {
-      grid-column: 1 / -1;
+    .pawsafe-footer__main {
+      padding: 26px 18px 18px;
+    }
+
+    .pawsafe-footer__grid {
+      gap: 22px;
+    }
+
+    .pawsafe-footer h2 {
+      font-size: 2.2rem;
+    }
+
+    .pawsafe-footer__bottom {
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 22px;
     }
   }
 {% endstylesheet %}
@@ -98,178 +330,20 @@
   "name": "t:names.footer",
   "class": "section-wrapper",
   "tag": "footer",
-  "blocks": [
-    {
-      "type": "_divider"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "follow-on-shop"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "menu"
-    },
-    {
-      "type": "payment-icons"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "logo"
-    },
-    {
-      "type": "jumbo-text"
-    },
-    {
-      "type": "luxury-footer"
-    },
-    {
-      "type": "pastel-footer"
-    },
-    {
-      "type": "social-links"
-    },
-    {
-      "type": "email-signup"
-    }
-  ],
   "enabled_on": {
     "groups": ["footer"]
   },
   "settings": [
     {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "select",
-      "id": "mobile_columns",
-      "label": "t:settings.mobile_columns",
-      "options": [
-        { "value": "1", "label": "1" },
-        { "value": "2", "label": "2" },
-        { "value": "3", "label": "3" }
-      ],
-      "default": "1"
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "label": "t:settings.gap",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
       "type": "color_scheme",
       "id": "color_scheme",
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
     }
   ],
   "presets": [
     {
-      "name": "t:names.footer",
-      "category": "t:categories.footer",
-      "settings": {
-        "gap": 20,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 36,
-        "padding-block-end": 36
-      },
-      "blocks": {
-        "newsletter-group": {
-          "type": "group",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "gap": 6,
-            "width": "fill",
-            "inherit_color_scheme": true
-          },
-          "blocks": {
-            "newsletter-heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Join our email list</h2>",
-                "width": "100%",
-                "alignment": "left",
-              }
-            },
-            "newsletter-text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Get exclusive deals and early access to new products.</p>",
-                "width": "100%",
-                "alignment": "left",
-              }
-            }
-          },
-          "block_order": ["newsletter-heading", "newsletter-text"]
-        },
-        "newsletter-form": {
-          "type": "email-signup",
-          "settings": {
-            "width": "fill"
-          }
-        }
-      },
-      "block_order": ["newsletter-group", "newsletter-form"]
+      "name": "PawSafe premium footer"
     }
   ]
 }

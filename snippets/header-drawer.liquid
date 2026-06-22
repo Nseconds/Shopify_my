@@ -101,7 +101,24 @@
             Handle menus with fewer than 3 levels of links
           {%- endcomment -%}
           {% liquid
-            assign custom_links = "Home|/,Shop|/collections/all,About|/pages/about-us,FAQ|/pages/faq,Track Order|/pages/track-order" | split: ","
+            assign pawsafe_product_url = "/products/dog-car-seat-belt"
+            if request.page_type == 'index'
+              assign home_link = "#"
+              assign shop_link = "#bundles"
+              assign faq_link = "#faq"
+            else
+              assign home_link = "/"
+              if request.path contains pawsafe_product_url or request.path contains "/products/"
+                assign shop_link = "#MainContent"
+                assign faq_link = "#faq"
+              else
+                assign shop_link = pawsafe_product_url
+                assign faq_link = pawsafe_product_url | append: "#faq"
+              endif
+            endif
+            assign track_link = "https://h6g7rjzw.aftership.com/"
+
+            assign custom_links = "Home|" | append: home_link | append: ",Shop|" | append: shop_link | append: ",Track Order|" | append: track_link | append: ",FAQ|" | append: faq_link | split: ","
             assign animation_index = 0
           %}
           {% for item in custom_links %}
@@ -783,3 +800,23 @@
     }
   }
 {% endstylesheet %}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const drawer = document.querySelector('header-drawer');
+  if (!drawer) return;
+  const details = drawer.querySelector('details');
+  if (!details) return;
+
+  drawer.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', () => {
+      if (typeof drawer.close === 'function') {
+        drawer.close();
+      } else {
+        details.removeAttribute('open');
+        document.documentElement.classList.remove('menu-open');
+      }
+    });
+  });
+});
+</script>

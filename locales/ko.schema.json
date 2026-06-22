@@ -503,7 +503,7 @@
     "media_fit": "미디어 맞춤",
     "scroll_speed": "다음 공지 시간",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "\"Powered by Forge AI on Shopify\" 표시",
+    "show_powered_by_shopify": "\"Powered by PawSafe Store on Shopify\" 표시",
     "seller_note_open_by_default": "판매자에게 보내는 메모를 기본으로 열기",
     "gift_card_form": "기프트 카드 양식",
     "custom_link": "사용자 지정 링크",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

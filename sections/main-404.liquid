@@ -1,6 +1,20 @@
 
 
 <div class="section-background no-gradient-bg color-{{ section.settings.color_scheme }}"></div>
+
+{% liquid
+  assign pawsafe_redirect_target = blank
+  if request.path == '/pages/about-us'
+    assign pawsafe_redirect_target = '/#problem'
+  endif
+%}
+
+{% if pawsafe_redirect_target != blank %}
+  <script>
+    window.location.replace({{ pawsafe_redirect_target | json }});
+  </script>
+{% endif %}
+
 <div
   class="
     section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}

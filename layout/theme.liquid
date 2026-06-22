@@ -29,6 +29,57 @@
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
+    <style>
+      .pawsafe-product-conversion .pawsafe-product-conversion__header,
+      .pawsafe-product-conversion .pawsafe-product-conversion__trust,
+      .pawsafe-product-conversion .pawsafe-product-conversion__grid {
+        box-sizing: border-box;
+        width: min(100%, 1100px);
+        margin-right: auto;
+        margin-left: auto;
+        padding-right: 28px;
+        padding-left: 28px;
+      }
+
+      .pawsafe-product-conversion .pawsafe-product-conversion__header {
+        max-width: none;
+      }
+
+      .pawsafe-product-conversion .pawsafe-product-conversion__header h2,
+      .pawsafe-product-conversion .pawsafe-product-conversion__header p {
+        max-width: 760px;
+      }
+
+      .pawsafe-product-conversion .pawsafe-product-conversion__faq,
+      .pawsafe-product-conversion .pawsafe-product-conversion__reviews {
+        box-sizing: border-box;
+        width: min(100%, 980px);
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .pawsafe-product-conversion .pawsafe-product-conversion__faq {
+        padding: 18px 28px 8px;
+      }
+
+      .pawsafe-product-conversion .pawsafe-product-conversion__reviews {
+        margin-top: 34px;
+      }
+
+      @media screen and (max-width: 749px) {
+        .pawsafe-product-conversion .pawsafe-product-conversion__header,
+        .pawsafe-product-conversion .pawsafe-product-conversion__trust,
+        .pawsafe-product-conversion .pawsafe-product-conversion__grid {
+          padding-right: 16px;
+          padding-left: 16px;
+        }
+
+        .pawsafe-product-conversion .pawsafe-product-conversion__faq {
+          padding-right: 16px;
+          padding-left: 16px;
+        }
+      }
+    </style>
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
@@ -40,37 +91,49 @@
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% section 'custom-announcement-bar' %}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
-    <div id="header-group">
-      {% sections 'header-group' %}
-    </div>
+    {% section 'pawsafe-header' %}
+    {% render 'pawsafe-discount-popup' %}
 
-    <script
-      src="{{ 'critical.js' | asset_url }}"
-      type="module"
-      async
-      blocking="render"
-    ></script>
-    
-    {% render 'cart-drawer-mini-2' %}
-    {% render 'forge-pv-beacon' %}
+    {% if request.page_type == 'index' %}
+      <main
+        id="MainContent"
+        class="content-for-layout"
+        role="main"
+        data-page-transition-enabled="false"
+        data-product-transition="false"
+        data-template="index"
+      >
+        {{ content_for_layout }}
+      </main>
+    {% else %}
+      <script
+        src="{{ 'critical.js' | asset_url }}"
+        type="module"
+        async
+        blocking="render"
+      ></script>
 
-    <main
-      id="MainContent"
-      class="content-for-layout"
-      role="main"
-      data-page-transition-enabled="{{ settings.page_transition_enabled }}"
-      data-product-transition="{{ settings.transition_to_main_product }}"
-      data-template="{{ template.name }}"
-    >
-      {{ content_for_layout }}
-    </main>
+      {% render 'cart-drawer-mini-2' %}
+      {% render 'forge-pv-beacon' %}
 
-    {% sections 'footer-group' %}
+      <main
+        id="MainContent"
+        class="content-for-layout"
+        role="main"
+        data-page-transition-enabled="{{ settings.page_transition_enabled }}"
+        data-product-transition="{{ settings.transition_to_main_product }}"
+        data-template="{{ template.name }}"
+      >
+        {{ content_for_layout }}
+      </main>
 
-    {% render 'search-modal' %}
+      {% sections 'footer-group' %}
 
-    {% if settings.quick_add or settings.mobile_quick_add %}
-      {% render 'quick-add-modal' %}
+      {% render 'search-modal' %}
+
+      {% if settings.quick_add or settings.mobile_quick_add %}
+        {% render 'quick-add-modal' %}
+      {% endif %}
     {% endif %}
   </body>
 </html>

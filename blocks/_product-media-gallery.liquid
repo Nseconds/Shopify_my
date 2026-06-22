@@ -110,6 +110,28 @@
   else
     assign sorted_media = selected_product.media
   endif
+
+  assign temp_sorted_media = '' | split: ','
+  assign seen_image_bases = ''
+  for media in sorted_media
+    if media.media_type == 'image'
+      assign media_filename = media.preview_image.src | split: '/' | last | split: '?' | first
+      if media_filename contains '1618642315248_95f20a08' or media_filename contains '1618642315542' or media_filename contains '1618642315250'
+        continue
+      endif
+      assign media_base = media_filename | split: '_' | first | split: '.' | first
+      assign seen_base_match = ',' | append: media_base | append: ','
+      assign seen_bases_check = ',' | append: seen_image_bases | append: ','
+      if seen_bases_check contains seen_base_match
+        continue
+      endif
+      assign seen_image_bases = seen_image_bases | append: media_base | append: ','
+    endif
+    assign found_media = selected_product.media | where: 'id', media.id
+    assign temp_sorted_media = temp_sorted_media | concat: found_media
+  endfor
+  assign sorted_media = temp_sorted_media
+
   assign has_image_drop = sorted_media | has: 'media_type', 'image'
 
   # Determine if we're in single column mode (carousel or grid with one column)

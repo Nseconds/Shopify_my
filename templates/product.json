@@ -30,8 +30,8 @@
             "padding-inline-end": 0,
             "show_testimonial": false,
             "hide_testimonial_mobile": true,
-            "testimonial_quote": "<p>\"When we hit sudden traffic braking, I felt confident she was genuinely secure. Truly military-grade.\"</p>",
-            "testimonial_name": "Dr. Sarah Chen, Portland OR",
+            "testimonial_quote": "",
+            "testimonial_name": "",
             "testimonial_color_scheme": "scheme-1",
             "testimonial_border_style": "dashed",
             "testimonial_border_width": 1,
@@ -112,43 +112,13 @@
               },
               "blocks": {}
             },
-            "forge_ai_store_builder_bundle_offer_hfiVPX": {
-              "type": "shopify://apps/forge-ai-store-builder/blocks/bundle-offer/019ac15d-2c18-711a-84dd-d1efed373549",
-              "settings": {}
-            },
             "add_to_cart_with_price_CRO": {
               "type": "add-to-cart-with-price",
               "settings": {
                 "button_text": "<p>ADD TO CART</p>",
-                "separator": "•",
+                "separator": "â€¢",
                 "color_scheme": "scheme-1",
                 "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "editorial_benefit_list_block": {
-              "type": "editorial-benefit-list",
-              "settings": {
-                "point_1": "PREVENTS DISTRACTED DRIVING",
-                "point_2": "RESTRAINS DURING IMPACT",
-                "point_3": "RUST-PROOF HARDWARE",
-                "point_4": "FITS ALL CAR MODELS"
-              },
-              "blocks": {}
-            },
-            "editorial_trust_strip_block": {
-              "type": "editorial-trust-strip",
-              "settings": {
-                "item_1": "VET-RECOMMENDED",
-                "item_2": "CRASH-TESTED",
-                "item_3": "LIFETIME WARRANTY"
-              },
-              "blocks": {}
-            },
-            "forge_rating_stars_block": {
-              "type": "forge-rating-stars",
-              "settings": {
-                "stars_color": "#f5a623"
               },
               "blocks": {}
             },
@@ -184,7 +154,7 @@
                       "type": "product-description",
                       "name": "t:names.product_description",
                       "settings": {
-                        "text": "<p>{{ closest.product.description }}<p></p></p>",
+                        "text": "<p>{{ closest.product.description }}</p>",
                         "character_limit": 0,
                         "width": "fit-content",
                         "max_width": "none",
@@ -223,7 +193,7 @@
                     "text_wMFRAi": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Constructed from high-density nylon webbing with integrated zinc alloy hardware. Wipe clean with a damp cloth and air dry. Inspect regularly for signs of wear and tear to ensure maximum safety.</p>",
+                        "text": "<p>Durable cloth and metal construction. Wipe clean with a damp cloth and inspect regularly before use.</p>",
                         "width": "100%",
                         "max_width": "none",
                         "alignment": "left",
@@ -253,7 +223,7 @@
                     "text_Nrxfg8": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Orders ship within 24-48 hours with tracked delivery across North America. We offer a 30-day safety guarantee - if it doesn't fit your vehicle or pet perfectly, returns are simple and stress-free.</p>",
+                        "text": "<p>Estimated delivery: 7–15 business days. 30-day return support. Contact us before returning any item.</p>",
                         "width": "100%",
                         "max_width": "none",
                         "alignment": "left",
@@ -277,16 +247,30 @@
                 "accordion_row_HUWbDi",
                 "accordion_row_GTWFgP"
               ]
+            },
+            "variant_picker_color": {
+              "type": "variant-picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": true,
+                "alignment": "left",
+                "color_scheme": "scheme-1",
+                "show_variant_title": true,
+                "option_border_radius": 8,
+                "swatch_border_radius": 50,
+                "padding-block-start": 8,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "text_WE3K4w",
             "price_a7krng",
-            "forge_rating_stars_block",
-            "editorial_benefit_list_block",
-            "editorial_trust_strip_block",
             "accordion_Yd4U4w",
-            "forge_ai_store_builder_bundle_offer_hfiVPX",
+            "variant_picker_color",
             "add_to_cart_with_price_CRO"
           ]
         },
@@ -298,7 +282,7 @@
             "show_price_badge": false,
             "show_variant_selector": true,
             "show_price": true,
-            "show_compare_at_price": true,
+            "show_compare_at_price": false,
             "price_size": 24,
             "comp_price_size": 18,
             "title_size": 16,
@@ -328,91 +312,28 @@
         "padding-block-end": 0
       }
     },
-    "editorial-marquee_product": {
-      "type": "editorial-marquee",
-      "settings": {
-        "text": "<p>CRASH-TESTED TO 200+ LBS IMPACT FORCE - MILITARY GRADE PROTECTION</p>",
-        "show_separator": true,
-        "speed": 30,
-        "direction": "left",
-        "font_size": 1.2,
-        "padding_vertical": 12,
-        "color_scheme": "scheme-1",
-        "use_custom_colors": true,
-        "bg_color": "#c9a961",
-        "text_color": "#ffffff",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
-    "editorial-trust-bar_o5kwse": {
-      "type": "editorial-trust-bar",
-      "blocks": {
-        "item_1": {
-          "type": "trust_item",
-          "settings": {
-            "heading": "Crash tested",
-            "description": ""
-          }
-        },
-        "item_2": {
-          "type": "trust_item",
-          "settings": {
-            "heading": "Free shipping",
-            "description": ""
-          }
-        },
-        "item_3": {
-          "type": "trust_item",
-          "settings": {
-            "heading": "30-day returns",
-            "description": ""
-          }
-        },
-        "item_4": {
-          "type": "trust_item",
-          "settings": {
-            "heading": "4.92 rating",
-            "description": ""
-          }
-        }
-      },
-      "block_order": [
-        "item_1",
-        "item_2",
-        "item_3",
-        "item_4"
-      ],
-      "settings": {
-        "color_scheme": "scheme-1",
-        "border_color": "#333333",
-        "divider_vertical_inset": 14,
-        "padding-block-start": 32,
-        "padding-block-end": 32
-      }
-    },
     "editorial-accordion_frawan": {
       "type": "editorial-accordion",
       "blocks": {
         "item_0": {
           "type": "accordion_item",
           "settings": {
-            "heading": "Guaranteed Compatibility",
-            "content": "<p>Our safety harness is designed to click directly into the standard seat belt buckles of 99% of vehicles, ensuring immediate compatibility without requiring extra adapters.</p>"
+            "heading": "Pet Travel Use",
+            "content": "<p>Helps keep dogs and cats safely restrained during car rides while allowing them to sit, stand, or lie down more comfortably.</p>"
           }
         },
         "item_1": {
           "type": "accordion_item",
           "settings": {
             "heading": "Materials & Durability",
-            "content": "<p>Constructed with heavy-duty zinc alloy hardware and crash-tested nylon webbing to provide maximum tensile strength and long-lasting safety.</p>"
+            "content": "<p>Durable cloth and metal construction with an adjustable length for a better fit.</p>"
           }
         },
         "item_2": {
           "type": "accordion_item",
           "settings": {
             "heading": "Shipping & Returns",
-            "content": "<p>Enjoy fast, tracked shipping with delivery in 7-15 days, backed by our hassle-free 30-day return policy.</p>"
+            "content": "<p>Estimated delivery: 7–15 business days. 30-day return support. Contact us before returning any item.</p>"
           }
         }
       },
@@ -431,315 +352,10 @@
         "padding-block-start": 16,
         "padding-block-end": 48
       }
-    },
-    "editorial-testimonials_nmp8dt": {
-      "type": "editorial-testimonials",
-      "blocks": {
-        "item_0": {
-          "type": "review",
-          "settings": {
-            "stars": 5,
-            "title": "<p>Saved my Lab</p>",
-            "quote": "<p>I had to slam the brakes on the highway and my 70lb Lab didn't shift an inch. This belt is high quality and sturdy.</p>",
-            "author": "Marcus T.",
-            "product_info": ""
-          }
-        },
-        "item_1": {
-          "type": "review",
-          "settings": {
-            "stars": 5,
-            "title": "<p>Professional Quality</p>",
-            "quote": "<p>The zinc hardware is much better than the cheap plastic ones you see in big box stores. You can feel the weight and strength.</p>",
-            "author": "Sarah L.",
-            "product_info": ""
-          }
-        },
-        "item_2": {
-          "type": "review",
-          "settings": {
-            "stars": 5,
-            "title": "<p>Essential for Travel</p>",
-            "quote": "<p>My cat used to climb all over the car, making it dangerous to drive. Now she sits comfortably and safely in the back seat.</p>",
-            "author": "Jessica W.",
-            "product_info": ""
-          }
-        }
-      },
-      "block_order": [
-        "item_0",
-        "item_1",
-        "item_2"
-      ],
-      "settings": {
-        "heading": "<p>TRUSTED BY PET PARENTS</p>",
-        "color_scheme": "scheme-1",
-        "use_custom_colors": false,
-        "card_bg": "#f5f5f5",
-        "text_color": "#000000",
-        "star_color": "#000000",
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "editorial-ugc-strip_9nw891": {
-      "type": "editorial-ugc-strip",
-      "blocks": {
-        "photo_1": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/forge-deploy-0-1780429476901.png"
-          }
-        },
-        "photo_2": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/1618642315250.jpg"
-          }
-        },
-        "photo_3": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/1618642315249_b3556deb-a958-4351-a65f-4100ca68000c.jpg"
-          }
-        },
-        "photo_4": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/1618642315543.jpg"
-          }
-        },
-        "photo_5": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/1618642315542.jpg"
-          }
-        },
-        "photo_6": {
-          "type": "photo",
-          "settings": {
-            "image": "shopify://shop_images/1618642315251.jpg"
-          }
-        }
-      },
-      "block_order": [
-        "photo_1",
-        "photo_2",
-        "photo_3",
-        "photo_4",
-        "photo_5",
-        "photo_6"
-      ],
-      "settings": {
-        "heading": "<p>Follow the Pack @CollectHive</p>",
-        "heading_alignment": "center",
-        "heading_margin_bottom": 24,
-        "slide_width_desktop": 360,
-        "slide_width_mobile": 280,
-        "aspect_ratio": "1 / 1",
-        "gap": 6,
-        "full_width_strip": true,
-        "scroll_snap": true,
-        "enable_hover_zoom": true,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "editorial-used-by_nh5amt": {
-      "type": "editorial-used-by",
-      "blocks": {
-        "inf_1": {
-          "type": "influencer",
-          "settings": {
-            "name": "Dr. Sarah Chen",
-            "verified": true,
-            "handle": "@vet_safety"
-          }
-        },
-        "inf_2": {
-          "type": "influencer",
-          "settings": {
-            "name": "Mark Peterson",
-            "verified": true,
-            "handle": "@canine_coach"
-          }
-        },
-        "inf_3": {
-          "type": "influencer",
-          "settings": {
-            "name": "The Golden Boys",
-            "verified": false,
-            "handle": "@goldie_travels"
-          }
-        },
-        "inf_4": {
-          "type": "influencer",
-          "settings": {
-            "name": "Adventure Kitty",
-            "verified": true,
-            "handle": "@cat_on_road"
-          }
-        },
-        "inf_5": {
-          "type": "influencer",
-          "settings": {
-            "name": "Dr. Sarah Chen",
-            "verified": true,
-            "handle": "@vet_safety"
-          }
-        },
-        "inf_6": {
-          "type": "influencer",
-          "settings": {
-            "name": "Mark Peterson",
-            "verified": true,
-            "handle": "@canine_coach"
-          }
-        },
-        "inf_7": {
-          "type": "influencer",
-          "settings": {
-            "name": "The Golden Boys",
-            "verified": false,
-            "handle": "@goldie_travels"
-          }
-        },
-        "inf_8": {
-          "type": "influencer",
-          "settings": {
-            "name": "Adventure Kitty",
-            "verified": true,
-            "handle": "@cat_on_road"
-          }
-        },
-        "inf_9": {
-          "type": "influencer",
-          "settings": {
-            "name": "Dr. Sarah Chen",
-            "verified": true,
-            "handle": "@vet_safety"
-          }
-        },
-        "inf_10": {
-          "type": "influencer",
-          "settings": {
-            "name": "Mark Peterson",
-            "verified": true,
-            "handle": "@canine_coach"
-          }
-        }
-      },
-      "block_order": [
-        "inf_1",
-        "inf_2",
-        "inf_3",
-        "inf_4",
-        "inf_5",
-        "inf_6",
-        "inf_7",
-        "inf_8",
-        "inf_9",
-        "inf_10"
-      ],
-      "settings": {
-        "heading": "<p>TRUSTED BY PET EXPERTS</p>",
-        "color_scheme": "scheme-1",
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "bestsellers-row_lso6gy": {
-      "type": "bestsellers-row",
-      "settings": {
-        "show_heading": true,
-        "heading": "Top-Rated Safety Gear",
-        "subheading": "",
-        "show_view_all": true,
-        "view_all_text": "View All Safety Gear",
-        "max_products": 4,
-        "show_badge": true,
-        "card_width": 240,
-        "gap": 16,
-        "section_width": "page-width",
-        "color_scheme": "scheme-1",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "forge-reviews_31x8id": {
-      "type": "_blocks",
-      "blocks": {
-        "forge_reviews_heading": {
-          "type": "text",
-          "name": "t:names.heading",
-          "settings": {
-            "text": "<h1><strong>All Reviews</strong></h1>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "center",
-            "background": false,
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "forge_review_box": {
-          "type": "shopify://apps/forge-ai-store-builder/blocks/review-box/019ac15d-2c18-711a-84dd-d1efed373549",
-          "settings": {
-            "per_page": 10,
-            "show_pagination": true,
-            "stars_color": "#f5a623",
-            "alignment": "center",
-            "show_sample_data": false
-          }
-        }
-      },
-      "block_order": [
-        "forge_reviews_heading",
-        "forge_review_box"
-      ],
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
     }
   },
   "order": [
     "product-main_mdhx2p",
-    "editorial-marquee_product",
-    "editorial-trust-bar_o5kwse",
-    "editorial-accordion_frawan",
-    "editorial-testimonials_nmp8dt",
-    "editorial-ugc-strip_9nw891",
-    "editorial-used-by_nh5amt",
-    "bestsellers-row_lso6gy",
-    "forge-reviews_31x8id"
+    "editorial-accordion_frawan"
   ]
 }

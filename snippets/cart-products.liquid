@@ -187,6 +187,37 @@
                         {%- endfor -%}
                       {%- endif -%}
 
+                      {%- if item.product.has_only_default_variant == false
+                        and item.item_components.size == 0
+                        and item.product.options.first == 'Color'
+                      -%}
+                        <div class="cart-color-picker" data-cart-color-picker>
+                          <label class="cart-color-picker__label" for="CartColor-{{ item.index | plus: 1 }}">
+                            Choose color
+                          </label>
+                          <select
+                            id="CartColor-{{ item.index | plus: 1 }}"
+                            class="cart-color-picker__select"
+                            data-cart-color-select
+                            data-line="{{ item.index | plus: 1 }}"
+                            data-line-key="{{ item.key }}"
+                            data-current-variant-id="{{ item.variant.id }}"
+                            data-quantity="{{ item.quantity }}"
+                            aria-label="Choose color for {{ item.product.title | escape }}"
+                          >
+                            {%- for variant in item.product.variants -%}
+                              <option
+                                value="{{ variant.id }}"
+                                {% if variant.id == item.variant.id %}selected{% endif %}
+                                {% unless variant.available %}disabled{% endunless %}
+                              >
+                                {{ variant.option1 | default: variant.title }}{% unless variant.available %} - Sold out{% endunless %}
+                              </option>
+                            {%- endfor -%}
+                          </select>
+                        </div>
+                      {%- endif -%}
+
                       {%- for property in item.properties -%}
                         {%- assign property_first_char = property.first | slice: 0 -%}
                         {%- if property.last != blank and property_first_char != '_' -%}
@@ -329,6 +360,67 @@
   {%- endif -%}
 </div>
 
+<script>
+  (() => {
+    const selects = document.querySelectorAll('[data-cart-color-select]');
+    if (!selects.length) return;
+
+    selects.forEach((select) => {
+      if (select.dataset.cartColorBound === 'true') return;
+      select.dataset.cartColorBound = 'true';
+
+      select.addEventListener('change', async () => {
+        const selectedVariantId = select.value;
+        const currentVariantId = select.dataset.currentVariantId;
+        const lineKey = select.dataset.lineKey;
+        const quantity = Number(select.dataset.quantity || 1);
+
+        if (!selectedVariantId || selectedVariantId === currentVariantId || !lineKey) return;
+
+        select.disabled = true;
+
+        try {
+          const addResponse = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({
+              items: [
+                {
+                  id: Number(selectedVariantId),
+                  quantity: quantity
+                }
+              ]
+            })
+          });
+          const addData = await addResponse.json();
+
+          if (!addResponse.ok || addData.status) {
+            throw new Error(addData.description || addData.message || 'Unable to add selected color.');
+          }
+
+          const removeResponse = await fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ id: lineKey, quantity: 0 })
+          });
+          const removeData = await removeResponse.json();
+
+          if (!removeResponse.ok || removeData.status) {
+            throw new Error(removeData.description || removeData.message || 'Unable to remove previous color.');
+          }
+
+          window.location.reload();
+        } catch (error) {
+          console.error('Cart color update error:', error);
+          alert(error.message || 'Unable to update color. Please try again.');
+          select.value = currentVariantId;
+          select.disabled = false;
+        }
+      });
+    });
+  })();
+</script>
+
 {% stylesheet %}
   .cart-items {
     --cart-item-media-width-min: 2.5rem;
@@ -345,6 +437,38 @@
 
   .cart-items__table {
     width: 100%;
+  }
+
+  .cart-color-picker {
+    display: grid;
+    gap: 6px;
+    margin-top: 10px;
+    max-width: 220px;
+  }
+
+  .cart-color-picker__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground-rgb) / 0.7);
+  }
+
+  .cart-color-picker__select {
+    min-height: 40px;
+    width: 100%;
+    border: 1px solid rgb(var(--color-border-rgb) / 0.75);
+    border-radius: 6px;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    padding: 8px 34px 8px 10px;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .cart-color-picker__select:disabled {
+    cursor: wait;
+    opacity: 0.65;
   }
 
   .cart-items__table * {

@@ -27,6 +27,10 @@
   assign og_type = 'website'
   assign og_description = page_description | default: shop.description | default: shop.name
   if request.page_type == 'index'
+    assign og_title = 'Dog Car Seat Belt – Keep Your Pet Safe | PawSafe'
+    assign og_description = 'Adjustable dog car seat belt designed to keep pets safer and calmer during every ride. Free worldwide shipping and 30-day returns.'
+  endif
+  if request.page_type == 'index'
     unless page_image
       assign page_image = settings.logo
     endunless

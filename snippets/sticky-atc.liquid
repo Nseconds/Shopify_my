@@ -201,6 +201,25 @@
       }
     }
 
+    .sticky-atc__button .button,
+    .sticky-atc__button .button .product-form-button-text,
+    .sticky-atc__button .button .button-text,
+    .sticky-atc__button .button .product-added-success {
+      caret-color: transparent !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    .sticky-atc__button .button {
+      cursor: pointer !important;
+    }
+
+    .sticky-atc__button .button .product-form-button-text,
+    .sticky-atc__button .button .button-text,
+    .sticky-atc__button .button .product-added-success {
+      pointer-events: none !important;
+    }
+
     {% comment %} Quantity +/- buttons: transparent so they always contrast the section bg {% endcomment %}
     .button.quantity-minus,
     .button.quantity-plus {
@@ -694,7 +713,22 @@
 >
   <div class="sticky-atc-container sticky-atc-container--restructured">
     <div class="sticky-atc__image">
-      {{ product.featured_image | image_url: height: 200 | image_tag }}
+      {%- liquid
+        assign featured_image_to_show = product.selected_or_first_available_variant.featured_image | default: product.featured_image
+        assign featured_image_url_string = featured_image_to_show | image_url
+        if featured_image_url_string contains '1618642315250' or featured_image_url_string contains '1618642315542' or featured_image_url_string contains '1618642315248_95f20a08'
+          for media in product.media
+            if media.media_type == 'image'
+              assign media_url_string = media.preview_image | image_url
+              unless media_url_string contains '1618642315250' or media_url_string contains '1618642315542' or media_url_string contains '1618642315248_95f20a08'
+                assign featured_image_to_show = media.preview_image
+                break
+              endunless
+            endif
+          endfor
+        endif
+      -%}
+      {{ featured_image_to_show | image_url: height: 200 | image_tag }}
       {% if block.settings.show_quantity_badge %}
         <span class="sticky-atc__quantity-badge" aria-live="polite" hidden>1×</span>
       {% endif %}
@@ -795,6 +829,7 @@
             id="atc-button-{{ section.id }}"
             data-buy-now="true"
             data-buy-now-label="{{ satc_buynow_label | escape }}"
+            contenteditable="false"
             {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}disabled{% endif %}
           >
             <div class="split-slide-right"></div>
@@ -820,6 +855,7 @@
           id="atc-button-{{ section.id }}"
           form="{{ product_form_id }}"
           data-button-label="{{ satc_atc_label | escape }}"
+          contenteditable="false"
           {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}disabled{% endif %}
         >
           <div class="split-slide-right"></div>
@@ -1190,6 +1226,15 @@
       }
     }
 
+    // Sync to custom details swatch buttons if they exist
+    const swatches = document.querySelectorAll('.pawsafe-swatch-btn');
+    if (swatches.length > 0 && selectedOption.toLowerCase() === 'color') {
+      const swatch = Array.from(swatches).find(s => s.dataset.value.toLowerCase() === selectedValue.toLowerCase());
+      if (swatch && !swatch.classList.contains('selected')) {
+        swatch.click();
+      }
+    }
+
     // Keep other sticky controls in sync (e.g. swatch + dropdown both exist for same option)
     if (stickyEl) {
       stickyEl.querySelectorAll(`select.sticky-atc__dropdown[data-option="${CSS.escape(selectedOption)}"]`).forEach((ctrl) => {
@@ -1211,6 +1256,9 @@
 
   // Format money helper - extract currency symbol from existing price display
   const formatMoneyStickyATC = (cents) => {
+    cents = Number(cents);
+    if (!Number.isFinite(cents)) cents = 0;
+
     if (typeof Shopify !== 'undefined' && typeof Shopify.formatMoney === 'function') {
       try {
         return Shopify.formatMoney(cents);
@@ -1255,7 +1303,10 @@
     const stickyPrice = document.getElementById('atc-price-{{ section.id }}');
     if (!stickyPrice) return;
 
-    const { discountedTotal, originalTotal } = bundleSelection;
+    const discountedTotal = Number(bundleSelection.discountedTotal);
+    const originalTotal = Number(bundleSelection.originalTotal);
+    if (!Number.isFinite(discountedTotal)) return;
+    const safeOriginalTotal = Number.isFinite(originalTotal) ? originalTotal : discountedTotal;
 
     // Get savings label directly from DOM (selected bundle card)
     // This works even if the extension hasn't been redeployed with savingsLabel in event data
@@ -1278,13 +1329,13 @@
     // Build custom price HTML for bundle - inline layout with proper styling
     let priceHtml = '';
 
-    if (discountedTotal < originalTotal) {
+    if (discountedTotal < safeOriginalTotal) {
       // Sale price display - horizontal layout with optional badge
       priceHtml = `
         <div class="price price--sale forge-bundle-price-display">
           ${badgeHtml}
           <span class="price-item price-item--sale">${formatMoneyStickyATC(discountedTotal)}</span>
-          <span class="compare-at-price">${formatMoneyStickyATC(originalTotal)}</span>
+          <span class="compare-at-price">${formatMoneyStickyATC(safeOriginalTotal)}</span>
         </div>
       `;
     } else {
@@ -1454,8 +1505,6 @@
               }
             }
 
-            console.log('Variant ID found:', variantId);
-
             if (!variantId) {
               throw new Error('Variant ID not found. Please select a variant.');
             }
@@ -1480,8 +1529,6 @@
               quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
             }
 
-            console.log('Adding to cart:', { variantId, quantity });
-
             // Add to cart
             const response = await fetch('/cart/add.js', {
               method: 'POST',
@@ -1499,7 +1546,6 @@
             const responseData = await response.json();
 
             if (response.ok) {
-              console.log('Added to cart, redirecting to checkout');
               // Redirect to checkout
               window.location.href = '/checkout';
             } else {

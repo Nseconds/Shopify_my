@@ -503,7 +503,7 @@
     "media_fit": "Median sovitus",
     "scroll_speed": "Aikaa seuraavaan ilmoitukseen",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "Näytä Powered by Forge AI on Shopify",
+    "show_powered_by_shopify": "Näytä Powered by PawSafe Store on Shopify",
     "seller_note_open_by_default": "Avaa huomautus myyjälle oletusarvoisesti",
     "gift_card_form": "Lahjakorttilomake",
     "add_to_cart_animation": "Lisää ostoskoriin",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

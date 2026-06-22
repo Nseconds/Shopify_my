@@ -503,7 +503,7 @@
     "media_fit": "Adattamento dei contenuti multimediali",
     "scroll_speed": "Tempo rimanente all'annuncio successivo",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "Mostrare la frase \"Powered by Forge AI on Shopify\".",
+    "show_powered_by_shopify": "Mostrare la frase \"Powered by PawSafe Store on Shopify\".",
     "seller_note_open_by_default": "Apri sempre nota al venditore",
     "gift_card_form": "Modulo buono regalo",
     "add_to_cart_animation": "Aggiungi al carrello",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }

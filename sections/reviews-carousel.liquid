@@ -29,6 +29,9 @@
   class="section section--{{ section.settings.section_width }} spacing-style color-{{ section.settings.color_scheme }}"
   style="{% render 'spacing-padding', settings: section.settings %}"
 >
+  {% if shop.metafields.judgeme.featured_carousel %}
+    {{ shop.metafields.judgeme.featured_carousel }}
+  {% else %}
   <reviews-carousel-component
     class="reviews-carousel"
     style="
@@ -161,6 +164,7 @@
       </div>
     </div>
   </reviews-carousel-component>
+  {% endif %}
 </div>
 
 {% stylesheet %}

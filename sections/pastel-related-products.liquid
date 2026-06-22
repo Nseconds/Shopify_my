@@ -16,6 +16,8 @@
   endif
 %}
 
+
+{% if products.size > 0 %}
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
   class="pastel-related-products section color-{{ section.settings.color_scheme }}"
@@ -53,6 +55,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 
 {% stylesheet %}
   .pastel-related-products {

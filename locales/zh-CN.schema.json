@@ -503,7 +503,7 @@
     "media_fit": "媒体文件适应",
     "scroll_speed": "下次公告时间",
     "scrolling_text_animation": "Scrolling text animation",
-    "show_powered_by_shopify": "显示“Powered by Forge AI on Shopify”",
+    "show_powered_by_shopify": "显示“Powered by PawSafe Store on Shopify”",
     "seller_note_open_by_default": "默认向卖家打开备注",
     "gift_card_form": "礼品卡",
     "add_to_cart_animation": "添加到购物车",
@@ -1092,7 +1092,7 @@
       "name": "Forge rating stars"
     },
     "forge_ai_summary": {
-      "name": "Forge AI summary"
+      "name": "PawSafe Store summary"
     }
   }
 }
