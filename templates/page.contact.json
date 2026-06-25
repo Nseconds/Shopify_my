@@ -1,1 +1,11 @@
-{"sections":{"main":{"type":"main-page","blocks":{"title":{"type":"text","name":"t:names.title","settings":{"text":"<h1>Get In Touch</h1>","character_limit":0,"width":"100%","max_width":"normal","alignment":"center","width_mobile":"fit-content","max_width_mobile":"normal","alignment_mobile":"left","letter_spacing":"normal","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"subtitle":{"type":"text","name":"Subtitle","settings":{"text":"<p>Got a question about products, orders, delivery, or returns? Send us a message and our customer support team will help.</p>","character_limit":0,"width":"100%","max_width":"narrow","alignment":"center","width_mobile":"fit-content","max_width_mobile":"normal","alignment_mobile":"left","letter_spacing":"normal","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"icon_with_text_zDUqmN":{"type":"icon-with-text","name":"Icon with text","settings":{"custom_icon":"","icon_image":"shopify://shop_images/24-hours-support.png","text":"<p>Customer support is available for product questions, order help, delivery updates, and return support. Please contact us before returning any item.</p>","icon_size":56,"gap":16,"text_size":15,"text_align":"left","icon_color":"#c4a69d","text_color":"#1e293b","padding-block-start":8,"padding-block-end":8},"blocks":{}},"contact_form_qt3ihA":{"type":"contact-form","name":"t:names.contact_form","settings":{"width":"custom","custom_width":100,"width_mobile":"custom","custom_width_mobile":100,"inherit_color_scheme":true,"color_scheme":"","padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{"submit-button":{"type":"contact-form-submit-button","static":true,"settings":{"label":"Submit","style_class":"button","width":"custom","custom_width":100,"width_mobile":"custom","custom_width_mobile":100},"blocks":{}}},"block_order":[]}},"block_order":["title","subtitle","icon_with_text_zDUqmN","contact_form_qt3ihA"],"settings":{"content_direction":"column","gap":16,"color_scheme":"","padding-block-start":60,"padding-block-end":40}}},"order":["main"]}
+{
+  "sections": {
+    "pawsafe_contact_page": {
+      "type": "pawsafe-contact-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "pawsafe_contact_page"
+  ]
+}

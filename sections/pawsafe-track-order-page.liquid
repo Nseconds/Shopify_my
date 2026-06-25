@@ -1,0 +1,273 @@
+<section class="pawsafe-track-page">
+  <div class="pawsafe-track-page__inner">
+    <a class="pawsafe-track-logo" href="{{ routes.root_url }}" aria-label="PawSafe home">
+      <span>
+        <img src="{{ 'pawsafe-logo-mark.jpg' | asset_url }}" alt="" width="42" height="35" loading="eager">
+      </span>
+      PawSafe
+    </a>
+
+    <div class="pawsafe-track-hero">
+      <p>Order Tracking</p>
+      <h1>Track Your Order 🐾</h1>
+      <span>Stay updated from checkout to delivery.</span>
+    </div>
+
+    <div class="pawsafe-track-card">
+      <div class="pawsafe-track-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 7h11v9H3z"></path>
+          <path d="M14 10h4l3 3v3h-7z"></path>
+          <circle cx="7" cy="18" r="2"></circle>
+          <circle cx="18" cy="18" r="2"></circle>
+        </svg>
+      </div>
+      <h2>Your delivery status, one click away.</h2>
+      <p>Use our secure tracking portal to follow your PawSafe order after checkout. You will need the tracking details provided for your order.</p>
+      <a href="https://h6g7rjzw.aftership.com/">Track My Order</a>
+
+      <div class="pawsafe-track-trust" aria-label="Tracking trust highlights">
+        <span>🔒 Secure Tracking</span>
+        <span>📦 Real-time Updates</span>
+        <span>🌍 Worldwide Delivery</span>
+      </div>
+    </div>
+
+    <div class="pawsafe-track-help">
+      <h2>Need help with your order?</h2>
+      <p>Email: <a href="mailto:help.pawsafestore@gmail.com">help.pawsafestore@gmail.com</a></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pawsafe-track-page {
+    --ps-green: #003d25;
+    --ps-deep: #002514;
+    --ps-gold: #d0ad5d;
+    --ps-cream: #fbf8f1;
+    min-height: 760px;
+    padding: 72px 20px 96px;
+    background:
+      radial-gradient(circle at 20% 18%, rgba(208, 173, 93, 0.16), transparent 28%),
+      radial-gradient(circle at 84% 22%, rgba(0, 61, 37, 0.12), transparent 30%),
+      var(--ps-cream);
+    color: var(--ps-deep);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-track-page__inner {
+    width: min(100%, 1040px);
+    margin: 0 auto;
+  }
+
+  .pawsafe-track-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ps-deep);
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 1.55rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .pawsafe-track-logo span {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 24px rgba(0, 37, 20, 0.08);
+  }
+
+  .pawsafe-track-logo img {
+    width: 38px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .pawsafe-track-hero {
+    max-width: 780px;
+    margin: 78px auto 42px;
+    text-align: center;
+  }
+
+  .pawsafe-track-hero p {
+    margin: 0 0 18px;
+    color: #a57518;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-track-hero h1,
+  .pawsafe-track-card h2,
+  .pawsafe-track-help h2 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-weight: 900;
+  }
+
+  .pawsafe-track-hero h1 {
+    margin: 0 0 20px;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 1.05;
+  }
+
+  .pawsafe-track-hero span {
+    display: block;
+    color: #2d3933;
+    font-size: clamp(1.05rem, 2vw, 1.32rem);
+  }
+
+  .pawsafe-track-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(34px, 5vw, 56px);
+    border: 1px solid #dfd9cc;
+    border-radius: 18px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 28px 70px rgba(0, 37, 20, 0.12);
+  }
+
+  .pawsafe-track-card__icon {
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 28px;
+    border-radius: 16px;
+    background: var(--ps-green);
+    color: var(--ps-gold);
+  }
+
+  .pawsafe-track-card__icon svg {
+    width: 34px;
+    height: 34px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .pawsafe-track-card h2 {
+    margin: 0 0 18px;
+    font-size: clamp(1.55rem, 3vw, 2.2rem);
+  }
+
+  .pawsafe-track-card p {
+    max-width: 540px;
+    margin: 0 auto 32px;
+    color: #3b4942;
+    line-height: 1.7;
+  }
+
+  .pawsafe-track-card > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 330px);
+    min-height: 58px;
+    border-radius: 8px;
+    background: var(--ps-green);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 6px 0 rgba(0, 37, 20, 0.16);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pawsafe-track-card > a:hover {
+    background: #004d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 0 rgba(0, 37, 20, 0.2);
+  }
+
+  .pawsafe-track-card > a:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(0, 37, 20, 0.2);
+  }
+
+  .pawsafe-track-trust {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 36px;
+    padding-top: 30px;
+    border-top: 1px solid #e8e1d7;
+  }
+
+  .pawsafe-track-trust span {
+    color: var(--ps-deep);
+    font-size: 0.82rem;
+    font-weight: 850;
+  }
+
+  .pawsafe-track-help {
+    max-width: 640px;
+    margin: 38px auto 0;
+    padding: 24px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.56);
+    text-align: center;
+  }
+
+  .pawsafe-track-help h2 {
+    margin: 0 0 10px;
+    font-size: 1.24rem;
+  }
+
+  .pawsafe-track-help p {
+    margin: 0;
+    color: #3b4942;
+  }
+
+  .pawsafe-track-help a {
+    color: var(--ps-green);
+    font-weight: 900;
+  }
+
+  @media screen and (max-width: 720px) {
+    .pawsafe-track-page {
+      padding: 42px 18px 70px;
+    }
+
+    .pawsafe-track-hero {
+      margin: 32px auto 24px;
+    }
+
+    .pawsafe-track-card {
+      padding: 28px 20px;
+    }
+
+    .pawsafe-track-card__icon {
+      margin-bottom: 18px;
+    }
+
+    .pawsafe-track-trust {
+      grid-template-columns: 1fr;
+      margin-top: 24px;
+      padding-top: 20px;
+      gap: 10px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "PawSafe track order page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "PawSafe track order page"
+    }
+  ]
+}
+{% endschema %}

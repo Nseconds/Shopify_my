@@ -93,11 +93,13 @@
 {%- comment -%}
   Render sticky_atc block outside the section to avoid stacking context issues
 {%- endcomment -%}
-{%- content_for 'block',
-  type: 'sticky_atc',
-  id: 'sticky_atc_block',
-  closest.product: closest.product
--%}
+{%- unless closest.product.handle == 'dog-car-seat-belt' -%}
+  {%- content_for 'block',
+    type: 'sticky_atc',
+    id: 'sticky_atc_block',
+    closest.product: closest.product
+  -%}
+{%- endunless -%}
 
 {% stylesheet %}
   .product-information {

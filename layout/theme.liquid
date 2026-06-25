@@ -24,6 +24,11 @@
 
     {%- render 'meta-tags' -%}
     {%- render 'json-ld-organization' -%}
+    {% # theme-check-disable RemoteAsset %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    {% # theme-check-enable RemoteAsset %}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
@@ -92,7 +97,10 @@
     {% section 'custom-announcement-bar' %}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     {% section 'pawsafe-header' %}
-    {% render 'pawsafe-discount-popup' %}
+    {% unless template.suffix == 'faq' or template.suffix == 'contact' or template.suffix == 'about-us' or template.suffix == 'track-order' or template.name == 'product' or template.name == 'cart' %}
+      {% render 'pawsafe-discount-popup' %}
+    {% endunless %}
+    {% render 'pawsafe-cart-polish' %}
 
     {% if request.page_type == 'index' %}
       <main
@@ -105,6 +113,10 @@
       >
         {{ content_for_layout }}
       </main>
+
+      {% unless template.suffix == 'contact' %}
+        {% sections 'footer-group' %}
+      {% endunless %}
     {% else %}
       <script
         src="{{ 'critical.js' | asset_url }}"
@@ -127,7 +139,9 @@
         {{ content_for_layout }}
       </main>
 
-      {% sections 'footer-group' %}
+      {% unless template.suffix == 'contact' %}
+        {% sections 'footer-group' %}
+      {% endunless %}
 
       {% render 'search-modal' %}
 

@@ -273,32 +273,6 @@
             "variant_picker_color",
             "add_to_cart_with_price_CRO"
           ]
-        },
-        "sticky_atc_block": {
-          "type": "sticky_atc",
-          "static": true,
-          "settings": {
-            "button_label": "Add to cart",
-            "show_price_badge": false,
-            "show_variant_selector": true,
-            "show_price": true,
-            "show_compare_at_price": false,
-            "price_size": 24,
-            "comp_price_size": 18,
-            "title_size": 16,
-            "option_size": 14,
-            "variant_selector_border_radius": 8,
-            "use_scheme_colors": true,
-            "container_alignment": "right",
-            "container_border_radius": 10,
-            "container_shadow": true,
-            "button_size": "large",
-            "button_border_radius": 8,
-            "badge_border_radius": 4,
-            "badge_font_size": 14,
-            "badge_padding": 6
-          },
-          "blocks": {}
         }
       },
       "settings": {
@@ -353,16 +327,14 @@
         "padding-block-end": 48
       }
     },
-    "pawsafe_conversion_content_v2": {
-      "type": "pawsafe-product-conversion",
-      "settings": {
-        "color_scheme": "scheme-1"
-      }
+    "pawsafe_product_steps": {
+      "type": "pawsafe-product-steps",
+      "settings": {}
     }
   },
   "order": [
     "product-main_mdhx2p",
     "editorial-accordion_frawan",
-    "pawsafe_conversion_content_v2"
+    "pawsafe_product_steps"
   ]
 }

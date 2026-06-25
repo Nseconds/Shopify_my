@@ -1,0 +1,382 @@
+{% liquid
+  assign pawsafe_product = collections.all.products.first
+  assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
+%}
+<section class="pawsafe-home-story">
+  <div class="pawsafe-home-problem">
+    <div class="pawsafe-home-heading">
+      <span>The Problem</span>
+      <h2>Most dogs travel completely unprotected.</h2>
+    </div>
+
+    <div class="pawsafe-problem-grid">
+      <article class="pawsafe-problem-card">
+        <h3>A sudden brake changes everything.</h3>
+        <p>A sudden brake or sharp turn can throw your dog forward, distract the driver, or create unnecessary panic in the car. PawSafe Store turns a normal seat into a safer travel space.</p>
+        <ul>
+          <li>Stops unsafe roaming inside the car</li>
+          <li>Helps reduce driver distraction</li>
+          <li>Prevents pets from jumping out of windows</li>
+        </ul>
+      </article>
+
+      <aside class="pawsafe-seconds-card">
+        <span aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13V8"/><path d="M9 2h6"/><path d="M15 5l2-2"/></svg>
+        </span>
+        <h3>Seconds matter.</h3>
+        <p>Secure your dog before the engine starts.</p>
+        <div aria-hidden="true"></div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="pawsafe-home-solution">
+    <div class="pawsafe-home-heading">
+      <span>The Solution</span>
+      <h2>One small clip. A much safer ride.</h2>
+    </div>
+
+    <div class="pawsafe-solution-grid">
+      <article>
+        <small>01</small>
+        <h3>Adjustable Fit</h3>
+        <p>Adjustable length helps your dog ride better fit for everyday rides of any duration.</p>
+      </article>
+      <article>
+        <small>02</small>
+        <h3>Easy Clip-On</h3>
+        <p>Clip it into the seat belt buckle and attach it to your pet's harness in seconds.</p>
+      </article>
+      <article>
+        <small>03</small>
+        <h3>Vibrant Colors</h3>
+        <p>Choose from Army Green, Black, Blue, Green, Pink, Red, or Sky Blue to match your style.</p>
+      </article>
+      <article>
+        <small>04</small>
+        <h3>Daily Utility</h3>
+        <p>Perfect for vet visits, errands, short drives, and regular car routines with your pet.</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="pawsafe-home-love">
+    <h2>Why Pet Owners Love PawSafe</h2>
+    <div class="pawsafe-love-grid">
+      <article>
+        <div aria-hidden="true">★★★★★</div>
+        <p>"Finally! My lab used to pace back and forth in the back seat, distracting me constantly. This simple clip keeps her calm and sitting down."</p>
+        <strong>— Sarah J., California</strong>
+      </article>
+      <article>
+        <div aria-hidden="true">★★★★★</div>
+        <p>"Quality is much better than the cheap ones I found elsewhere. The metal clips feel very sturdy and the strap is heavy-duty."</p>
+        <strong>— Michael R., Texas</strong>
+      </article>
+      <article>
+        <div aria-hidden="true">★★★★★</div>
+        <p>"Essential for any dog owner. It's so easy to use and gives me peace of mind every time I go to the vet or just the park."</p>
+        <strong>— Amanda T., Florida</strong>
+      </article>
+    </div>
+  </div>
+
+  <div class="pawsafe-home-cta">
+    <h2>Give Your Dog the Safe Routine They Deserve</h2>
+    <p>Safer rides start before the engine does. Join 50,000+ pet parents making travel safer every day.</p>
+    <div>
+      <a href="{{ pawsafe_product_url }}">Protect My Dog Today</a>
+      <a href="https://h6g7rjzw.aftership.com/">View Shipping Info</a>
+    </div>
+    <small>Consistent. Practical. Strong. For routines you can trust.</small>
+  </div>
+</section>
+
+<style>
+  .pawsafe-home-story {
+    --ps-green: #003d25;
+    --ps-deep: #002514;
+    --ps-gold: #d0ad5d;
+    --ps-cream: #fbf8f1;
+    --ps-line: #d9d3c8;
+    background: var(--ps-cream);
+    color: var(--ps-deep);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-home-problem,
+  .pawsafe-home-solution,
+  .pawsafe-home-love {
+    width: min(100% - 36px, 1220px);
+    margin: 0 auto;
+  }
+
+  .pawsafe-home-problem {
+    padding: 78px 0 72px;
+  }
+
+  .pawsafe-home-solution {
+    padding: 86px 0 74px;
+    border-top: 1px solid #eee8dd;
+  }
+
+  .pawsafe-home-love {
+    padding: 54px 0 74px;
+  }
+
+  .pawsafe-home-heading {
+    margin: 0 auto 42px;
+    text-align: center;
+  }
+
+  .pawsafe-home-heading span {
+    display: block;
+    margin-bottom: 8px;
+    color: #b68624;
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-home-heading h2,
+  .pawsafe-home-love h2,
+  .pawsafe-home-cta h2,
+  .pawsafe-home-story h3 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-weight: 900;
+  }
+
+  .pawsafe-home-heading h2 {
+    margin: 0;
+    font-size: clamp(1.65rem, 3vw, 2.35rem);
+    line-height: 1.15;
+  }
+
+  .pawsafe-problem-grid {
+    display: grid;
+    grid-template-columns: 2fr 0.98fr;
+    gap: 24px;
+  }
+
+  .pawsafe-problem-card,
+  .pawsafe-seconds-card,
+  .pawsafe-solution-grid article,
+  .pawsafe-love-grid article {
+    border: 1px solid var(--ps-line);
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  .pawsafe-problem-card {
+    padding: 32px 36px;
+  }
+
+  .pawsafe-problem-card h3,
+  .pawsafe-seconds-card h3,
+  .pawsafe-solution-grid h3 {
+    margin: 0 0 14px;
+    font-size: 1.1rem;
+  }
+
+  .pawsafe-problem-card p,
+  .pawsafe-solution-grid p,
+  .pawsafe-love-grid p {
+    margin: 0;
+    color: #35423b;
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  .pawsafe-problem-card ul {
+    display: grid;
+    gap: 10px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+    color: #26362f;
+    font-size: 0.86rem;
+    font-weight: 650;
+  }
+
+  .pawsafe-problem-card li::before {
+    content: "x";
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 1px solid #c33e3e;
+    border-radius: 50%;
+    color: #c33e3e;
+    font-size: 0.68rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .pawsafe-seconds-card {
+    padding: 34px;
+    background: var(--ps-green);
+    color: #ffffff;
+  }
+
+  .pawsafe-seconds-card span {
+    display: block;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 48px;
+    color: var(--ps-gold);
+  }
+
+  .pawsafe-seconds-card svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .pawsafe-seconds-card p {
+    margin: 0 0 54px;
+    color: #e7f1eb;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .pawsafe-seconds-card div {
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--ps-gold) 34%, rgba(255, 255, 255, 0.18) 34%);
+  }
+
+  .pawsafe-solution-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .pawsafe-solution-grid article {
+    padding: 30px 28px;
+    min-height: 170px;
+  }
+
+  .pawsafe-solution-grid small {
+    display: block;
+    margin-bottom: 20px;
+    color: var(--ps-gold);
+    font-size: 0.82rem;
+    font-weight: 850;
+  }
+
+  .pawsafe-home-love h2 {
+    margin: 0 0 38px;
+    text-align: center;
+    font-size: clamp(1.55rem, 2.5vw, 2.05rem);
+  }
+
+  .pawsafe-love-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 34px;
+  }
+
+  .pawsafe-love-grid article {
+    padding: 28px 30px;
+  }
+
+  .pawsafe-love-grid div {
+    margin-bottom: 14px;
+    color: var(--ps-gold);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+
+  .pawsafe-love-grid p {
+    font-style: italic;
+  }
+
+  .pawsafe-love-grid strong {
+    display: block;
+    margin-top: 20px;
+    color: var(--ps-deep);
+    font-size: 0.84rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-home-cta {
+    padding: 76px 24px 84px;
+    background: var(--ps-green);
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .pawsafe-home-cta h2 {
+    max-width: 680px;
+    margin: 0 auto 22px;
+    font-size: clamp(2.15rem, 4vw, 3.15rem);
+    line-height: 1.1;
+  }
+
+  .pawsafe-home-cta p {
+    max-width: 560px;
+    margin: 0 auto 34px;
+    color: #d8e9df;
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .pawsafe-home-cta div {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .pawsafe-home-cta a {
+    min-width: 170px;
+    padding: 16px 24px;
+    border-radius: 7px;
+    background: #ff8400;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .pawsafe-home-cta a:last-child {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .pawsafe-home-cta small {
+    display: block;
+    color: #b7cec2;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 950px) {
+    .pawsafe-problem-grid,
+    .pawsafe-solution-grid,
+    .pawsafe-love-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "PawSafe home safety story",
+  "settings": [],
+  "presets": [
+    {
+      "name": "PawSafe home safety story"
+    }
+  ]
+}
+{% endschema %}

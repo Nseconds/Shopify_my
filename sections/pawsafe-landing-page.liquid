@@ -1,0 +1,373 @@
+{{ 'pawsafe-landing.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign pawsafe_product = section.settings.product
+
+  if pawsafe_product == blank
+    assign pawsafe_product = collections.all.products.first
+  endif
+
+  assign pawsafe_variant = pawsafe_product.selected_or_first_available_variant
+  assign pawsafe_product_url = pawsafe_product.url | default: '/products/dog-car-seat-belt'
+  assign pawsafe_can_add = false
+
+  if pawsafe_variant and pawsafe_variant.available
+    assign pawsafe_can_add = true
+  endif
+%}
+
+<main>
+  <section class="pawsafe-hero">
+    <div class="orb orb1"></div>
+    <div class="heroText">
+      <div class="pill">Premium pet travel safety</div>
+      <h1>Keep your dog safe on every car ride.</h1>
+      <p class="lead">PawSafe Store helps protect your pet from sudden stops, unsafe movement, and driver distraction with a secure clip-in design that installs in seconds.</p>
+      <div class="heroCtas">
+        <a class="btn primary" href="{{ pawsafe_product_url }}" id="hero-primary-btn">Protect My Dog</a>
+        <a class="btn secondary" href="#how-it-works" id="hero-secondary-btn">Watch Demo</a>
+      </div>
+      <div class="microTrust"><b>30-Day Return Support</b> - PayPal accepted at checkout.</div>
+      <div class="featuresLine"><span>Adjustable Fit</span><span>Easy Clip-On Design</span><span>Customer Support Available</span></div>
+    </div>
+    <div class="heroVisual">
+      <div class="imageFrame mainFrame">
+        <img id="hero-main-img" src="{{ 'hero.jpg' | asset_url }}" alt="Dog secured with PawSafe Store in car" width="900" height="900" loading="eager" fetchpriority="high">
+      </div>
+      <div class="floatingCard cardTop"><strong>3-sec install</strong><small>Clip - Adjust - Drive</small></div>
+      <div class="floatingCard cardBottom"><strong>Reduces distraction</strong><small>Keeps pets positioned safely</small></div>
+      <div class="productBadge">
+        <span class="productBadgeIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5.5 16.5h13l-1.3-4.5a2.4 2.4 0 0 0-2.3-1.7H9.1A2.4 2.4 0 0 0 6.8 12l-1.3 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+            <path d="M7.2 10.3 8.4 7.4A2.2 2.2 0 0 1 10.4 6h3.2a2.2 2.2 0 0 1 2 1.4l1.2 2.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M4.5 16.5v2.2c0 .7.5 1.2 1.2 1.2h.8c.7 0 1.2-.5 1.2-1.2v-.5h8.6v.5c0 .7.5 1.2 1.2 1.2h.8c.7 0 1.2-.5 1.2-1.2v-2.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M8 14.3h.1M15.9 14.3h.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+            <path d="m19 5 1.5 1.5L23 4" stroke="#c9a961" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+        <span class="productBadgeText">
+          <strong>Universal Car Fit</strong>
+          <small>Works with most vehicles</small>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="logoStrip">
+    <span>Secure restraint</span><span>Adjustable comfort</span><span>Daily travel ready</span><span>Multiple colors</span>
+  </section>
+
+  <section id="how-it-works" class="videoSection">
+    <div class="videoCopy"><span class="eyebrow">Watch it work</span><h2>From loose and risky to clipped-in and calm.</h2><p>See how quickly PawSafe Store creates a calmer, safer travel setup before every drive.</p></div>
+    <div class="videoShell"><video src="{{ 'video.mp4' | asset_url }}" autoplay muted loop playsinline controls></video></div>
+  </section>
+
+  <section class="productShowcase">
+    <div class="gallery">
+      <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View PawSafe belt product page"><img src="{{ 'hero2.jpg' | asset_url }}" alt="PawSafe Store product in use" width="640" height="640" loading="lazy"></a>
+      <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View PawSafe belt product page"><img src="{{ 'seat2.jpg' | asset_url }}" alt="Pet safety belt attached to seat" width="640" height="640" loading="lazy"></a>
+      <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View PawSafe belt product page"><img src="{{ 'cat.jpg' | asset_url }}" alt="Pet secured for travel" width="640" height="640" loading="lazy"></a>
+      <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View PawSafe belt product page"><img src="{{ 'multi.jpg' | asset_url }}" alt="PawSafe Store color options" width="640" height="640" loading="lazy"></a>
+    </div>
+    <div class="productPanel">
+      <span class="eyebrow">PawSafe Store Original</span>
+      <h2>Premium adjustable dog car safety belt</h2>
+      <div class="productFacts"><span>Adjustable length</span><span>Cloth and metal build</span><span>7 color options</span></div>
+      <p>Built for daily drives, vet visits, errands, and short rides where your pet needs a calmer, more controlled travel setup.</p>
+      <div class="swatches">
+        <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View red PawSafe belt"><img src="{{ 'red.jpg' | asset_url }}" alt="Red PawSafe Store belt" width="120" height="120" loading="lazy"></a>
+        <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View black PawSafe belt"><img src="{{ 'black.jpg' | asset_url }}" alt="Black PawSafe Store belt" width="120" height="120" loading="lazy"></a>
+        <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View blue PawSafe belt"><img src="{{ 'blue.jpg' | asset_url }}" alt="Blue PawSafe Store belt" width="120" height="120" loading="lazy"></a>
+        <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View pink PawSafe belt"><img src="{{ 'pink.jpg' | asset_url }}" alt="Pink PawSafe Store belt" width="120" height="120" loading="lazy"></a>
+        <a class="productMediaLink" href="{{ pawsafe_product_url }}" aria-label="View green PawSafe belt"><img src="{{ 'green.jpg' | asset_url }}" alt="Green PawSafe Store belt" width="120" height="120" loading="lazy"></a>
+      </div>
+      <a class="btn primary wide" href="{{ pawsafe_product_url }}" id="showcase-cta-btn">Choose Color</a>
+      <div class="afterpay">PayPal accepted at checkout.</div>
+    </div>
+  </section>
+
+  <section class="compare pawsafe-section">
+    <span class="eyebrow">Why it helps</span><h2>A small travel habit that adds control.</h2>
+    <table><tr><th>Feature</th><th>PawSafe Store</th><th>Loose travel</th></tr><tr><td>Helps limit roaming inside the car</td><td>Yes</td><td>No</td></tr><tr><td>Adjustable comfort length</td><td>Yes</td><td>No</td></tr><tr><td>Easy clip-on buckle design</td><td>Yes</td><td>No</td></tr><tr><td>Multiple colors available</td><td>Yes</td><td>No</td></tr><tr><td>30-day return support</td><td>Yes</td><td>No</td></tr></table>
+  </section>
+
+  <section class="pawsafe-shipping-timeline-section pawsafe-section center">
+    <span class="eyebrow">Visual shipping timeline</span>
+    <h2>Shipping Process</h2>
+    <div class="pawsafe-shipping-timeline">
+      <div class="timeline-step">
+        <div class="step-icon-wrapper">
+          <div class="step-circle current"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">Order Today</div>
+          <div class="step-desc">Confirmation sent</div>
+        </div>
+      </div>
+      <div class="timeline-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon-wrapper">
+          <div class="step-circle"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">Processing</div>
+          <div class="step-desc">1–2 Days</div>
+        </div>
+      </div>
+      <div class="timeline-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon-wrapper">
+          <div class="step-circle"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">Shipped</div>
+          <div class="step-desc">Tracking details provided</div>
+        </div>
+      </div>
+      <div class="timeline-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </div>
+      <div class="timeline-step">
+        <div class="step-icon-wrapper">
+          <div class="step-circle success"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title">Delivered</div>
+          <div class="step-desc">7–15 Business Days</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pawsafe-trust-cards-section pawsafe-section center">
+    <span class="eyebrow">Why Pet Owners Love PawSafe</span>
+    <h2>Designed for Safer Travels</h2>
+    <div class="pawsafe-trust-cards-grid">
+      <div class="pawsafe-trust-card-item">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h3>Designed for Safety</h3>
+        <p>Helps keep your pet secure in their seat, reducing distractions while you focus on the road.</p>
+      </div>
+      <div class="pawsafe-trust-card-item">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <h3>Quality Materials</h3>
+        <p>Durable nylon strap webbing and heavy-duty zinc alloy metal clips designed for everyday pet travel.</p>
+      </div>
+      <div class="pawsafe-trust-card-item">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h3>Universally Compatible</h3>
+        <p>Universal seat belt clip fits easily into most standard vehicle buckle receivers with ease.</p>
+      </div>
+      <div class="pawsafe-trust-card-item">
+        <div class="card-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+            <line x1="9" y1="20" x2="15" y2="20"></line>
+            <line x1="12" y1="4" x2="12" y2="20"></line>
+          </svg>
+        </div>
+        <h3>Comfort & Adjustability</h3>
+        <p>Length adjusts easily so your dog or cat can sit, stand, or lie down comfortably during car rides.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="bundles" class="bundles">
+    <span class="eyebrow">Build your safer ride kit</span><h2>Choose your PawSafe Store bundle</h2>
+    <div class="bundleGrid">
+      <article class="bundle">
+        <h3>Single Pack</h3>
+        <p>For one dog or one vehicle.</p>
+        <div class="price">$19.99</div>
+        <div class="bundle-per-unit">$19.99 per belt</div>
+        {% if pawsafe_can_add %}
+          <a class="btn secondary wide" id="add-bundle-single" href="/cart/{{ pawsafe_variant.id }}:1">Add 1 To Cart</a>
+        {% else %}
+          <a class="btn secondary wide" id="add-bundle-single" role="link" aria-disabled="true">Unavailable</a>
+        {% endif %}
+      </article>
+      <article class="bundle featured">
+        <div class="tag">Best Value</div>
+        <h3>Duo Pack</h3>
+        <p>Perfect for two cars or two pets.</p>
+        <div class="price">$29.99 <span class="bundle-was">was $39.98</span></div>
+        <div class="bundle-savings">Save $9.99 — $14.99 per belt</div>
+        {% if pawsafe_can_add %}
+          <a class="btn primary wide" id="add-bundle-double" href="/cart/{{ pawsafe_variant.id }}:2?discount=BUNDLE2">Add 2 — Save $9.99</a>
+        {% else %}
+          <a class="btn primary wide" id="add-bundle-double" role="link" aria-disabled="true">Unavailable</a>
+        {% endif %}
+      </article>
+      <article class="bundle">
+        <div class="tag">Maximum Savings</div>
+        <h3>Family Pack</h3>
+        <p>Maximum value for multi-pet homes.</p>
+        <div class="price">$39.99 <span class="bundle-was">was $59.97</span></div>
+        <div class="bundle-savings">Save $19.98 — $13.33 per belt</div>
+        {% if pawsafe_can_add %}
+          <a class="btn secondary wide" id="add-bundle-family" href="/cart/{{ pawsafe_variant.id }}:3?discount=BUNDLE3">Add 3 — Save $19.98</a>
+        {% else %}
+          <a class="btn secondary wide" id="add-bundle-family" role="link" aria-disabled="true">Unavailable</a>
+        {% endif %}
+      </article>
+    </div>
+  </section>
+
+  <section class="pawsafe-home-footer-cta">
+    <h2>Give Your Dog the Safe Routine They Deserve</h2>
+    <p>Safer rides start before the engine does. Join 50,000+ pet parents making travel safer every day.</p>
+    <div>
+      <a href="{{ pawsafe_product_url }}">Protect My Dog Today</a>
+      <a href="https://h6g7rjzw.aftership.com/">View Shipping Info</a>
+    </div>
+    <small>Original PawSafe Store | Estimated delivery: 7-15 days</small>
+  </section>
+
+</main>
+
+<style>
+  .pawsafe-home-footer-cta {
+    padding: 82px 24px 86px;
+    background: #0b462d;
+    color: #ffffff;
+    font-family: Inter, var(--font-body--family), sans-serif;
+    text-align: center;
+  }
+
+  .pawsafe-home-footer-cta h2 {
+    max-width: 650px;
+    margin: 0 auto 26px;
+    color: #ffffff;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: clamp(2.25rem, 4vw, 3.7rem);
+    font-weight: 900;
+    line-height: 1.12;
+  }
+
+  .pawsafe-home-footer-cta p {
+    max-width: 620px;
+    margin: 0 auto 36px;
+    color: #dbe9e2;
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+
+  .pawsafe-home-footer-cta div {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .pawsafe-home-footer-cta a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 185px;
+    min-height: 58px;
+    border-radius: 7px;
+    background: #ff7a0a;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .pawsafe-home-footer-cta a:last-child {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+
+  .pawsafe-home-footer-cta small {
+    display: block;
+    color: #b9cbc2;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 640px) {
+    .pawsafe-home-footer-cta {
+      padding: 62px 18px 68px;
+    }
+
+    .pawsafe-home-footer-cta a {
+      width: 100%;
+      max-width: 310px;
+    }
+  }
+</style>
+
+<div class="stickyBar" id="sticky-cta-bar"><div><b>PawSafe Store Original</b><span>Estimated delivery: 7&ndash;15 business days</span></div><a class="btn primary" href="{{ pawsafe_product_url }}">Shop Now</a></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if (id === '#') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (id.length > 1) {
+        e.preventDefault();
+        document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  const stickyBar = document.getElementById('sticky-cta-bar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      stickyBar.classList.add('visible');
+    } else {
+      stickyBar.classList.remove('visible');
+    }
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "PawSafe Landing Page",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product for bundle buttons"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PawSafe Landing Page"
+    }
+  ]
+}
+{% endschema %}

@@ -1,124 +1,471 @@
+{% liquid
+  assign pawsafe_product = collections.all.products.first
+  assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
+%}
+<section class="pawsafe-cart-page">
+  <div class="pawsafe-cart-shell">
+    <h1>Shopping Cart</h1>
 
-
-<cart-items-component
-  class="cart-items-component"
-  data-section-id="{{ section.id }}"
->
-  <div class="section-background no-gradient-bg color-{{ section.settings.color_scheme }}"></div>
-  <div
-    class="section color-{{ section.settings.color_scheme }} section--{{ section.settings.section_width }}"
-  >
-    <div
-      class="cart-page spacing-style{% if cart.empty? %} cart-page--empty{% endif %}"
-      style="{% render 'spacing-style', settings: section.settings %}"
-    >
-      <div class="cart-page__title">
-        {%- content_for 'block', id: 'cart-page-title', type: '_cart-title' %}
+    {% if cart.empty? %}
+      <div class="pawsafe-cart-empty">
+        <h2>Your cart is empty</h2>
+        <p>Add PawSafe gear to begin building a safer travel routine.</p>
+        <a href="{{ pawsafe_product_url }}">Shop Safety Gear</a>
       </div>
+    {% else %}
+      <div class="pawsafe-cart-grid">
+        <div class="pawsafe-cart-items" aria-label="Cart items">
+          {% for item in cart.items %}
+            {% assign item_minus = item.quantity | minus: 1 %}
+            {% assign item_plus = item.quantity | plus: 1 %}
+            <article class="pawsafe-cart-item">
+              <a class="pawsafe-cart-item__image" href="{{ item.url }}">
+                {% if item.image %}
+                  {{ item.image | image_url: width: 360 | image_tag: loading: 'lazy', widths: '160, 240, 360', alt: item.product.title }}
+                {% endif %}
+              </a>
 
-      <div class="cart-page__items">
-        {%- content_for 'block', id: 'cart-page-items', type: '_cart-products' %}
-      </div>
+              <div class="pawsafe-cart-item__content">
+                <div class="pawsafe-cart-item__top">
+                  <div>
+                    <h2><a href="{{ item.url }}">{{ item.product.title }}</a></h2>
+                    {% unless item.product.has_only_default_variant %}
+                      <p class="pawsafe-cart-item__variant">
+                        {% for option in item.options_with_values %}
+                          {{ option.name }}: {{ option.value }}{% unless forloop.last %} | {% endunless %}
+                        {% endfor %}
+                      </p>
+                    {% endunless %}
+                    <div class="pawsafe-cart-badges">
+                      <span>In Stock</span>
+                      <span>Safety Certified</span>
+                    </div>
+                  </div>
 
-      {%- unless cart.empty? -%}
-        <div class="cart-page__summary">
-          {%- content_for 'block', id: 'cart-page-summary', type: '_cart-summary' -%}
+                  <a class="pawsafe-cart-remove" href="{{ item.url_to_remove }}" aria-label="Remove {{ item.product.title | escape }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>
+                  </a>
+                </div>
+
+                <div class="pawsafe-cart-item__bottom">
+                  <div class="pawsafe-cart-qty" aria-label="Quantity controls">
+                    <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item_minus }}" aria-label="Decrease quantity">-</a>
+                    <span>{{ item.quantity }}</span>
+                    <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item_plus }}" aria-label="Increase quantity">+</a>
+                  </div>
+                  <strong>{{ item.final_line_price | money }}</strong>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
         </div>
-      {%- endunless -%}
 
-      <div class="cart-page__more-blocks">
-        {%- content_for 'blocks' -%}
+        <aside class="pawsafe-cart-side">
+          <div class="pawsafe-cart-summary">
+            <h2>Order Summary</h2>
+            <dl>
+              <div>
+                <dt>Subtotal</dt>
+                <dd>{{ cart.items_subtotal_price | money }}</dd>
+              </div>
+              <div>
+                <dt>Shipping</dt>
+                <dd class="pawsafe-free">FREE</dd>
+              </div>
+              <div>
+                <dt>Estimated Tax</dt>
+                <dd>At checkout</dd>
+              </div>
+            </dl>
+            <div class="pawsafe-cart-total">
+              <span>Total</span>
+              <strong>{{ cart.total_price | money }}</strong>
+            </div>
+
+            <form action="{{ routes.cart_url }}" method="post">
+              <button class="pawsafe-checkout-main" type="submit" name="checkout">
+                Secure Checkout
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              </button>
+            </form>
+            <a class="pawsafe-checkout-alt" href="/checkout">Checkout</a>
+            <p class="pawsafe-secure-note">Encrypted &amp; secure payment</p>
+          </div>
+
+          <div class="pawsafe-cart-trust">
+            <article>
+              <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+              <div><strong>Free Worldwide Shipping</strong><p>On all safety equipment orders</p></div>
+            </article>
+            <article>
+              <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h10v12H7z"/><path d="M9 7a3 3 0 0 1 6 0"/><path d="M9 13h6"/></svg></span>
+              <div><strong>30-Day Easy Returns</strong><p>Unshakeable satisfaction guarantee</p></div>
+            </article>
+            <article>
+              <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3.5 8 7 10 3.5-2 7-5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <div><strong>Certified Protection</strong><p>Independent crash-test lab verified</p></div>
+            </article>
+          </div>
+        </aside>
       </div>
-    </div>
+    {% endif %}
   </div>
-</cart-items-component>
+</section>
 
-{% stylesheet %}
-  .cart-items-component {
-    overflow-x: hidden;
-    max-width: 100%;
+<style>
+  .pawsafe-cart-page {
+    --ps-green: #003d25;
+    --ps-deep: #002514;
+    --ps-gold: #c9a34e;
+    --ps-cream: #fbf8f1;
+    --ps-line: #ddd7cb;
+    min-height: 760px;
+    padding: 132px 0 120px;
+    background: radial-gradient(circle at 72% 4%, rgba(201, 163, 78, 0.08), transparent 34%), var(--ps-cream);
+    color: var(--ps-deep);
+    font-family: Inter, var(--font-body--family), sans-serif;
   }
 
-  .cart-page {
-    --cart-font-size--2xs: var(--font-size--2xs);
-    --cart-font-size--xs: var(--font-size--xs);
-    --cart-font-size--sm: var(--font-size--sm);
-    --cart-font-size--md: var(--font-size--md);
-    --cart-font-size--2xl: var(--font-size--2xl);
+  .pawsafe-cart-shell {
+    width: min(100% - 64px, 1320px);
+    margin: 0 auto;
+  }
 
+  .pawsafe-cart-shell h1 {
+    margin: 0 0 48px;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: clamp(2.3rem, 4vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .pawsafe-cart-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0 var(--padding-5xl);
-    overflow-x: hidden;
-    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 28px;
+    align-items: start;
   }
 
-  .cart-page--empty {
+  .pawsafe-cart-items,
+  .pawsafe-cart-side,
+  .pawsafe-cart-trust {
+    display: grid;
+    gap: 26px;
+  }
+
+  .pawsafe-cart-item,
+  .pawsafe-cart-summary,
+  .pawsafe-cart-trust article,
+  .pawsafe-cart-empty {
+    border: 1px solid var(--ps-line);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(0, 37, 20, 0.05);
+  }
+
+  .pawsafe-cart-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 28px;
+    padding: 26px;
+  }
+
+  .pawsafe-cart-item__image {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f0e5c4;
+  }
+
+  .pawsafe-cart-item__image img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .pawsafe-cart-item__content {
+    display: grid;
+    gap: 30px;
+    min-width: 0;
+  }
+
+  .pawsafe-cart-item__top,
+  .pawsafe-cart-item__bottom {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .pawsafe-cart-item h2 {
+    margin: 4px 0 14px;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .pawsafe-cart-item h2 a,
+  .pawsafe-cart-remove,
+  .pawsafe-cart-qty a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .pawsafe-cart-item__variant {
+    margin: 0 0 14px;
+    color: #111b16;
+    font-size: 0.98rem;
+    font-style: italic;
+    letter-spacing: 0.04em;
+  }
+
+  .pawsafe-cart-badges {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pawsafe-cart-badges span {
+    color: #a27a1f;
+    font-size: 0.78rem;
+    font-weight: 850;
+  }
+
+  .pawsafe-cart-badges span:first-child {
+    padding: 5px 10px;
+    border-radius: 3px;
+    background: #e8eee8;
+    color: var(--ps-deep);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-cart-remove svg,
+  .pawsafe-cart-summary svg,
+  .pawsafe-cart-trust svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .pawsafe-cart-item__bottom {
+    align-items: center;
+    padding-top: 26px;
+    border-top: 1px solid #eee9df;
+  }
+
+  .pawsafe-cart-qty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 118px;
+    height: 46px;
+    border: 1px solid #c8cfc5;
+    border-radius: 999px;
+    color: var(--ps-deep);
+    font-size: 1.05rem;
+    font-weight: 750;
+  }
+
+  .pawsafe-cart-qty a,
+  .pawsafe-cart-qty span {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 100%;
+  }
+
+  .pawsafe-cart-item__bottom strong {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+  }
+
+  .pawsafe-cart-summary {
+    padding: 40px 36px;
+  }
+
+  .pawsafe-cart-summary h2 {
+    margin: 0 0 32px;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-cart-summary dl {
+    display: grid;
+    gap: 24px;
+    margin: 0 0 24px;
+    padding: 0 0 24px;
+    border-bottom: 1px solid #eee9df;
+  }
+
+  .pawsafe-cart-summary dl div,
+  .pawsafe-cart-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .pawsafe-cart-summary dt,
+  .pawsafe-cart-summary dd {
+    margin: 0;
+    font-size: 1.02rem;
+  }
+
+  .pawsafe-free {
+    color: #0b9f32;
+    font-weight: 900;
+  }
+
+  .pawsafe-cart-total {
+    margin-bottom: 34px;
+  }
+
+  .pawsafe-cart-total span {
+    font-size: 1.24rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-cart-total strong {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-checkout-main,
+  .pawsafe-checkout-alt {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .cart-page--empty .cart-page__title,
-  .cart-page--empty .cart-page__more-blocks {
-    margin-top: var(--margin-6xl);
-  }
-
-  .cart-page__more-blocks {
+    gap: 12px;
     width: 100%;
+    min-height: 60px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
   }
 
-  .cart-page--empty .cart-title {
+  .pawsafe-checkout-main {
+    margin-bottom: 14px;
+    background: var(--ps-green);
+    color: #ffffff;
+  }
+
+  .pawsafe-checkout-alt {
+    background: #ffb700;
+    color: var(--ps-deep);
+  }
+
+  .pawsafe-secure-note {
+    margin: 28px 0 0;
+    color: #7a817a;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
     text-align: center;
+    text-transform: uppercase;
   }
 
-  .cart-page__main {
-    grid-column: 1;
+  .pawsafe-cart-trust article {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 18px;
+    align-items: center;
+    padding: 22px;
   }
 
-  .cart-page__summary {
-    padding-top: var(--padding-xl);
+  .pawsafe-cart-trust span {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fbf3de;
+    color: var(--ps-gold);
   }
 
-  @media screen and (min-width: 750px) {
-    .cart-page {
-      grid-template-columns: 1fr min(50vw, var(--sidebar-width));
-      grid-template-rows: min-content min-content 1fr;
+  .pawsafe-cart-trust strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 900;
+  }
+
+  .pawsafe-cart-trust p {
+    margin: 0;
+    color: #4d5751;
+    font-size: 0.82rem;
+  }
+
+  .pawsafe-cart-empty {
+    max-width: 640px;
+    padding: 52px;
+  }
+
+  .pawsafe-cart-empty h2 {
+    margin: 0 0 12px;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 2rem;
+  }
+
+  .pawsafe-cart-empty p {
+    margin: 0 0 28px;
+    color: #3c4942;
+  }
+
+  .pawsafe-cart-empty a {
+    display: inline-flex;
+    padding: 15px 24px;
+    border-radius: 8px;
+    background: var(--ps-green);
+    color: #ffffff;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 980px) {
+    .pawsafe-cart-page {
+      padding: 78px 0;
     }
 
-    .cart-page__summary {
+    .pawsafe-cart-shell {
+      width: min(100% - 32px, 720px);
+    }
+
+    .pawsafe-cart-grid,
+    .pawsafe-cart-item {
+      grid-template-columns: 1fr;
+    }
+
+    .pawsafe-cart-item__image {
+      width: 150px;
+    }
+
+    .pawsafe-cart-item__top,
+    .pawsafe-cart-item__bottom {
+      align-items: flex-start;
+    }
+  }
+
+  @media screen and (max-width: 560px) {
+    .pawsafe-cart-item__top,
+    .pawsafe-cart-item__bottom {
       display: grid;
-      height: 100%;
-      grid-column: 2;
-      grid-row: 1 / -1;
-      align-self: stretch;
-      grid-template-rows: subgrid;
-      padding-top: 0;
-
-      /* needed to support blurred effect from hero section */
-      position: relative;
-    }
-
-    .section--page-width .cart-page:has(.cart__container--extend) {
-      grid-column: 2 / 4;
-      grid-template-columns: 1fr minmax(
-          var(--sidebar-width),
-          calc((100vw - var(--page-width)) / 2 + var(--sidebar-width))
-        );
-    }
-
-    .cart__container--extend {
-      height: 100%;
     }
   }
-
-  @media screen and (min-width: 1400px) {
-    .cart-page {
-      grid-template-columns: 1fr var(--sidebar-width);
-    }
-  }
-{% endstylesheet %}
+</style>
 
 {% schema %}
 {
@@ -126,35 +473,6 @@
   "disabled_on": {
     "groups": ["header", "footer"]
   },
-  "blocks": [
-    {
-      "type": "@theme"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "video"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "spacer"
-    }
-  ],
   "settings": [
     {
       "type": "select",

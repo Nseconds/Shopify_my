@@ -101,7 +101,11 @@
             Handle menus with fewer than 3 levels of links
           {%- endcomment -%}
           {% liquid
-            assign pawsafe_product_url = "/products/dog-car-seat-belt"
+            assign pawsafe_product = section.settings.product
+            if pawsafe_product == blank
+              assign pawsafe_product = collections.all.products.first
+            endif
+            assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
             if request.page_type == 'index'
               assign home_link = "#"
               assign shop_link = "#bundles"

@@ -1,0 +1,357 @@
+<section class="pawsafe-help-page">
+  <div class="pawsafe-help-hero">
+    <span>Help Center</span>
+    <h1>Commonly Asked Questions</h1>
+    <p>Everything you need to know about PawSafe protection, shipping, and returns. Our team is dedicated to your pet's serene guardian.</p>
+    <label class="pawsafe-help-search" aria-label="Search FAQs">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+      <input type="search" placeholder="Search for safety tips, shipping info...">
+    </label>
+  </div>
+
+  <div class="pawsafe-help-layout">
+    <aside class="pawsafe-help-tabs" aria-label="FAQ categories">
+      <a href="#shipping" class="is-active">Shipping <span aria-hidden="true">+</span></a>
+      <a href="#returns">Returns <span aria-hidden="true">↻</span></a>
+      <a href="#payments">Payments <span aria-hidden="true">$</span></a>
+      <a href="#usage">Products <span aria-hidden="true">*</span></a>
+    </aside>
+
+    <div class="pawsafe-help-content">
+      <div class="pawsafe-help-group" id="shipping">
+        <h2><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span> Shipping Information</h2>
+        <details open>
+          <summary>How long will my PawSafe order take to arrive?</summary>
+          <p>Our dedicated logistics team works around the clock to ensure your pet safety gear arrives safely. Standard shipping times typically range between <strong>7 to 15 business days</strong> depending on your location and regional customs processing. You will receive a tracking link via email as soon as your package leaves our warehouse.</p>
+        </details>
+        <details>
+          <summary>Do you offer express shipping?</summary>
+          <p>Most orders use tracked standard shipping. If express service is available for your destination, it will appear during checkout.</p>
+        </details>
+      </div>
+
+      <div class="pawsafe-help-group" id="returns">
+        <h2><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6"/><path d="M4 4v6h6"/></svg></span> Returns &amp; Support</h2>
+        <details>
+          <summary>What is your return policy?</summary>
+          <p>We offer 30-day return support. Please contact us before returning an item so our team can guide you through the correct next step.</p>
+        </details>
+      </div>
+
+      <div class="pawsafe-help-group" id="usage">
+        <h2><span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2"/><circle cx="17" cy="8" r="2"/><circle cx="9" cy="16" r="2"/><circle cx="15" cy="16" r="2"/><path d="M12 11c2.2 0 4 1.7 4 3.7 0 1.8-1.5 3.3-4 3.3s-4-1.5-4-3.3C8 12.7 9.8 11 12 11z"/></svg></span> Product Usage</h2>
+        <details>
+          <summary>How should I attach the PawSafe beacon?</summary>
+          <p>Attach PawSafe gear to a secure pet harness rather than directly to a collar. A harness distributes pressure more comfortably during sudden stops.</p>
+        </details>
+        <details>
+          <summary>Is the hardware waterproof?</summary>
+          <p>The hardware is made for everyday travel use and can handle normal outdoor conditions. Dry it after heavy moisture and inspect it regularly.</p>
+        </details>
+      </div>
+
+      <div class="pawsafe-help-group" id="payments">
+        <h2><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></span> Payment Methods</h2>
+        <details>
+          <summary>Which payment types do you accept?</summary>
+          <p>Checkout is securely processed through Shopify-supported payment methods, including major cards and PayPal where available.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="pawsafe-help-cta">
+    <h2>Still have questions?</h2>
+    <p>Our support team of pet experts is available 24/7 to help you with anything you might need.</p>
+    <div>
+      <a href="/pages/contact">Contact Support</a>
+      <a href="mailto:help.pawsafestore@gmail.com">Message Live Chat</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pawsafe-help-page {
+    --ps-green: #003d25;
+    --ps-deep: #002514;
+    --ps-gold: #d0ad5d;
+    --ps-cream: #fbf8f1;
+    background: var(--ps-cream);
+    color: var(--ps-deep);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-help-hero {
+    max-width: 830px;
+    margin: 0 auto;
+    padding: 88px 24px 56px;
+    text-align: center;
+  }
+
+  .pawsafe-help-hero > span {
+    display: inline-flex;
+    margin-bottom: 24px;
+    padding: 7px 18px;
+    border-radius: 999px;
+    background: #f0d785;
+    color: #8a6417;
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-help-hero h1,
+  .pawsafe-help-cta h2,
+  .pawsafe-help-group h2 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-weight: 900;
+  }
+
+  .pawsafe-help-hero h1 {
+    margin: 0 0 22px;
+    font-size: clamp(2.4rem, 5vw, 4.1rem);
+    line-height: 1.08;
+  }
+
+  .pawsafe-help-hero p {
+    max-width: 660px;
+    margin: 0 auto 48px;
+    color: #2e3a34;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .pawsafe-help-search {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    align-items: center;
+    gap: 14px;
+    min-height: 66px;
+    border: 1px solid #cfc8bd;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 0 22px;
+    text-align: left;
+  }
+
+  .pawsafe-help-search svg,
+  .pawsafe-help-group svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .pawsafe-help-search input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ps-deep);
+    font: inherit;
+  }
+
+  .pawsafe-help-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    width: min(100% - 72px, 1180px);
+    margin: 0 auto;
+    padding: 0 0 88px;
+  }
+
+  .pawsafe-help-tabs {
+    display: grid;
+    gap: 16px;
+    align-self: start;
+    position: sticky;
+    top: 96px;
+  }
+
+  .pawsafe-help-tabs a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 8px;
+    color: var(--ps-deep);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pawsafe-help-tabs a.is-active {
+    border: 1px solid #cfc8bd;
+    background: #ffffff;
+    box-shadow: 0 8px 22px rgba(0, 37, 20, 0.04);
+  }
+
+  .pawsafe-help-content {
+    display: grid;
+    gap: 48px;
+  }
+
+  .pawsafe-help-group h2 {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 24px;
+    font-size: 1.8rem;
+  }
+
+  .pawsafe-help-group h2 span {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: var(--ps-green);
+    color: #ffffff;
+  }
+
+  .pawsafe-help-group details {
+    border: 1px solid #cfc8bd;
+    border-bottom: 0;
+    background: #ffffff;
+  }
+
+  .pawsafe-help-group details:first-of-type {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .pawsafe-help-group details:last-of-type {
+    border-bottom: 1px solid #cfc8bd;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .pawsafe-help-group details:only-of-type {
+    border-radius: 10px;
+  }
+
+  .pawsafe-help-group summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 26px 28px;
+    font-size: 1.08rem;
+    font-weight: 700;
+  }
+
+  .pawsafe-help-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pawsafe-help-group summary::after {
+    content: "+";
+    float: right;
+    color: #aa7c19;
+    font-weight: 900;
+  }
+
+  .pawsafe-help-group details[open] summary::after {
+    content: "-";
+  }
+
+  .pawsafe-help-group p {
+    margin: -8px 28px 28px;
+    color: #303a35;
+    line-height: 1.7;
+  }
+
+  .pawsafe-help-cta {
+    padding: 90px 24px 96px;
+    background: var(--ps-green);
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .pawsafe-help-cta h2 {
+    margin: 0 0 22px;
+    font-size: clamp(2.15rem, 4vw, 3.25rem);
+    text-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .pawsafe-help-cta p {
+    max-width: 560px;
+    margin: 0 auto 44px;
+    color: #d7eadf;
+    line-height: 1.65;
+  }
+
+  .pawsafe-help-cta div {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pawsafe-help-cta a {
+    min-width: 205px;
+    padding: 17px 28px;
+    border: 1px solid var(--ps-gold);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+
+  .pawsafe-help-cta a:first-child {
+    background: var(--ps-gold);
+    color: var(--ps-deep);
+  }
+
+  @media screen and (max-width: 900px) {
+    .pawsafe-help-layout {
+      grid-template-columns: 1fr;
+      width: min(100% - 32px, 720px);
+    }
+
+    .pawsafe-help-tabs {
+      position: static;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 560px) {
+    .pawsafe-help-tabs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .pawsafe-help-group summary {
+      padding: 16px 18px;
+      font-size: 0.95rem;
+    }
+    .pawsafe-help-group p {
+      margin: -4px 18px 18px;
+      font-size: 0.85rem;
+    }
+    .pawsafe-help-group h2 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .pawsafe-help-hero {
+      padding: 56px 16px 36px;
+    }
+    .pawsafe-help-layout {
+      padding-bottom: 48px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "PawSafe FAQ page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "PawSafe FAQ page"
+    }
+  ]
+}
+{% endschema %}

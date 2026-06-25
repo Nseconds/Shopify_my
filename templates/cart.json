@@ -1,1 +1,16 @@
-{"sections":{"cart-section":{"type":"main-cart","blocks":{"cart-page-title":{"type":"_cart-title","static":true,"settings":{"title":"Cart","show_count":true,"type_preset":"h2","alignment":"left","padding-block-start":32,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"cart-page-items":{"type":"_cart-products","static":true,"settings":{"gap":24,"image_ratio":"portrait","dividers":true,"vendor":false,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"cart-page-summary":{"type":"_cart-summary","static":true,"settings":{"extend_summary":true,"inherit_color_scheme":false,"color_scheme":"scheme-1","border":"none","border_width":0,"border_opacity":100,"border_radius":0},"blocks":{}}},"settings":{"section_width":"page-width","color_scheme":"","padding-block-start":0,"padding-block-end":0}}},"order":["cart-section"]}
+{
+  "sections": {
+    "cart-section": {
+      "type": "main-cart",
+      "settings": {
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "cart-section"
+  ]
+}

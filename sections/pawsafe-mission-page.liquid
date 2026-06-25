@@ -1,0 +1,343 @@
+{% liquid
+  assign pawsafe_product = collections.all.products.first
+  assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
+%}
+<section class="pawsafe-mission-page">
+  <div class="pawsafe-mission-hero">
+    <div class="pawsafe-mission-hero__copy">
+      <p>Our Founding Story</p>
+      <h1>No Pet Left <span>Unprotected</span></h1>
+      <div>
+        <p>It started with a terrifying realization: most pets travel like unsecured cargo. One sharp turn or sudden stop can turn a beloved family member into a projectile. We founded PawSafe because "good enough" isn't an option when it comes to the lives of those who trust us most.</p>
+      </div>
+      <div class="pawsafe-mission-actions">
+        <a href="{{ pawsafe_product_url }}">View Safety Standards</a>
+        <a href="/collections/all">Our Gear</a>
+      </div>
+    </div>
+    <div class="pawsafe-mission-hero__image">
+      <img src="{{ 'pawsafe-review-02-golden-retriever-red-belt.jpg' | asset_url }}" alt="Dog safely secured in a car seat with PawSafe gear" width="720" height="560" loading="eager">
+    </div>
+  </div>
+
+  <div class="pawsafe-mission-truth">
+    <div class="pawsafe-mission-heading">
+      <h2>The Truth About Travel</h2>
+      <p>Every year, thousands of pets are injured in preventable car accidents. We're here to change the statistics through engineering and education.</p>
+    </div>
+    <div class="pawsafe-mission-cards">
+      <article>
+        <span aria-hidden="true">01</span>
+        <h3>Practical Safety</h3>
+        <p>We don't just sell products; we engineer solutions. Our gear is crash-tested and rigorously vetted to ensure it performs when it matters most, without sacrificing your pet's comfort.</p>
+      </article>
+      <article>
+        <span aria-hidden="true">02</span>
+        <h3>Clear Information</h3>
+        <p>Safety shouldn't be confusing. We provide transparent test results, fitting guides, and honest advice. No marketing fluff, just the data you need to keep your pet secure.</p>
+      </article>
+      <article>
+        <span aria-hidden="true">03</span>
+        <h3>Customer Support</h3>
+        <p>Our team of safety experts is always standing by. Whether you're choosing a harness or adjusting a car seat, we're here to guide you every step of the way.</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="pawsafe-mission-vision">
+    <h2>Our vision is a world where every pet journey is a safe journey.</h2>
+    <span aria-hidden="true"></span>
+    <p>"We believe pets aren't just animals; they are family. And family deserves the same level of safety engineering we expect for ourselves. That's the PawSafe promise."</p>
+    <div>
+      <strong>Sarah Jenkins</strong>
+      <small>Founder &amp; CEO</small>
+    </div>
+  </div>
+
+  <div class="pawsafe-mission-strip" aria-label="PawSafe commitments">
+    <span>Crash Test Certified</span>
+    <span>Eco-Friendly Materials</span>
+    <span>Veterinarian Approved</span>
+    <span>Global Safety Standards</span>
+  </div>
+</section>
+
+<style>
+  .pawsafe-mission-page {
+    --ps-green: #003d25;
+    --ps-deep: #002514;
+    --ps-gold: #d0ad5d;
+    --ps-cream: #fbf8f1;
+    background: var(--ps-cream);
+    color: var(--ps-deep);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-mission-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 70px;
+    width: min(100% - 72px, 1260px);
+    margin: 0 auto;
+    padding: 88px 0 128px;
+  }
+
+  .pawsafe-mission-hero__copy > p,
+  .pawsafe-mission-heading p {
+    color: #a57518;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-mission-hero__copy > p {
+    display: inline-flex;
+    margin: 0 0 28px;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: #f5e4b3;
+  }
+
+  .pawsafe-mission-hero h1,
+  .pawsafe-mission-heading h2,
+  .pawsafe-mission-vision h2,
+  .pawsafe-mission-cards h3 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-weight: 900;
+  }
+
+  .pawsafe-mission-hero h1 {
+    margin: 0 0 34px;
+    font-size: clamp(2.7rem, 5vw, 4.4rem);
+    line-height: 1.08;
+  }
+
+  .pawsafe-mission-hero h1 span {
+    display: block;
+    color: var(--ps-gold);
+  }
+
+  .pawsafe-mission-hero__copy div p {
+    max-width: 560px;
+    margin: 0;
+    color: #26362f;
+    font-size: 1.04rem;
+    line-height: 1.75;
+  }
+
+  .pawsafe-mission-actions {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 42px;
+  }
+
+  .pawsafe-mission-actions a {
+    min-width: 188px;
+    padding: 17px 26px;
+    border: 1px solid var(--ps-gold);
+    border-radius: 7px;
+    color: var(--ps-deep);
+    font-size: 0.86rem;
+    font-weight: 850;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .pawsafe-mission-actions a:first-child {
+    border-color: var(--ps-green);
+    background: var(--ps-green);
+    color: #ffffff;
+  }
+
+  .pawsafe-mission-hero__image {
+    position: relative;
+    border-radius: 10px;
+  }
+
+  .pawsafe-mission-hero__image::before {
+    content: "";
+    position: absolute;
+    inset: -86px -70px -86px 22%;
+    border-radius: 999px 0 0 999px;
+    background: #f1eee7;
+    z-index: 0;
+  }
+
+  .pawsafe-mission-hero__image img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.04;
+    border: 5px solid #ffffff;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 28px 60px rgba(0, 37, 20, 0.22);
+  }
+
+  .pawsafe-mission-truth {
+    background: #ffffff;
+    padding: 82px 24px 92px;
+  }
+
+  .pawsafe-mission-heading {
+    max-width: 690px;
+    margin: 0 auto 64px;
+    text-align: center;
+  }
+
+  .pawsafe-mission-heading h2 {
+    margin: 0 0 18px;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+  }
+
+  .pawsafe-mission-heading p {
+    margin: 0 auto;
+    color: #4b554f;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.65;
+    text-transform: none;
+  }
+
+  .pawsafe-mission-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    width: min(100%, 1180px);
+    margin: 0 auto;
+  }
+
+  .pawsafe-mission-cards article {
+    padding: 34px 32px;
+    border: 1px solid #d4cec3;
+    border-radius: 8px;
+    background: #fbf8f1;
+  }
+
+  .pawsafe-mission-cards span {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 30px;
+    border-radius: 6px;
+    background: var(--ps-green);
+    color: var(--ps-gold);
+    font-size: 0.8rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-mission-cards h3 {
+    margin: 0 0 18px;
+    font-size: 1.52rem;
+  }
+
+  .pawsafe-mission-cards p {
+    margin: 0;
+    color: #3d463f;
+    line-height: 1.65;
+  }
+
+  .pawsafe-mission-vision {
+    padding: 126px 24px 134px;
+    background: radial-gradient(circle at center, rgba(208, 173, 93, 0.12), transparent 42%), var(--ps-green);
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .pawsafe-mission-vision h2 {
+    max-width: 760px;
+    margin: 0 auto 34px;
+    font-size: clamp(2.35rem, 5vw, 4.2rem);
+    line-height: 1.1;
+    text-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .pawsafe-mission-vision > span {
+    display: block;
+    width: 92px;
+    height: 4px;
+    margin: 0 auto 48px;
+    background: var(--ps-gold);
+  }
+
+  .pawsafe-mission-vision p {
+    max-width: 850px;
+    margin: 0 auto 48px;
+    color: #f4f6ef;
+    font-size: 1.08rem;
+    font-style: italic;
+    line-height: 1.75;
+  }
+
+  .pawsafe-mission-vision strong,
+  .pawsafe-mission-vision small {
+    display: block;
+  }
+
+  .pawsafe-mission-vision strong {
+    color: var(--ps-gold);
+    font-weight: 900;
+  }
+
+  .pawsafe-mission-vision small {
+    margin-top: 4px;
+    color: #e8f0eb;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-mission-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    padding: 34px 40px;
+    background: #fbf8f1;
+    color: #6c6255;
+    text-align: center;
+  }
+
+  .pawsafe-mission-strip span {
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 900px) {
+    .pawsafe-mission-hero,
+    .pawsafe-mission-cards,
+    .pawsafe-mission-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .pawsafe-mission-hero {
+      width: min(100% - 32px, 720px);
+      gap: 48px;
+      padding: 64px 0 82px;
+    }
+
+    .pawsafe-mission-hero__image::before {
+      inset: -24px;
+      border-radius: 24px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "PawSafe mission page",
+  "settings": [],
+  "presets": [
+    {
+      "name": "PawSafe mission page"
+    }
+  ]
+}
+{% endschema %}

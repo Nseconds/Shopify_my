@@ -25,7 +25,11 @@
 
 {% capture children %}
   {% liquid
-    assign pawsafe_product_url = "/products/dog-car-seat-belt"
+    assign pawsafe_product = section.settings.product
+    if pawsafe_product == blank
+      assign pawsafe_product = collections.all.products.first
+    endif
+    assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
     if request.page_type == 'index'
       assign home_link = "#"
       assign shop_link = "#bundles"
@@ -37,7 +41,7 @@
         assign faq_link = "#faq"
       else
         assign shop_link = pawsafe_product_url
-        assign faq_link = pawsafe_product_url | append: "#faq"
+        assign faq_link = "/pages/faq"
       endif
     endif
     assign track_link = "https://h6g7rjzw.aftership.com/"

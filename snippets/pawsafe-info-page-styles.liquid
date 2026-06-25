@@ -1,0 +1,441 @@
+<style>
+  .pawsafe-info-page {
+    --ps-bg: #fbf9f5;
+    --ps-card: #f5f3ef;
+    --ps-card-bright: #ffffff;
+    --ps-text: #002514;
+    --ps-muted: #414943;
+    --ps-green: #0d3c26;
+    --ps-green-deep: #002514;
+    --ps-gold: #775a19;
+    --ps-coral: #f47c5d;
+    --ps-border: #e4e2de;
+    background: var(--ps-bg);
+    color: var(--ps-text);
+    font-family: Inter, var(--font-body--family), sans-serif;
+    padding: 0 0 72px;
+  }
+
+  .pawsafe-info-page *,
+  .pawsafe-info-page *::before,
+  .pawsafe-info-page *::after {
+    box-sizing: border-box;
+  }
+
+  .pawsafe-info-page__hero {
+    width: min(100% - 40px, 760px);
+    margin: 0 auto;
+    padding: 48px 0 78px;
+    text-align: center;
+  }
+
+  .pawsafe-info-page__eyebrow,
+  .pawsafe-contact-panel__label {
+    margin: 0 0 18px;
+    color: var(--ps-gold);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.32em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-info-page h1,
+  .pawsafe-info-page h2,
+  .pawsafe-info-page h3 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .pawsafe-info-page__hero h1 {
+    margin: 0 0 18px;
+    font-size: clamp(2.25rem, 5vw, 3.7rem);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  .pawsafe-info-page__hero p:not(.pawsafe-info-page__eyebrow) {
+    max-width: 650px;
+    margin: 0 auto;
+    color: var(--ps-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .pawsafe-info-page__layout,
+  .pawsafe-contact-grid {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 26px;
+    width: min(100% - 80px, 1150px);
+    margin: 0 auto;
+  }
+
+  .pawsafe-info-page__tabs {
+    position: sticky;
+    top: 96px;
+    display: grid;
+    gap: 16px;
+    align-self: start;
+  }
+
+  .pawsafe-info-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 0 22px;
+    border-radius: 8px;
+    background: var(--ps-card);
+    color: var(--ps-text);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pawsafe-info-tab--active {
+    background: var(--ps-green-deep);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 37, 20, 0.22);
+  }
+
+  .pawsafe-faq-group {
+    margin-bottom: 52px;
+  }
+
+  .pawsafe-faq-group h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--ps-border);
+    color: var(--ps-text);
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    font-weight: 800;
+  }
+
+  .pawsafe-faq-group details {
+    margin-bottom: 16px;
+    border-radius: 14px;
+    background: var(--ps-card);
+    overflow: hidden;
+  }
+
+  .pawsafe-faq-group summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 78px;
+    padding: 0 28px;
+    color: var(--ps-text);
+    cursor: pointer;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .pawsafe-faq-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pawsafe-faq-group summary::after {
+    content: "⌄";
+    color: var(--ps-text);
+    font-family: Inter, sans-serif;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .pawsafe-faq-group details[open] summary::after {
+    content: "⌃";
+  }
+
+  .pawsafe-faq-group details p {
+    margin: -2px 0 0;
+    padding: 0 28px 26px;
+    color: var(--ps-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .pawsafe-info-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    width: min(100% - 80px, 1150px);
+    margin: 80px auto 0;
+    padding: 58px 64px;
+    border: 2px solid #001d0f;
+    border-radius: 28px;
+    background: linear-gradient(110deg, #0d3c26, #0b492c);
+    color: #ffffff;
+  }
+
+  .pawsafe-info-cta h2 {
+    margin: 0 0 14px;
+    color: #ffffff;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: 800;
+  }
+
+  .pawsafe-info-cta p {
+    max-width: 560px;
+    margin: 0;
+    color: #bdeece;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .pawsafe-info-cta__actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-shrink: 0;
+  }
+
+  .pawsafe-info-cta__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 220px;
+    min-height: 66px;
+    padding: 0 28px;
+    border-radius: 8px;
+    background: var(--ps-coral);
+    color: #ffffff;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .pawsafe-info-cta__link {
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+
+  .pawsafe-info-trust {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    width: min(100% - 80px, 1150px);
+    margin: 94px auto 0;
+    padding-top: 66px;
+    border-top: 1px solid var(--ps-border);
+  }
+
+  .pawsafe-info-trust div {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+
+  .pawsafe-info-trust span {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e4e2de;
+    color: var(--ps-text);
+    font-size: 1rem;
+  }
+
+  .pawsafe-info-trust p {
+    margin: 0;
+    color: var(--ps-text);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .pawsafe-contact-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  .pawsafe-contact-panel,
+  .pawsafe-contact-form-card {
+    border-radius: 24px;
+    background: var(--ps-card);
+    padding: 40px;
+  }
+
+  .pawsafe-contact-panel h2 {
+    margin: 0 0 18px;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1.1;
+  }
+
+  .pawsafe-contact-panel p:not(.pawsafe-contact-panel__label) {
+    margin: 0;
+    color: var(--ps-muted);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .pawsafe-contact-methods {
+    display: grid;
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .pawsafe-contact-methods a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 54px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: var(--ps-text);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .pawsafe-contact-methods span {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e9f3ed;
+    color: var(--ps-green);
+  }
+
+  .pawsafe-contact-form {
+    display: grid;
+    gap: 18px;
+  }
+
+  .pawsafe-form-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .pawsafe-form-row label {
+    color: var(--ps-text);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-form-row input,
+  .pawsafe-form-row textarea {
+    width: 100%;
+    border: 1px solid #d7d9d4;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--ps-text);
+    font: inherit;
+    padding: 15px 16px;
+  }
+
+  .pawsafe-form-row textarea {
+    resize: vertical;
+  }
+
+  .pawsafe-contact-form button {
+    min-height: 58px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--ps-coral);
+    color: #ffffff;
+    cursor: pointer;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .pawsafe-form-message {
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-weight: 700;
+  }
+
+  .pawsafe-form-message--success {
+    background: #e9f3ed;
+    color: var(--ps-green);
+  }
+
+  .pawsafe-form-message--error {
+    background: #ffdad6;
+    color: #93000a;
+  }
+
+  @media screen and (max-width: 990px) {
+    .pawsafe-info-page__layout,
+    .pawsafe-contact-grid {
+      grid-template-columns: 1fr;
+      width: min(100% - 40px, 760px);
+    }
+
+    .pawsafe-info-page__tabs {
+      position: static;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pawsafe-info-cta {
+      align-items: flex-start;
+      flex-direction: column;
+      width: min(100% - 40px, 760px);
+      padding: 36px;
+    }
+
+    .pawsafe-info-trust {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: min(100% - 40px, 760px);
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .pawsafe-info-page {
+      padding-bottom: 48px;
+    }
+
+    .pawsafe-info-page__hero {
+      padding: 36px 0 46px;
+    }
+
+    .pawsafe-info-page__tabs,
+    .pawsafe-info-trust {
+      grid-template-columns: 1fr;
+    }
+
+    .pawsafe-faq-group summary {
+      min-height: 68px;
+      padding: 0 18px;
+    }
+
+    .pawsafe-faq-group details p {
+      padding: 0 18px 22px;
+    }
+
+    .pawsafe-info-cta,
+    .pawsafe-contact-panel,
+    .pawsafe-contact-form-card {
+      border-radius: 18px;
+      padding: 26px 20px;
+    }
+
+    .pawsafe-info-cta__actions {
+      align-items: stretch;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .pawsafe-info-cta__button {
+      min-width: 0;
+      width: 100%;
+    }
+  }
+</style>

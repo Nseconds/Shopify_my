@@ -542,6 +542,44 @@ button.sticky-atc-close:before {
   }
 }
 
+/* PawSafe full-width CJ-style sticky cart override. Kept at file end so it wins over legacy variants. */
+.sticky-atc.sticky-atc-mobile-button-only,
+.sticky-atc.sticky-atc--align-right,
+.sticky-atc.sticky-atc--align-center,
+.sticky-atc.sticky-atc--align-left,
+.sticky-atc {
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  border-radius: 0 !important;
+  transform: none !important;
+}
+
+.sticky-atc.sticky-atc-mobile-button-only .sticky-atc-container,
+.sticky-atc.sticky-atc-mobile-button-only .sticky-atc-container--restructured,
+.sticky-atc .sticky-atc-container,
+.sticky-atc .sticky-atc-container--restructured {
+  width: min(100vw, 1240px) !important;
+  max-width: calc(100vw - 28px) !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+@media screen and (min-width: 821px) {
+  .sticky-atc.sticky-atc-mobile-button-only,
+  .sticky-atc {
+    min-height: 116px !important;
+  }
+
+  .sticky-atc .sticky-atc-container,
+  .sticky-atc .sticky-atc-container--restructured {
+    flex-direction: row !important;
+    min-height: 116px !important;
+  }
+}
+
 /* Custom Premium Sticky ATC Spacing, Alignment, Outline, Cursor Resets */
 .sticky-atc,
 .sticky-atc * {
@@ -637,4 +675,31 @@ button.sticky-atc-close:before {
     padding: 10px !important;
     min-height: 40px !important;
   }
+}
+
+/* PawSafe final sticky cart width pass. This must stay at the end of the file. */
+.sticky-atc,
+.sticky-atc.sticky-atc-mobile-button-only,
+.sticky-atc.sticky-atc--align-left,
+.sticky-atc.sticky-atc--align-center,
+.sticky-atc.sticky-atc--align-right,
+body .sticky-atc {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-width: 100vw !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+.sticky-atc .sticky-atc-container,
+.sticky-atc .sticky-atc-container--restructured,
+body .sticky-atc .sticky-atc-container,
+body .sticky-atc .sticky-atc-container--restructured {
+  width: min(1240px, calc(100vw - 28px)) !important;
+  max-width: calc(100vw - 28px) !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
 }

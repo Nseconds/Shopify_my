@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "pawsafe_faq_page": {
+      "type": "pawsafe-faq-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "pawsafe_faq_page"
+  ]
+}

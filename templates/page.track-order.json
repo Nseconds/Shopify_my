@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "pawsafe_track_order_page": {
+      "type": "pawsafe-track-order-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "pawsafe_track_order_page"
+  ]
+}

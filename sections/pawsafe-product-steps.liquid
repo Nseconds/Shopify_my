@@ -1,0 +1,315 @@
+<section class="pawsafe-product-steps">
+  <div class="pawsafe-product-steps__inner">
+    <div class="pawsafe-product-steps__header">
+      <h2>Engineering Safer Journeys</h2>
+      <p>Simple to use, impossible to ignore. Our safety system installs in seconds to provide peace of mind for a lifetime.</p>
+    </div>
+
+    <div class="pawsafe-product-steps__grid">
+      <article>
+        <span>1</span>
+        <h3>Clip</h3>
+        <p>Simply insert the universal PawSafe buckle into your vehicle's standard seat belt slot until you hear the secure click.</p>
+      </article>
+      <article>
+        <span>2</span>
+        <h3>Attach</h3>
+        <p>Connect the heavy-duty metal carabiner to your dog's harness. We always recommend a harness over a collar for maximum comfort.</p>
+      </article>
+      <article>
+        <span>3</span>
+        <h3>Adjust</h3>
+        <p>Slide the adjuster to the perfect length, allowing your pet to sit, stand, or lie down comfortably while remaining securely tethered.</p>
+      </article>
+    </div>
+
+    <div class="pawsafe-product-reviews" aria-label="Customer reviews">
+      <div class="pawsafe-product-reviews__header">
+        <div>
+          <h2>Trusted by 10,000+ Pets</h2>
+          <p>Real safety. Real stories. From our community.</p>
+        </div>
+        <div class="pawsafe-product-reviews__score" aria-label="4.4 out of 5 stars based on 7 reviews">
+          <strong>4.4</strong>
+          <span>★★★★★</span>
+          <small>Based on 7 reviews</small>
+        </div>
+      </div>
+
+      <div class="pawsafe-product-reviews__grid">
+        <article>
+          <img src="{{ 'pawsafe-review-01-beagle-blanket-car-seat.jpg' | asset_url }}" alt="Dog resting safely during a car ride" width="320" height="220" loading="lazy">
+          <div class="pawsafe-product-reviews__stars">★★★★★</div>
+          <h3>Keeps him settled</h3>
+          <p>"Toby usually moves around a lot, but this helps keep him in one spot. Love that he can still lie down."</p>
+          <small>— Sophie M.</small>
+        </article>
+        <article>
+          <img src="{{ 'pawsafe-review-02-golden-retriever-red-belt.jpg' | asset_url }}" alt="Golden retriever secured with a red car seat belt" width="320" height="220" loading="lazy">
+          <div class="pawsafe-product-reviews__stars">★★★★★</div>
+          <h3>Simple & feels secure</h3>
+          <p>"It clicked into the seatbelt slot easily, and the strap feels strong. Max can sit up comfortably."</p>
+          <small>— James R.</small>
+        </article>
+        <article>
+          <img src="{{ 'pawsafe-review-05-black-lab-window-rain.jpg' | asset_url }}" alt="Black dog looking out of a rainy car window" width="320" height="220" loading="lazy">
+          <div class="pawsafe-product-reviews__stars">★★★★★</div>
+          <h3>Helpful on rainy days</h3>
+          <p>"Bear loves looking out the window, and this keeps him from leaning too far forward. Works well!"</p>
+          <small>— Daniel K.</small>
+        </article>
+        <article>
+          <img src="{{ 'pawsafe-review-06-beagle-front-seat.jpg' | asset_url }}" alt="Beagle sitting calmly in a car seat" width="320" height="220" loading="lazy">
+          <div class="pawsafe-product-reviews__stars">★★★★★</div>
+          <h3>Works great</h3>
+          <p>"It does keep Milo from jumping around. Once set up, it's very useful for daily errands."</p>
+          <small>— Hannah C.</small>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pawsafe-product-steps {
+    background: #fbf9f5;
+    color: #002514;
+    font-family: Inter, var(--font-body--family), sans-serif;
+    padding: 110px 20px 120px;
+  }
+
+  .pawsafe-product-steps__inner {
+    width: min(100%, 1280px);
+    margin: 0 auto;
+  }
+
+  .pawsafe-product-steps__header {
+    max-width: 690px;
+    margin: 0 auto 72px;
+    text-align: center;
+  }
+
+  .pawsafe-product-steps h2,
+  .pawsafe-product-steps h3 {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .pawsafe-product-steps h2 {
+    margin: 0 0 22px;
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .pawsafe-product-steps__header p {
+    margin: 0;
+    color: #1b1c1a;
+    font-size: clamp(1rem, 2vw, 1.28rem);
+    line-height: 1.55;
+  }
+
+  .pawsafe-product-steps__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  .pawsafe-product-steps article {
+    min-height: 285px;
+    padding: 36px 36px 34px;
+    border: 1px solid #e4e2de;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 10px 26px rgba(0, 37, 20, 0.05);
+  }
+
+  .pawsafe-product-steps article span {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 34px;
+    border-radius: 50%;
+    background: #002514;
+    color: #ffffff;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+
+  .pawsafe-product-steps h3 {
+    margin: 0 0 18px;
+    font-size: clamp(1.4rem, 2.5vw, 1.72rem);
+    font-weight: 800;
+  }
+
+  .pawsafe-product-steps article p {
+    margin: 0;
+    color: #414943;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .pawsafe-product-reviews {
+    margin-top: 110px;
+  }
+
+  .pawsafe-product-reviews__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 52px;
+  }
+
+  .pawsafe-product-reviews__header h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.9rem, 3.6vw, 2.55rem);
+  }
+
+  .pawsafe-product-reviews__header p {
+    margin: 0;
+    color: #234033;
+    font-size: 1rem;
+  }
+
+  .pawsafe-product-reviews__score {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 8px;
+    min-width: 180px;
+    padding: 13px 18px;
+    border: 1px solid #e6e0d6;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #002514;
+    box-shadow: 0 10px 24px rgba(0, 37, 20, 0.06);
+  }
+
+  .pawsafe-product-reviews__score strong {
+    grid-row: span 2;
+    align-self: center;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-size: 1.45rem;
+    line-height: 1;
+  }
+
+  .pawsafe-product-reviews__score span {
+    color: #967018;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .pawsafe-product-reviews__score small {
+    color: #002514;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-product-reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px;
+  }
+
+  .pawsafe-product-reviews__grid article {
+    min-height: 0;
+    padding: 20px 20px 24px;
+    border: 1px solid #dedbd4;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(0, 37, 20, 0.05);
+  }
+
+  .pawsafe-product-reviews__grid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.42;
+    height: auto;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .pawsafe-product-reviews__stars {
+    margin-bottom: 8px;
+    color: #967018;
+    font-size: 0.92rem;
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+
+  .pawsafe-product-reviews__grid h3 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .pawsafe-product-reviews__grid p {
+    margin: 0 0 24px;
+    color: #3c463f;
+    font-size: 0.92rem;
+    font-style: italic;
+    line-height: 1.55;
+  }
+
+  .pawsafe-product-reviews__grid small {
+    color: #315143;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 900px) {
+    .pawsafe-product-steps {
+      padding: 72px 20px;
+    }
+
+    .pawsafe-product-steps__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pawsafe-product-steps__header {
+      margin-bottom: 36px;
+    }
+
+    .pawsafe-product-reviews {
+      margin-top: 72px;
+    }
+
+    .pawsafe-product-reviews__header {
+      display: grid;
+      margin-bottom: 28px;
+    }
+
+    .pawsafe-product-reviews__score {
+      width: fit-content;
+    }
+
+    .pawsafe-product-reviews__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (min-width: 901px) and (max-width: 1180px) {
+    .pawsafe-product-reviews__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "PawSafe product steps",
+  "settings": [],
+  "presets": [
+    {
+      "name": "PawSafe product steps"
+    }
+  ]
+}
+{% endschema %}

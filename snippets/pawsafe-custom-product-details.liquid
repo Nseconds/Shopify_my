@@ -118,13 +118,13 @@
             <span class="pawsafe-pack-price">$19.99</span>
           </button>
           <button type="button" class="pawsafe-pack-card" data-pack-name="Duo Pack" data-pack-qty="2" data-pack-total="{{ duo_total }}">
-            <span class="pawsafe-pack-badge">Best Value</span>
+            <span class="pawsafe-pack-badge">Save $9.99</span>
             <span class="pawsafe-pack-title">Duo Pack</span>
             <span class="pawsafe-pack-subtitle">2 belts</span>
             <span class="pawsafe-pack-price">$29.99</span>
           </button>
           <button type="button" class="pawsafe-pack-card" data-pack-name="Family Pack" data-pack-qty="3" data-pack-total="{{ family_total }}">
-            <span class="pawsafe-pack-badge">Maximum Savings</span>
+            <span class="pawsafe-pack-badge">Best Value</span>
             <span class="pawsafe-pack-title">Family Pack</span>
             <span class="pawsafe-pack-subtitle">3 belts</span>
             <span class="pawsafe-pack-price">$39.99</span>
@@ -521,6 +521,166 @@
     .pawsafe-color-swatches-row { grid-template-columns: 1fr; }
     .pawsafe-btn-atc { font-size: 0.78rem; letter-spacing: 0.04em; }
   }
+
+  /* Stitch design system: Premium Canine Protection */
+  .pawsafe-details-wrapper {
+    --stitch-surface: #fbf9f5;
+    --stitch-surface-card: #ffffff;
+    --stitch-surface-soft: #f5f3ef;
+    --stitch-primary: #0d3c26;
+    --stitch-primary-deep: #002514;
+    --stitch-primary-tint: #e9f3ed;
+    --stitch-gold: #fed488;
+    --stitch-gold-text: #775a19;
+    --stitch-coral: #f47c5d;
+    --stitch-coral-hover: #dd6448;
+    --stitch-text: #1b1c1a;
+    --stitch-muted: #414943;
+    --stitch-border: #c1c9c1;
+    color: var(--stitch-text);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-eyebrow {
+    color: var(--stitch-gold-text);
+    font-family: Inter, var(--font-body--family), sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+  }
+
+  .pawsafe-main-title,
+  .pawsafe-price-current,
+  .pawsafe-pack-heading-row h2 {
+    color: var(--stitch-text) !important;
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+  }
+
+  .pawsafe-main-title {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+
+  .pawsafe-price-current {
+    color: var(--stitch-primary) !important;
+    font-weight: 800;
+  }
+
+  .pawsafe-stars-gold {
+    color: var(--stitch-gold-text);
+  }
+
+  .pawsafe-stars-count,
+  .pawsafe-price-note,
+  .pawsafe-selected-color-name,
+  .pawsafe-pack-selected {
+    color: var(--stitch-muted);
+  }
+
+  .pawsafe-swatch-btn,
+  .pawsafe-pack-card,
+  .pawsafe-benefit-item,
+  .pawsafe-compact-trust-badges {
+    border-color: var(--stitch-border);
+    background: var(--stitch-surface-card);
+    color: var(--stitch-text);
+    font-family: Inter, var(--font-body--family), sans-serif;
+  }
+
+  .pawsafe-swatch-btn {
+    border-radius: 8px;
+  }
+
+  .pawsafe-swatch-btn:hover,
+  .pawsafe-swatch-btn.selected {
+    border-color: var(--stitch-primary);
+  }
+
+  .pawsafe-swatch-btn.selected {
+    box-shadow: 0 0 0 2px var(--stitch-primary), 0 10px 24px rgba(13, 60, 38, 0.1);
+    background: var(--stitch-primary-tint);
+  }
+
+  .pawsafe-pack-card {
+    min-height: 132px;
+    border-radius: 16px;
+    background: var(--stitch-surface-card);
+    box-shadow: 0 14px 30px rgba(13, 60, 38, 0.06);
+  }
+
+  .pawsafe-pack-card:hover {
+    border-color: var(--stitch-primary);
+    box-shadow: 0 16px 36px rgba(13, 60, 38, 0.12);
+  }
+
+  .pawsafe-pack-card.selected {
+    border-color: var(--stitch-primary);
+    box-shadow: 0 0 0 2px var(--stitch-primary), 0 16px 36px rgba(13, 60, 38, 0.14);
+    background: var(--stitch-primary-tint);
+  }
+
+  .pawsafe-pack-title {
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    font-weight: 800;
+  }
+
+  .pawsafe-pack-price {
+    color: var(--stitch-primary);
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+  }
+
+  .pawsafe-pack-badge {
+    border-radius: 999px;
+    background: var(--stitch-gold);
+    color: var(--stitch-gold-text);
+  }
+
+  .pawsafe-benefit-item {
+    border-radius: 12px;
+    background: var(--stitch-surface-soft);
+    font-weight: 700;
+  }
+
+  .pawsafe-benefit-item span:first-child,
+  .pawsafe-trust-badge-item svg {
+    color: var(--stitch-primary);
+    stroke: var(--stitch-primary);
+  }
+
+  .pawsafe-benefit-item span:first-child {
+    background: #dceee4;
+  }
+
+  .pawsafe-btn-atc {
+    border-color: var(--stitch-coral);
+    border-radius: 8px;
+    background: var(--stitch-coral);
+    box-shadow: 0 14px 30px rgba(244, 124, 93, 0.24);
+    font-family: Montserrat, var(--font-heading--family), sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .pawsafe-btn-atc:hover {
+    background: var(--stitch-coral-hover);
+    border-color: var(--stitch-coral-hover);
+    box-shadow: 0 16px 34px rgba(244, 124, 93, 0.3);
+  }
+
+  .pawsafe-payment-line {
+    border: 1px solid #d7e5dc;
+    background: var(--stitch-primary-tint);
+    color: var(--stitch-primary);
+  }
+
+  .pawsafe-compact-trust-badges {
+    border-radius: 16px;
+    background: var(--stitch-surface);
+  }
+
+  .pawsafe-trust-badge-item {
+    color: var(--stitch-primary);
+  }
 </style>
 
 <script>
@@ -750,8 +910,21 @@
     });
 
     if (productForm) {
-      productForm.addEventListener('submit', () => {
+      productForm.addEventListener('submit', (event) => {
         if (quantityInput) quantityInput.value = String(selectedPack.quantity);
+
+        // For bundle packs, skip the cart and go straight to checkout with discount code applied
+        const variantId = colorInput ? colorInput.value : '';
+        if (selectedPack.quantity === 2 && variantId) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.location.href = '/cart/' + variantId + ':2?discount=BUNDLE2';
+        } else if (selectedPack.quantity === 3 && variantId) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.location.href = '/cart/' + variantId + ':3?discount=BUNDLE3';
+        }
+        // qty 1 (Single Pack) — let form submit normally → adds to cart
       });
     }
 

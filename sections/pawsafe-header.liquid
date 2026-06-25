@@ -1,0 +1,506 @@
+{% liquid
+  assign pawsafe_product = section.settings.product
+  if pawsafe_product == blank
+    assign pawsafe_product = collections.all.products.first
+  endif
+  
+  assign pawsafe_product_url = pawsafe_product.url | default: "/products/dog-car-seat-belt"
+  assign faq_link = "/pages/faq"
+
+  if request.page_type == 'index'
+    assign home_link = "#"
+    assign shop_link = "#bundles"
+  else
+    assign home_link = "/"
+    if request.path contains pawsafe_product_url or request.path contains "/products/"
+      assign shop_link = "#MainContent"
+    else
+      assign shop_link = pawsafe_product_url
+    endif
+  endif
+  assign track_link = "https://h6g7rjzw.aftership.com/"
+%}
+
+<div class="pawsafe-header-wrapper">
+  <header class="pawsafe-nav">
+    <div class="pawsafe-nav-container">
+      
+      <!-- Hamburger Toggle Button -->
+      <button class="pawsafe-menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="pawsafe-mobile-drawer">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <!-- Brand Logo -->
+      <a class="pawsafe-brand" href="{{ routes.root_url }}">
+        <span class="pawsafe-brand-mark">
+          <img src="{{ 'pawsafe-logo-mark.jpg' | asset_url }}" alt="" width="42" height="35" loading="eager">
+        </span>
+        <span>PawSafe</span>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="pawsafe-desktop-menu">
+        <a href="{{ home_link }}" class="pawsafe-nav-link" id="nav-link-home">Home</a>
+        <a href="{{ shop_link }}" class="pawsafe-nav-link" id="nav-link-shop">Shop</a>
+        <a href="{{ track_link }}" class="pawsafe-nav-link" id="nav-link-track-order">Track Order</a>
+        <a href="{{ faq_link }}" class="pawsafe-nav-link" id="nav-link-faq">FAQ</a>
+      </nav>
+
+      <div class="pawsafe-header-actions">
+        <a class="pawsafe-header-cart" href="{{ routes.cart_url }}" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="9" cy="21" r="1.6"></circle>
+            <circle cx="19" cy="21" r="1.6"></circle>
+            <path d="M1.5 3h3l2.4 12.2a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 1.9-1.4L22 7H6"></path>
+          </svg>
+          {% if cart.item_count > 0 %}
+            <span>{{ cart.item_count }}</span>
+          {% endif %}
+        </a>
+
+        <!-- CTA Button -->
+        <a class="pawsafe-navbtn" href="{{ pawsafe_product_url }}" id="header-cta-btn">
+          {{ section.settings.cta_text }}
+        </a>
+      </div>
+
+    </div>
+  </header>
+</div>
+
+<!-- Mobile Navigation Drawer -->
+<div class="pawsafe-mobile-drawer" id="pawsafe-mobile-drawer" aria-hidden="true">
+  <div class="pawsafe-drawer-header">
+    <a class="pawsafe-brand" href="{{ routes.root_url }}">
+      <span class="pawsafe-brand-mark">
+        <img src="{{ 'pawsafe-logo-mark.jpg' | asset_url }}" alt="" width="42" height="35" loading="lazy">
+      </span>
+      <span>PawSafe</span>
+    </a>
+    <button class="pawsafe-drawer-close" aria-label="Close Menu">&times;</button>
+  </div>
+  <nav class="pawsafe-mobile-menu">
+    <a href="{{ home_link }}" class="pawsafe-drawer-link">Home</a>
+    <a href="{{ shop_link }}" class="pawsafe-drawer-link">Shop</a>
+    <a href="{{ track_link }}" class="pawsafe-drawer-link">Track Order</a>
+    <a href="{{ faq_link }}" class="pawsafe-drawer-link">FAQ</a>
+  </nav>
+</div>
+<div class="pawsafe-drawer-overlay"></div>
+
+<style>
+  :root {
+    --header-height: 72px;
+  }
+  @media (max-width: 900px) {
+    :root {
+      --header-height: 64px;
+    }
+  }
+
+  body {
+    --header-height: var(--header-height);
+    --header-group-height: var(--header-height);
+  }
+
+  #shopify-section-pawsafe-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+  }
+
+  .pawsafe-header-wrapper {
+    position: relative;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(24, 57, 47, 0.08);
+  }
+
+  .pawsafe-nav {
+    width: 100%;
+    height: var(--header-height);
+    padding: 0 6vw;
+    display: flex;
+    align-items: center;
+  }
+
+  .pawsafe-nav-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Hamburger Menu Toggle */
+  .pawsafe-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 101;
+  }
+
+  .pawsafe-menu-toggle .bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #18392f;
+    border-radius: 1px;
+    transition: all 0.3s ease;
+  }
+
+  /* Brand Logo */
+  .pawsafe-brand {
+    gap: 10px;
+    font-size: 25px;
+    font-weight: 900;
+    color: #18392f;
+    letter-spacing: -0.04em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .pawsafe-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  .pawsafe-brand-mark img {
+    width: 38px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  /* Desktop Menu */
+  .pawsafe-desktop-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .pawsafe-nav-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: #35433e;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .pawsafe-nav-link:hover {
+    color: #18392f;
+  }
+
+  /* CTA Button */
+  .pawsafe-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .pawsafe-header-cart {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    color: #002514;
+    text-decoration: none;
+  }
+
+  .pawsafe-header-cart svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .pawsafe-header-cart span {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #f47c5d;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .pawsafe-navbtn {
+    background: #162f27;
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .pawsafe-navbtn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Responsive styles for menu */
+  @media (max-width: 900px) {
+    .pawsafe-menu-toggle {
+      display: flex;
+    }
+
+    .pawsafe-desktop-menu {
+      display: none;
+    }
+
+    .pawsafe-brand {
+      font-size: 22px;
+      gap: 8px;
+    }
+
+    .pawsafe-brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+    }
+
+    .pawsafe-brand-mark img {
+      width: 34px;
+      height: 29px;
+    }
+
+    .pawsafe-nav {
+      padding: 0 4vw;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .pawsafe-brand {
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+    .pawsafe-navbtn {
+      padding: 10px 13px;
+      font-size: 13px;
+    }
+
+    .pawsafe-header-actions {
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .pawsafe-nav {
+      position: relative;
+      justify-content: center;
+    }
+
+    .pawsafe-nav-container {
+      justify-content: center;
+    }
+
+    .pawsafe-menu-toggle {
+      position: absolute;
+      left: 4vw;
+    }
+
+    .pawsafe-navbtn {
+      display: none;
+    }
+
+    .pawsafe-header-actions {
+      position: absolute;
+      right: 4vw;
+    }
+  }
+
+  /* Mobile Drawer Menu */
+  .pawsafe-mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    max-width: 80vw;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .pawsafe-mobile-drawer.active {
+    transform: translateX(0);
+  }
+
+  .pawsafe-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(24, 57, 47, 0.08);
+  }
+
+  .pawsafe-drawer-close {
+    font-size: 32px;
+    font-weight: 300;
+    background: none;
+    border: none;
+    color: #18392f;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+  }
+
+  .pawsafe-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .pawsafe-drawer-link {
+    font-size: 18px;
+    font-weight: 700;
+    color: #35433e;
+    text-decoration: none;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(24, 57, 47, 0.04);
+    transition: color 0.2s ease;
+  }
+
+  .pawsafe-drawer-link:hover {
+    color: #18392f;
+  }
+
+  /* Drawer Overlay */
+  .pawsafe-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .pawsafe-drawer-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.querySelector('.pawsafe-menu-toggle');
+    const closeBtn = document.querySelector('.pawsafe-drawer-close');
+    const drawer = document.querySelector('.pawsafe-mobile-drawer');
+    const overlay = document.querySelector('.pawsafe-drawer-overlay');
+    const drawerLinks = document.querySelectorAll('.pawsafe-drawer-link');
+    const navLinks = document.querySelectorAll('.pawsafe-nav-link');
+
+    if (toggleBtn && drawer && overlay) {
+      const openDrawer = function() {
+        drawer.classList.add('active');
+        overlay.classList.add('active');
+        drawer.setAttribute('aria-hidden', 'false');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeDrawer = function() {
+        drawer.classList.remove('active');
+        overlay.classList.remove('active');
+        drawer.setAttribute('aria-hidden', 'true');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      };
+
+      toggleBtn.addEventListener('click', openDrawer);
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+
+      // Smooth scroll for anchor links
+      const handleSmoothScroll = function(e, href) {
+        if (href.startsWith('#')) {
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            closeDrawer();
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else if (href === '#') {
+          e.preventDefault();
+          closeDrawer();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+
+      drawerLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = link.getAttribute('href');
+          handleSmoothScroll(e, href);
+        });
+      });
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = link.getAttribute('href');
+          handleSmoothScroll(e, href);
+        });
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "PawSafe Global Header",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Primary Product"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Shop Now"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PawSafe Global Header"
+    }
+  ]
+}
+{% endschema %}

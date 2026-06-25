@@ -1,0 +1,368 @@
+{% liquid
+  assign popup_image = 'hero2.jpg' | asset_url
+%}
+
+<div class="pawsafe-discount-popup" data-pawsafe-discount-popup hidden>
+  <div class="pawsafe-discount-popup__backdrop" data-pawsafe-discount-close></div>
+  <aside
+    class="pawsafe-discount-popup__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pawsafe-discount-title"
+  >
+    <button class="pawsafe-discount-popup__close" type="button" aria-label="Close discount popup" data-pawsafe-discount-close>
+      &times;
+    </button>
+    <div class="pawsafe-discount-popup__media">
+      <img src="{{ popup_image }}" alt="PawSafe pet car safety belt clipped into a car seat" width="800" height="800" loading="lazy">
+    </div>
+    <div class="pawsafe-discount-popup__content">
+      <p class="pawsafe-discount-popup__eyebrow">PawSafe welcome offer</p>
+      <h2 id="pawsafe-discount-title">Get 10% Off Your First Order</h2>
+      <p class="pawsafe-discount-popup__subtitle">Use this first-order discount at checkout.</p>
+
+      <div class="pawsafe-discount-popup__success" data-pawsafe-discount-success>
+        <span>Your code is ready:</span>
+        <strong>WELCOME10</strong>
+      </div>
+
+      <button class="pawsafe-discount-popup__button" type="button" data-pawsafe-discount-copy>
+        Copy Code
+      </button>
+      <p class="pawsafe-discount-popup__message" data-pawsafe-discount-copy-message hidden>
+        Code copied.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<button class="pawsafe-discount-tab" type="button" data-pawsafe-discount-open>
+  Get 10% Off
+</button>
+
+<style>
+  .pawsafe-discount-popup[hidden] {
+    display: none;
+  }
+
+  .pawsafe-discount-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    pointer-events: none;
+  }
+
+  .pawsafe-discount-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 31, 25, 0.38);
+    pointer-events: auto;
+  }
+
+  .pawsafe-discount-popup__panel {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(180px, 0.82fr) minmax(280px, 1fr);
+    width: min(92vw, 760px);
+    overflow: hidden;
+    border: 1px solid rgba(201, 169, 97, 0.32);
+    border-radius: 8px;
+    background: #fffdf8;
+    box-shadow: 0 26px 72px rgba(13, 34, 28, 0.24);
+    pointer-events: auto;
+  }
+
+  .pawsafe-discount-popup__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(24, 57, 47, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #18392f;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .pawsafe-discount-popup__media {
+    min-height: 100%;
+    background: #e9efe8;
+  }
+
+  .pawsafe-discount-popup__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    object-fit: cover;
+  }
+
+  .pawsafe-discount-popup__content {
+    padding: 42px 34px 34px;
+    color: #18392f;
+  }
+
+  .pawsafe-discount-popup__eyebrow {
+    margin: 0 0 10px;
+    color: #9d7a2d;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pawsafe-discount-popup h2 {
+    margin: 0;
+    color: #10281f;
+    font-family: inherit;
+    font-size: 34px;
+    line-height: 1.06;
+    letter-spacing: 0;
+  }
+
+  .pawsafe-discount-popup__subtitle {
+    margin: 14px 0 22px;
+    color: #4b5b55;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .pawsafe-discount-popup__button {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 8px;
+    font: inherit;
+  }
+
+  .pawsafe-discount-popup__button {
+    margin-top: 14px;
+    border: 0;
+    background: #18392f;
+    color: #ffffff;
+    padding: 0 18px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .pawsafe-discount-popup__button:hover {
+    background: #245443;
+  }
+
+  .pawsafe-discount-popup__message {
+    margin: 12px 0 0;
+    font-size: 13px;
+  }
+
+  .pawsafe-discount-popup__message--error {
+    color: #a6422f;
+  }
+
+  .pawsafe-discount-popup__success {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 13px 14px;
+    border: 1px dashed rgba(157, 122, 45, 0.62);
+    border-radius: 8px;
+    background: #fff7df;
+    color: #18392f;
+    font-size: 14px;
+  }
+
+  .pawsafe-discount-popup__success strong {
+    color: #9d6b08;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+
+  .pawsafe-discount-tab {
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+    z-index: 900;
+    min-height: 44px;
+    border: 1px solid rgba(201, 169, 97, 0.46);
+    border-radius: 999px;
+    background: #18392f;
+    color: #ffffff;
+    padding: 0 18px;
+    box-shadow: 0 14px 34px rgba(13, 34, 28, 0.2);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .pawsafe-discount-tab:hover {
+    background: #245443;
+  }
+
+  @media (max-width: 640px) {
+    .pawsafe-discount-popup {
+      align-items: flex-end;
+      padding: 12px;
+    }
+
+    .pawsafe-discount-popup__backdrop {
+      background: rgba(12, 31, 25, 0.22);
+    }
+
+    .pawsafe-discount-popup__panel {
+      grid-template-columns: 1fr;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .pawsafe-discount-popup__media img {
+      min-height: 150px;
+      max-height: 190px;
+    }
+
+    .pawsafe-discount-popup__content {
+      padding: 24px 18px 20px;
+    }
+
+    .pawsafe-discount-popup__close {
+      top: 10px;
+      right: 10px;
+      background: #18392f;
+      color: #ffffff;
+      border-color: rgba(247, 207, 122, 0.58);
+      box-shadow: 0 8px 22px rgba(13, 34, 28, 0.22);
+    }
+
+    .pawsafe-discount-popup h2 {
+      padding-right: 34px;
+      font-size: 26px;
+    }
+
+    .pawsafe-discount-popup__subtitle {
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .pawsafe-discount-popup__success {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .pawsafe-discount-tab {
+      left: 12px;
+      bottom: 12px;
+      min-height: 40px;
+      padding: 0 14px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const popup = document.querySelector('[data-pawsafe-discount-popup]');
+    const openButtons = document.querySelectorAll('[data-pawsafe-discount-open]');
+    const closeButtons = document.querySelectorAll('[data-pawsafe-discount-close]');
+    const copyButton = document.querySelector('[data-pawsafe-discount-copy]');
+    const copyMessage = document.querySelector('[data-pawsafe-discount-copy-message]');
+    const storageKey = 'pawsafeWelcomeDiscountClosed';
+    let hasOpened = false;
+
+    if (!popup) return;
+
+    const storage = {
+      get: function(key) {
+        try {
+          return window.localStorage.getItem(key) || window.sessionStorage.getItem(key);
+        } catch (error) {
+          return null;
+        }
+      },
+      set: function(key, value) {
+        try {
+          window.localStorage.setItem(key, value);
+        } catch (error) {
+          try {
+            window.sessionStorage.setItem(key, value);
+          } catch (sessionError) {}
+        }
+      },
+      remove: function(key) {
+        try {
+          window.sessionStorage.removeItem(key);
+        } catch (error) {}
+      }
+    };
+
+    const openPopup = function() {
+      popup.hidden = false;
+      hasOpened = true;
+    };
+
+    const closePopup = function() {
+      popup.hidden = true;
+      storage.set(storageKey, 'true');
+    };
+
+    openButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        openPopup();
+      });
+    });
+
+    closeButtons.forEach(function(button) {
+      button.addEventListener('click', closePopup);
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !popup.hidden) {
+        closePopup();
+      }
+    });
+
+    if (copyButton) {
+      copyButton.addEventListener('click', function() {
+        const showCopied = function() {
+          if (!copyMessage) return;
+          copyMessage.hidden = false;
+          window.setTimeout(function() {
+            copyMessage.hidden = true;
+          }, 1800);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('WELCOME10').then(showCopied).catch(showCopied);
+        } else {
+          showCopied();
+        }
+      });
+    }
+
+    if (storage.get(storageKey) === 'true') return;
+
+    window.setTimeout(function() {
+      if (!hasOpened) openPopup();
+    }, 5000);
+
+    const handleScroll = function() {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      if ((window.scrollY / scrollable) >= 0.4 && !hasOpened) {
+        openPopup();
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+  });
+</script>
